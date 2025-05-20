@@ -61,7 +61,7 @@ export default function Rooms() {
                     Capacity: {room.capacity} guests
                   </p>
                   <p className="font-semibold">
-                    Price: ${room.price_per_night} per night
+                    Price: ₹{room.price_per_night} per night
                   </p>
                   {room.amenities && room.amenities.length > 0 && (
                     <div>
