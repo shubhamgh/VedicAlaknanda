@@ -23,25 +23,25 @@ const Index = () => {
             Badrinath routes. Perfect for pilgrims and nature lovers alike.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-            <div className="p-6 border border-gray-200 rounded-lg">
+            <div className="p-6 border border-gray-200 rounded-lg bg-hotel-gold">
               <h3 className="font-semibold text-xl mb-3">
                 Luxury Accommodations
               </h3>
-              <p className="text-gray-600">
+              <p className="text-white">
                 Spacious rooms and suites designed for your ultimate comfort and
                 relaxation.
               </p>
             </div>
-            <div className="p-6 border border-gray-200 rounded-lg">
+            <div className="p-6 border border-gray-200 rounded-lg bg-hotel-gold">
               <h3 className="font-semibold text-xl mb-3">Fine Dining</h3>
-              <p className="text-gray-600">
+              <p className="text-white">
                 Savor culinary masterpieces in our hygenic and inviting
                 restaurants
               </p>
             </div>
-            <div className="p-6 border border-gray-200 rounded-lg">
+            <div className="p-6 border border-gray-200 rounded-lg bg-hotel-gold">
               <h3 className="font-semibold text-xl mb-3">Premium Amenities</h3>
-              <p className="text-gray-600">
+              <p className="text-white">
                 24x7 security cameras, room service, high speed Wi-Fi, and more
               </p>
             </div>

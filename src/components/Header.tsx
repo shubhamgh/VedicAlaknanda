@@ -34,14 +34,14 @@ const Header: React.FC = () => {
   return (
     <header
       className={cn(
-        "fixed w-full z-50 transition-all duration-300 ease-in-out",
+        "fixed w-full z-50 transition-all duration-700 ease-in-out",
         scrolled ? "opaque-header" : "transparent-header"
       )}
     >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link to="/" className="text-2xl font-bold">
           <span
-            className={`transition-colors duration-300 ${
+            className={`transition-colors duration-700 pr-4 ${
               scrolled ? "text-hotel-dark" : "text-white"
             }`}
           >
@@ -80,7 +80,7 @@ const Header: React.FC = () => {
           <div
             className={`fixed top-0 right-0 h-screen w-3/4 bg-white p-4 transform ${
               isSidebarOpen ? "translate-x-0" : "translate-x-full"
-            } transition-transform duration-300 ease-in-out md:hidden`}
+            } transition-transform duration-700 ease-in-out md:hidden`}
           >
             <button
               className="absolute top-4 right-4"

@@ -6,14 +6,18 @@ const Dining = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold text-center mb-8">Dining Experience</h1>
+      <main className="container mx-auto px-4 py-20">
+        <h1 className="text-4xl font-bold text-center mb-8">
+          Dining Experience
+        </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <Card>
             <CardContent className="p-6">
               <h2 className="text-2xl font-semibold mb-4">Restaurant</h2>
               <p className="text-gray-600">
-                Experience fine dining at its best with our world-class restaurant offering a diverse menu of international and local cuisine.
+                Experience fine dining at its best with our world-class
+                restaurant offering a diverse menu of international and local
+                cuisine.
               </p>
             </CardContent>
           </Card>
@@ -21,7 +25,8 @@ const Dining = () => {
             <CardContent className="p-6">
               <h2 className="text-2xl font-semibold mb-4">Bar & Lounge</h2>
               <p className="text-gray-600">
-                Unwind at our elegant bar and lounge, featuring craft cocktails, premium spirits, and a carefully curated wine selection.
+                Unwind at our elegant bar and lounge, featuring craft cocktails,
+                premium spirits, and a carefully curated wine selection.
               </p>
             </CardContent>
           </Card>
