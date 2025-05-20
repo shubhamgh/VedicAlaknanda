@@ -107,11 +107,14 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               {[
                 "About Us",
-                "Rooms & Suites",
+                "Rooms",
                 "Dining",
-                "Events",
-                "Gallery",
-                "Offers",
+                // "Events",
+                "Amenities",
+                "Explore",
+                "Contact",
+                // "Gallery",
+                // "Offers",
               ].map((item) => (
                 <li key={item}>
                   <Link
