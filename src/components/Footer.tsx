@@ -109,7 +109,7 @@ const Footer: React.FC = () => {
                   href="mailto:vedicalaknanda@gmail.com"
                   className="hover:text-hotel-gold transition-colors"
                 >
-                  vedicalaknanda@gmail.com
+                  VedicAlaknanda@gmail.com
                 </a>
               </li>
             </ul>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface SlideProps {
@@ -6,10 +6,11 @@ interface SlideProps {
   heading: string;
   subheading: string;
 }
-import hotelImage from "../assets/hotel.png";
-import diningImage from "../assets/dining.png";
+
+import hotelImage from "../assets/hotel.jpg";
+import diningImage from "../assets/dining.jpg";
 import viewImage from "../assets/view.jpg";
-import roomImage from "../assets/room.png";
+import roomImage from "../assets/room.jpg";
 
 const slides: SlideProps[] = [
   {
@@ -40,24 +41,69 @@ const Slideshow: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [fade, setFade] = useState(false);
 
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+
   useEffect(() => {
     const timer = setInterval(() => {
-      setFade(true);
-      setTimeout(() => {
-        setCurrentSlide((prev) => (prev + 1) % slides.length);
-        setFade(false);
-      }, 1000);
+      nextSlide();
     }, 5000);
 
-    return () => {
-      clearInterval(timer);
-    };
+    return () => clearInterval(timer);
   }, []);
+
+  const nextSlide = () => {
+    setFade(true);
+    setTimeout(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      setFade(false);
+    }, 500);
+  };
+
+  const prevSlide = () => {
+    setFade(true);
+    setTimeout(() => {
+      setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+      setFade(false);
+    }, 500);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current !== null && touchEndX.current !== null) {
+      const diff = touchStartX.current - touchEndX.current;
+      if (Math.abs(diff) > 50) {
+        // swipe left
+        if (diff > 0) {
+          nextSlide();
+        } else {
+          // swipe right
+          prevSlide();
+        }
+      }
+    }
+
+    // reset values
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
 
   const currentSlideData = slides[currentSlide];
 
   return (
-    <div className="relative w-full h-screen">
+    <div
+      className="relative w-full h-screen"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       {slides.map((slide, index) => (
         <div
           key={index}
@@ -73,10 +119,8 @@ const Slideshow: React.FC = () => {
         />
       ))}
 
-      {/* Overlay gradient */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
 
-      {/* Content */}
       <div
         className={cn(
           "absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4 transition-opacity duration-1000",
@@ -97,7 +141,6 @@ const Slideshow: React.FC = () => {
         </a>
       </div>
 
-      {/* Slide indicators */}
       <div className="absolute bottom-10 left-0 right-0 flex justify-center space-x-2">
         {slides.map((_, index) => (
           <button
