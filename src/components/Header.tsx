@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { X, Menu } from "lucide-react";
 
 const Header: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const handleMenuClick = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+  const handleCloseSidebar = () => {
+    setIsSidebarOpen(false);
+  };
+
+  const HeaderLinks = ["Rooms", "Dining", "Amenities", "Explore", "Contact"];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,19 +51,17 @@ const Header: React.FC = () => {
 
         <nav>
           <ul className="hidden md:flex space-x-8 items-center">
-            {["Rooms", "Dining", "Amenities", "Explore", "Contact"].map(
-              (item) => (
-                <li key={item}>
-                  <Link
-                    to={`/${item.toLowerCase()}`}
-                    className={`text-sm uppercase tracking-wider font-medium hover:text-hotel-gold transition-colors
+            {HeaderLinks.map((item) => (
+              <li key={item}>
+                <Link
+                  to={`/${item.toLowerCase()}`}
+                  className={`text-sm uppercase tracking-wider font-medium hover:text-hotel-gold transition-colors
                     ${scrolled ? "text-hotel-dark" : "text-white"}`}
-                  >
-                    {item}
-                  </Link>
-                </li>
-              )
-            )}
+                >
+                  {item}
+                </Link>
+              </li>
+            ))}
             <li>
               <Link
                 to="/book-now"
@@ -63,12 +72,36 @@ const Header: React.FC = () => {
             </li>
           </ul>
 
-          <button className="md:hidden">
-            {/* Mobile menu button, we'll implement this in a later iteration */}
-            <span className={`${scrolled ? "text-hotel-dark" : "text-white"}`}>
-              Menu
-            </span>
+          <button className="md:hidden flex" onClick={handleMenuClick}>
+            <Menu
+              className={`${scrolled ? "text-hotel-dark" : "text-white"}`}
+            />
           </button>
+          <div
+            className={`fixed top-0 right-0 h-screen w-3/4 bg-white p-4 transform ${
+              isSidebarOpen ? "translate-x-0" : "translate-x-full"
+            } transition-transform duration-300 ease-in-out md:hidden`}
+          >
+            <button
+              className="absolute top-4 right-4"
+              onClick={handleCloseSidebar}
+            >
+              <X className="h-6 w-6 text-gray-500" />
+            </button>
+            {/* Sidebar content here */}
+            <ul>
+              {HeaderLinks.map((item) => (
+                <li key={item}>
+                  <Link
+                    to={`/${item.toLowerCase()}`}
+                    className="text-sm uppercase transition-colors"
+                  >
+                    {item}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </nav>
       </div>
     </header>

@@ -1,4 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const Explore = () => {
   return (
@@ -8,11 +14,14 @@ const Explore = () => {
         <Card>
           <CardHeader>
             <CardTitle>Local Attractions</CardTitle>
-            <CardDescription>Discover the best sights and landmarks nearby</CardDescription>
+            <CardDescription>
+              Discover the best sights and landmarks nearby
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-gray-600">
-              Explore the vibrant local culture, historic sites, and natural wonders surrounding our hotel.
+              Explore the vibrant local culture, historic sites, and natural
+              wonders surrounding our hotel.
             </p>
           </CardContent>
         </Card>
@@ -20,11 +29,14 @@ const Explore = () => {
         <Card>
           <CardHeader>
             <CardTitle>Dining & Entertainment</CardTitle>
-            <CardDescription>Experience local cuisine and nightlife</CardDescription>
+            <CardDescription>
+              Experience local cuisine and nightlife
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-gray-600">
-              Find the best restaurants, bars, and entertainment venues in the area.
+              Find the best restaurants, bars, and entertainment venues in the
+              area.
             </p>
           </CardContent>
         </Card>
@@ -32,11 +44,14 @@ const Explore = () => {
         <Card>
           <CardHeader>
             <CardTitle>Activities</CardTitle>
-            <CardDescription>Engage in exciting local activities</CardDescription>
+            <CardDescription>
+              Engage in exciting local activities
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-gray-600">
-              From outdoor adventures to cultural experiences, there's something for everyone.
+              From outdoor adventures to cultural experiences, there's something
+              for everyone.
             </p>
           </CardContent>
         </Card>

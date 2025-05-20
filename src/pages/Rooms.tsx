@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 interface Room {
   id: string;
@@ -51,7 +57,9 @@ export default function Rooms() {
               <CardContent>
                 <div className="space-y-2">
                   <p>{room.description}</p>
-                  <p className="font-semibold">Capacity: {room.capacity} guests</p>
+                  <p className="font-semibold">
+                    Capacity: {room.capacity} guests
+                  </p>
                   <p className="font-semibold">
                     Price: ${room.price_per_night} per night
                   </p>
