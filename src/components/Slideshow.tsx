@@ -11,6 +11,7 @@ import hotelImage from "../assets/hotel.jpg";
 import diningImage from "../assets/dining.jpg";
 import viewImage from "../assets/view.jpg";
 import roomImage from "../assets/room.jpg";
+import { Link } from "react-router-dom";
 
 const slides: SlideProps[] = [
   {
@@ -133,12 +134,11 @@ const Slideshow: React.FC = () => {
         <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8">
           {currentSlideData.subheading}
         </p>
-        <a
-          href="/book-now"
-          className="bg-hotel-gold hover:bg-opacity-90 text-white py-3 px-8 text-base uppercase tracking-wider font-medium transition-all"
-        >
-          Book Your Stay
-        </a>
+        <Link to="/book-now">
+          <a className="bg-hotel-gold hover:bg-opacity-90 text-white py-3 px-8 text-base uppercase tracking-wider font-medium transition-all">
+            Book Your Stay
+          </a>
+        </Link>
       </div>
 
       <div className="absolute bottom-10 left-0 right-0 flex justify-center space-x-2">

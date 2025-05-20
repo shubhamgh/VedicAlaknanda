@@ -73,7 +73,7 @@ const Footer: React.FC = () => {
                   className="flex items-start"
                 >
                   <MapPin className="mr-3 h-5 w-5 text-hotel-gold" />
-                  <span>
+                  <span className="hover:text-hotel-gold transition-colors">
                     Hotel Vedic Alaknanda, Narkota
                     <br />
                     Rudraprayag, Uttarakhand 246171
