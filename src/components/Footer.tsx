@@ -168,21 +168,21 @@ const Footer: React.FC = () => {
             © {new Date().getFullYear()} Hotel Vedic Alaknanda. All rights
             reserved.
           </p>
-          {/* <p className="mt-2 md:mt-0">
-            <Link
+          <p className="mt-2 md:mt-0">
+            {/* <Link
               to="/privacy-policy"
               className="hover:text-hotel-gold transition-colors"
             >
               Privacy Policy
-            </Link>{" "}
-            |
-            <Link
+            </Link>{" "} */}
+            <Link to={"/admin"}>|</Link>
+            {/* <Link
               to="/terms"
               className="hover:text-hotel-gold transition-colors ml-2"
             >
               Terms of Service
-            </Link>
-          </p> */}
+            </Link> */}
+          </p>
         </div>
       </div>
     </footer>

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -79,21 +78,14 @@ const AdminLogin = () => {
                 required
               />
             </div>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading}
-            >
+            <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Logging in..." : "Login"}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm text-gray-500">
             <p>Only administrators are allowed to access the admin panel.</p>
             <p className="mt-1">
-              <a 
-                href="/" 
-                className="text-blue-600 hover:underline"
-              >
+              <a href="/" className="text-blue-600 hover:underline">
                 Return to homepage
               </a>
             </p>

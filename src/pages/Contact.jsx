@@ -86,7 +86,7 @@ const Contact = () => {
                   <p className="text-gray-600">
                     We are located on the banks of the serene Alaknanda River,
                     just 4 km from Rudraprayag. The nearest major airport is
-                    Jolly Grant Airport in Dehradun (160 km). We can arrange
+                    Jolly Grant Airport in Dehradun (143 km). We can arrange
                     transportation from any mojor city upon request.
                   </p>
                 </div>
