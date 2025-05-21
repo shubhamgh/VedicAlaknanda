@@ -108,10 +108,3 @@ CREATE TRIGGER update_bookings_updated_at
   BEFORE UPDATE ON bookings
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
-
--- Insert some sample rooms
-INSERT INTO rooms (number, type, capacity, price_per_night, description, amenities, status)
-VALUES 
-  ('101', 'Deluxe', 2, 3000, 'Spacious deluxe room with mountain view', ARRAY['Wi-Fi', 'AC', 'TV', 'Mini Bar'], 'available'),
-  ('102', 'Suite', 4, 5000, 'Luxury suite with separate living area', ARRAY['Wi-Fi', 'AC', 'TV', 'Mini Bar', 'Jacuzzi'], 'available'),
-  ('201', 'Standard', 2, 2000, 'Comfortable standard room', ARRAY['Wi-Fi', 'AC', 'TV'], 'available');

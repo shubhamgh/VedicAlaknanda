@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
@@ -6,7 +5,12 @@ import { format, parse, startOfWeek, getDay } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -81,16 +85,16 @@ const Admin = () => {
     const checkAuth = async () => {
       try {
         const { data } = await supabase.auth.getSession();
-        
+
         if (!data.session) {
           navigate("/admin-login");
           return;
         }
-        
+
         // For now, we'll accept any authenticated user
         // In a production app, you would check against a list of admin emails
         // or use custom claims to verify admin status
-        
+
         setIsAuthenticated(true);
       } catch (error) {
         console.error("Authentication error:", error);
@@ -99,7 +103,7 @@ const Admin = () => {
         setIsLoading(false);
       }
     };
-    
+
     checkAuth();
   }, [navigate]);
 
@@ -120,7 +124,7 @@ const Admin = () => {
       end: new Date(booking.check_out_date),
       resource: booking,
     }));
-    
+
     setEvents(newEvents);
   }, [bookings, rooms]);
 
@@ -130,9 +134,9 @@ const Admin = () => {
         .from("bookings")
         .select("*")
         .order("check_in", { ascending: true });
-      
+
       if (error) throw error;
-      
+
       // Map the database fields to our interface
       const mappedBookings: Booking[] = (data || []).map((item: any) => ({
         id: item.id,
@@ -145,9 +149,9 @@ const Admin = () => {
         status: item.status,
         total_price: item.total_price,
         num_guests: item.adults + item.children,
-        notes: item.special_requests
+        notes: item.special_requests,
       }));
-      
+
       setBookings(mappedBookings);
     } catch (error: any) {
       toast({
@@ -161,17 +165,17 @@ const Admin = () => {
   const fetchRooms = async () => {
     try {
       const { data, error } = await supabase.from("rooms").select("*");
-      
+
       if (error) throw error;
-      
+
       // Map the database fields to our interface
       const mappedRooms: Room[] = (data || []).map((room: any) => ({
         id: room.id,
         room_number: room.number,
         room_type: room.type,
-        price_per_night: room.price_per_night
+        price_per_night: room.price_per_night,
       }));
-      
+
       setRooms(mappedRooms);
     } catch (error: any) {
       toast({
@@ -216,13 +220,13 @@ const Admin = () => {
             children: bookingData.num_children || 0,
             total_price: bookingData.total_price,
             special_requests: bookingData.notes,
-            status: bookingData.status
+            status: bookingData.status,
           })
           .eq("id", selectedBooking.id)
           .select();
-          
+
         if (error) throw error;
-        
+
         toast({
           title: "Booking updated",
           description: "The booking has been updated successfully.",
@@ -231,29 +235,31 @@ const Admin = () => {
         // Create new booking
         const { data, error } = await supabase
           .from("bookings")
-          .insert([{
-            guest_name: bookingData.guest_name,
-            guest_email: bookingData.guest_email,
-            guest_phone: bookingData.guest_phone,
-            check_in: bookingData.check_in_date,
-            check_out: bookingData.check_out_date,
-            room_id: bookingData.room_id,
-            adults: bookingData.num_adults || 1,
-            children: bookingData.num_children || 0,
-            total_price: bookingData.total_price,
-            special_requests: bookingData.notes,
-            status: 'confirmed'
-          }])
+          .insert([
+            {
+              guest_name: bookingData.guest_name,
+              guest_email: bookingData.guest_email,
+              guest_phone: bookingData.guest_phone,
+              check_in: bookingData.check_in_date,
+              check_out: bookingData.check_out_date,
+              room_id: bookingData.room_id,
+              adults: bookingData.num_adults || 1,
+              children: bookingData.num_children || 0,
+              total_price: bookingData.total_price,
+              special_requests: bookingData.notes,
+              status: "confirmed",
+            },
+          ])
           .select();
-          
+
         if (error) throw error;
-        
+
         toast({
           title: "Booking created",
           description: "The booking has been created successfully.",
         });
       }
-      
+
       setIsModalOpen(false);
       fetchBookings();
     } catch (error: any) {
@@ -268,18 +274,15 @@ const Admin = () => {
   const handleDeleteBooking = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this booking?")) {
       try {
-        const { error } = await supabase
-          .from("bookings")
-          .delete()
-          .eq("id", id);
-          
+        const { error } = await supabase.from("bookings").delete().eq("id", id);
+
         if (error) throw error;
-        
+
         toast({
           title: "Booking deleted",
           description: "The booking has been deleted successfully.",
         });
-        
+
         fetchBookings();
       } catch (error: any) {
         toast({
