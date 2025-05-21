@@ -168,7 +168,7 @@ const Contact = () => {
               <h2 className="text-2xl font-semibold mb-4">Our Location</h2>
               <div className="aspect-video bg-gray-200 rounded-md flex items-center justify-center">
                 <iframe
-                  src="https://www.google.com/maps/place/Vedic+Alaknanda+Seva+Sadan/@30.2578283,78.9311636,18.75z/data=!4m6!3m5!1s0x3909b7ef1c0aa69f:0x94b35599cfe216b2!8m2!3d30.2581409!4d78.9308495!16s%2Fg%2F11ycb71x12?entry=ttu&g_ep=EgoyMDI1MDUxNS4wIKXMDSoASAFQAw%3D%3D"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1702.7380136428335!2d78.93092549077694!3d30.257979148865914!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3909b7ef1c0aa69f%3A0x94b35599cfe216b2!2sVedic%20Alaknanda%20Seva%20Sadan!5e0!3m2!1sen!2sin!4v1747835192254!5m2!1sen!2sin"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
