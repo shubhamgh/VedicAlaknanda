@@ -1,6 +1,6 @@
 // Contact.jsx
-import React from "react";
-import { Link } from "react-router-dom";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,8 +9,9 @@ import { Map, Phone, Mail, Clock, Send } from "lucide-react";
 
 const Contact = () => {
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="container mx-auto px-4">
+    <main className="min-h-screen">
+      <Header />
+      <div className="container mx-auto px-4 bg-gray-50 py-20">
         <h1 className="text-4xl font-bold text-center mb-8">Contact Us</h1>
 
         <div className="grid md:grid-cols-2 gap-8">
@@ -178,16 +179,12 @@ const Contact = () => {
                   className="rounded-md"
                 ></iframe>
               </div>
-              <div className="mt-4 flex justify-center">
-                <Link to="/">
-                  <Button variant="outline">Back to Home</Button>
-                </Link>
-              </div>
             </CardContent>
           </Card>
         </div>
       </div>
-    </div>
+      <Footer />
+    </main>
   );
 };
 
