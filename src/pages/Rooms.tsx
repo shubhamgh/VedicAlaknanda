@@ -52,7 +52,7 @@ export default function Rooms() {
             <Card key={room.id}>
               <CardHeader>
                 <CardTitle>{room.type}</CardTitle>
-                <CardDescription>Room {room.number}</CardDescription>
+                <CardDescription>{room.number}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
