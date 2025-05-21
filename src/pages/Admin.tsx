@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-import format from "date-fns/format";
-import parse from "date-fns/parse";
-import startOfWeek from "date-fns/startOfWeek";
-import getDay from "date-fns/getDay";
+import { format } from "date-fns";
+import { parse } from "date-fns";
+import { startOfWeek } from "date-fns";
+import { getDay } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -90,6 +90,7 @@ const Admin = () => {
           return;
         }
         
+        // Query from public schema
         const { data: adminData, error } = await supabase
           .from("administrators")
           .select("*")
@@ -139,10 +140,26 @@ const Admin = () => {
       const { data, error } = await supabase
         .from("bookings")
         .select("*")
-        .order("check_in_date", { ascending: true });
+        .order("check_in", { ascending: true });
       
       if (error) throw error;
-      setBookings(data || []);
+      
+      // Map the database fields to our interface
+      const mappedBookings: Booking[] = (data || []).map((item: any) => ({
+        id: item.id,
+        guest_name: item.guest_name,
+        guest_email: item.guest_email,
+        guest_phone: item.guest_phone,
+        check_in_date: item.check_in,
+        check_out_date: item.check_out,
+        room_id: item.room_id,
+        status: item.status,
+        total_price: item.total_price,
+        num_guests: item.adults + item.children,
+        notes: item.special_requests
+      }));
+      
+      setBookings(mappedBookings);
     } catch (error: any) {
       toast({
         title: "Error fetching bookings",
@@ -157,7 +174,16 @@ const Admin = () => {
       const { data, error } = await supabase.from("rooms").select("*");
       
       if (error) throw error;
-      setRooms(data || []);
+      
+      // Map the database fields to our interface
+      const mappedRooms: Room[] = (data || []).map((room: any) => ({
+        id: room.id,
+        room_number: room.number,
+        room_type: room.type,
+        price_per_night: room.price_per_night
+      }));
+      
+      setRooms(mappedRooms);
     } catch (error: any) {
       toast({
         title: "Error fetching rooms",
@@ -190,7 +216,19 @@ const Admin = () => {
         // Update existing booking
         const { data, error } = await supabase
           .from("bookings")
-          .update(bookingData)
+          .update({
+            guest_name: bookingData.guest_name,
+            guest_email: bookingData.guest_email,
+            guest_phone: bookingData.guest_phone,
+            check_in: bookingData.check_in_date,
+            check_out: bookingData.check_out_date,
+            room_id: bookingData.room_id,
+            adults: bookingData.num_adults || 1,
+            children: bookingData.num_children || 0,
+            total_price: bookingData.total_price,
+            special_requests: bookingData.notes,
+            status: bookingData.status
+          })
           .eq("id", selectedBooking.id)
           .select();
           
@@ -204,7 +242,19 @@ const Admin = () => {
         // Create new booking
         const { data, error } = await supabase
           .from("bookings")
-          .insert([bookingData])
+          .insert([{
+            guest_name: bookingData.guest_name,
+            guest_email: bookingData.guest_email,
+            guest_phone: bookingData.guest_phone,
+            check_in: bookingData.check_in_date,
+            check_out: bookingData.check_out_date,
+            room_id: bookingData.room_id,
+            adults: bookingData.num_adults || 1,
+            children: bookingData.num_children || 0,
+            total_price: bookingData.total_price,
+            special_requests: bookingData.notes,
+            status: 'confirmed'
+          }])
           .select();
           
         if (error) throw error;
