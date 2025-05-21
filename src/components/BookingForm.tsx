@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as zod from "zod"; // Changed from "import { z } from "zod";"
+import * as z from "zod"; // Import zod as z (standard pattern)
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,18 +30,19 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-const formSchema = zod.object({
-  guest_name: zod.string().min(2, "Name is required"),
-  guest_email: zod.string().email("Invalid email address"),
-  guest_phone: zod.string().min(5, "Phone number is required"),
-  address: zod.string().min(5, "Address is required"),
-  gov_id_number: zod.string().min(5, "Government ID number is required"),
-  room_id: zod.string().min(1, "Room is required"),
-  check_in_date: zod.date({ required_error: "Check-in date is required" }),
-  check_out_date: zod.date({ required_error: "Check-out date is required" }),
-  num_guests: zod.number().int().min(1, "At least 1 guest is required"),
-  special_requests: zod.string().optional(),
-  status: zod.string().default("confirmed"),
+// Changed from zod.object to z.object
+const formSchema = z.object({
+  guest_name: z.string().min(2, "Name is required"),
+  guest_email: z.string().email("Invalid email address"),
+  guest_phone: z.string().min(5, "Phone number is required"),
+  address: z.string().min(5, "Address is required"),
+  gov_id_number: z.string().min(5, "Government ID number is required"),
+  room_id: z.string().min(1, "Room is required"),
+  check_in_date: z.date({ required_error: "Check-in date is required" }),
+  check_out_date: z.date({ required_error: "Check-out date is required" }),
+  num_guests: z.number().int().min(1, "At least 1 guest is required"),
+  special_requests: z.string().optional(),
+  status: z.string().default("confirmed"),
 });
 
 interface Room {
@@ -80,7 +81,7 @@ const BookingForm = ({
     booking?.room_id || ""
   );
 
-  const form = useForm<zod.infer<typeof formSchema>>({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       guest_name: booking?.guest_name || "",
@@ -127,7 +128,7 @@ const BookingForm = ({
     }
   }, [booking, selectedDates, form]);
 
-  const handleSubmit = (values: zod.infer<typeof formSchema>) => {
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
     // Calculate total price based on room rate and nights
     const selectedRoom = rooms.find((room) => room.id === values.room_id);
     const nights = calculateNights(values.check_in_date, values.check_out_date);
