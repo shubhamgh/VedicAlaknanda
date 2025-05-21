@@ -1,7 +1,6 @@
+
 import React, { useEffect, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod"; // Changed from namespace import to direct import
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,20 +29,19 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-// Define the form schema with direct import
-const formSchema = z.object({
-  guest_name: z.string().min(2, "Name is required"),
-  guest_email: z.string().email("Invalid email address"),
-  guest_phone: z.string().min(5, "Phone number is required"),
-  address: z.string().min(5, "Address is required"),
-  gov_id_number: z.string().min(5, "Government ID number is required"),
-  room_id: z.string().min(1, "Room is required"),
-  check_in_date: z.date({ required_error: "Check-in date is required" }),
-  check_out_date: z.date({ required_error: "Check-out date is required" }),
-  num_guests: z.number().int().min(1, "At least 1 guest is required"),
-  special_requests: z.string().optional(),
-  status: z.string().default("confirmed"),
-});
+interface FormValues {
+  guest_name: string;
+  guest_email: string;
+  guest_phone: string;
+  address: string;
+  gov_id_number: string;
+  room_id: string;
+  check_in_date: Date;
+  check_out_date: Date;
+  num_guests: number;
+  special_requests: string;
+  status: string;
+}
 
 interface Room {
   id: string;
@@ -81,8 +79,7 @@ const BookingForm = ({
     booking?.room_id || ""
   );
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<FormValues>({
     defaultValues: {
       guest_name: booking?.guest_name || "",
       guest_email: booking?.guest_email || "",
@@ -128,7 +125,7 @@ const BookingForm = ({
     }
   }, [booking, selectedDates, form]);
 
-  const handleSubmit = (values: z.infer<typeof formSchema>) => {
+  const handleSubmit = (values: FormValues) => {
     // Calculate total price based on room rate and nights
     const selectedRoom = rooms.find((room) => room.id === values.room_id);
     const nights = calculateNights(values.check_in_date, values.check_out_date);
@@ -148,6 +145,19 @@ const BookingForm = ({
     return Math.ceil(diffInTime / (1000 * 3600 * 24));
   };
 
+  const validateRequired = (value: any) => {
+    return value ? true : "This field is required";
+  };
+
+  const validateEmail = (value: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(value) ? true : "Invalid email address";
+  };
+
+  const validateMinLength = (value: string, minLength: number, fieldName: string) => {
+    return value.length >= minLength ? true : `${fieldName} must be at least ${minLength} characters`;
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
@@ -155,6 +165,10 @@ const BookingForm = ({
           <FormField
             control={form.control}
             name="guest_name"
+            rules={{ 
+              required: "Name is required",
+              validate: (value) => validateMinLength(value, 2, "Name") 
+            }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Name</FormLabel>
@@ -169,6 +183,10 @@ const BookingForm = ({
           <FormField
             control={form.control}
             name="guest_email"
+            rules={{ 
+              required: "Email is required",
+              validate: validateEmail 
+            }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
@@ -183,6 +201,10 @@ const BookingForm = ({
           <FormField
             control={form.control}
             name="guest_phone"
+            rules={{ 
+              required: "Phone number is required",
+              validate: (value) => validateMinLength(value, 5, "Phone number") 
+            }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Phone Number</FormLabel>
@@ -197,6 +219,10 @@ const BookingForm = ({
           <FormField
             control={form.control}
             name="address"
+            rules={{ 
+              required: "Address is required",
+              validate: (value) => validateMinLength(value, 5, "Address") 
+            }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Address</FormLabel>
@@ -211,6 +237,10 @@ const BookingForm = ({
           <FormField
             control={form.control}
             name="gov_id_number"
+            rules={{ 
+              required: "Government ID number is required",
+              validate: (value) => validateMinLength(value, 5, "Government ID number") 
+            }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Government ID Number</FormLabel>
@@ -225,6 +255,7 @@ const BookingForm = ({
           <FormField
             control={form.control}
             name="room_id"
+            rules={{ required: "Room is required" }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Room Type</FormLabel>
@@ -257,6 +288,7 @@ const BookingForm = ({
           <FormField
             control={form.control}
             name="check_in_date"
+            rules={{ required: "Check-in date is required" }}
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>Check-in Date</FormLabel>
@@ -303,6 +335,7 @@ const BookingForm = ({
           <FormField
             control={form.control}
             name="check_out_date"
+            rules={{ required: "Check-out date is required" }}
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>Check-out Date</FormLabel>
@@ -350,6 +383,10 @@ const BookingForm = ({
           <FormField
             control={form.control}
             name="num_guests"
+            rules={{ 
+              required: "Number of guests is required",
+              min: { value: 1, message: "At least 1 guest is required" }
+            }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Number of Guests</FormLabel>
