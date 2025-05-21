@@ -1,12 +1,5 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import Badrinath from "../assets/badrinath-temple-bnr-removebg-preview.png";
 
 const localAttractions = [
@@ -135,34 +128,41 @@ const Explore = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <div className="container mx-auto py-20">
+      <div className="container mx-auto px-4 py-20">
         <h1 className="text-4xl font-bold text-center mb-8">
           Explore Our Area
         </h1>
+
         <section className="mt-10">
           <h2 className="text-3xl font-bold mb-4">Local Attractions</h2>
-          <h3 className="pb-2">
+          <h3 className="pb-4 text-gray-700">
             Explore the vibrant local culture, historic sites and temples, and
             natural wonders surrounding our hotel.
           </h3>
-          <div className="flex flex-col space-y-4">
+
+          <div className="flex flex-col gap-6">
             {localAttractions.map((attraction, index) => (
-              <div key={index} className="bg-white p-4 shadow-md w-full flex">
-                <span>
-                  <h3 className="text-xl font-bold">{attraction.name}</h3>
-                  <p className="text-gray-600 py-2">{attraction.description}</p>
-                  <span className="flex">
-                    <h4>Distance:&nbsp; </h4>
-                    <div className="text-gray-600">{attraction.distance}</div>
-                  </span>
-                </span>
-                {attraction.image.length ? (
-                  <img
-                    src={attraction.image}
-                    alt={attraction.name}
-                    className="w-full h-64 object-cover mt-4"
-                  />
-                ) : null}
+              <div
+                key={index}
+                className="bg-white shadow-md p-4 rounded-xl flex flex-col md:flex-row gap-4"
+              >
+                <div className="flex-1">
+                  <h3 className="text-xl font-semibold">{attraction.name}</h3>
+                  <p className="text-gray-600 mt-2">{attraction.description}</p>
+                  <p className="mt-2 text-sm text-gray-700">
+                    <strong>Distance:</strong> {attraction.distance}
+                  </p>
+                </div>
+
+                {attraction.image?.length > 0 && (
+                  <div className="md:w-64 w-full">
+                    <img
+                      src={attraction.image}
+                      alt={attraction.name}
+                      className="w-full h-48 object-cover rounded-lg"
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -172,5 +172,4 @@ const Explore = () => {
     </div>
   );
 };
-
 export default Explore;
