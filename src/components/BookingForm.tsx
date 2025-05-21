@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -81,7 +80,7 @@ const BookingForm = ({
     booking?.room_id || ""
   );
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<zod.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       guest_name: booking?.guest_name || "",
@@ -112,7 +111,7 @@ const BookingForm = ({
       form.setValue("check_out_date", checkOut);
       setCheckInDate(checkIn);
       setCheckOutDate(checkOut);
-      
+
       // Set all other values
       form.setValue("guest_name", booking.guest_name);
       form.setValue("guest_email", booking.guest_email);
@@ -123,19 +122,17 @@ const BookingForm = ({
       form.setValue("num_guests", booking.num_guests);
       form.setValue("special_requests", booking.special_requests || "");
       form.setValue("status", booking.status);
-      
+
       setSelectedRoomId(booking.room_id);
     }
   }, [booking, selectedDates, form]);
 
-  const handleSubmit = (values: z.infer<typeof formSchema>) => {
+  const handleSubmit = (values: zod.infer<typeof formSchema>) => {
     // Calculate total price based on room rate and nights
     const selectedRoom = rooms.find((room) => room.id === values.room_id);
     const nights = calculateNights(values.check_in_date, values.check_out_date);
     const total_price =
-      selectedRoom && nights > 0
-        ? selectedRoom.price_per_night * nights
-        : 0;
+      selectedRoom && nights > 0 ? selectedRoom.price_per_night * nights : 0;
 
     onSubmit({
       ...values,
@@ -289,7 +286,9 @@ const BookingForm = ({
                         field.onChange(date);
                         setCheckInDate(date);
                       }}
-                      disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                      disabled={(date) =>
+                        date < new Date(new Date().setHours(0, 0, 0, 0))
+                      }
                       initialFocus
                       className={cn("p-3 pointer-events-auto")}
                     />
@@ -373,10 +372,7 @@ const BookingForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Booking Status</FormLabel>
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  >
+                  <Select value={field.value} onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select status" />
