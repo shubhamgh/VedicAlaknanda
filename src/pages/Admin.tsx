@@ -21,17 +21,16 @@ import {
 } from "@/components/ui/table";
 import BookingForm from "@/components/BookingForm";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-
-const locales = {
-  "en-US": require("date-fns/locale/en-US"),
-};
+import enUS from "date-fns/locale/en-US";
 
 const localizer = dateFnsLocalizer({
   format,
   parse,
   startOfWeek,
   getDay,
-  locales,
+  locales: {
+    "en-US": enUS,
+  },
 });
 
 interface Booking {
