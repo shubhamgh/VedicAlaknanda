@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod"; // Changed to namespace import
+import { z } from "zod"; // Changed from namespace import to direct import
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-// Define the form schema with namespace import
+// Define the form schema with direct import
 const formSchema = z.object({
   guest_name: z.string().min(2, "Name is required"),
   guest_email: z.string().email("Invalid email address"),
