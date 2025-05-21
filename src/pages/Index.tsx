@@ -20,8 +20,8 @@ const Index = () => {
         <div className="max-w-4xl mx-auto text-center">
           <p className="mb-8 text-gray-600">
             Unwind at our tranquil hotel in Narkota, Rudraprayag. Wake up to
-            panoramic mountain and river views, just minutes from Kedarnath and
-            Badrinath routes. Perfect for pilgrims and nature lovers alike.
+            panoramic mountain and river views, right at Kedarnath and Badrinath
+            routes. Perfect for pilgrims and nature lovers alike.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
             <Link
