@@ -21,7 +21,7 @@ const Dining = () => {
               </p>
             </CardContent>
           </Card>
-          <Card>
+      /*    <Card>
             <CardContent className="p-6">
               <h2 className="text-2xl font-semibold mb-4">Bar & Lounge</h2>
               <p className="text-gray-600">
@@ -29,7 +29,7 @@ const Dining = () => {
                 premium spirits, and a carefully curated wine selection.
               </p>
             </CardContent>
-          </Card>
+          </Card> */
         </div>
       </main>
       <Footer />
