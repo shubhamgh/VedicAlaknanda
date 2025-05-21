@@ -21,7 +21,6 @@ const Dining = () => {
               </p>
             </CardContent>
           </Card>
-      
         </div>
       </main>
       <Footer />
