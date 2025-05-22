@@ -1,9 +1,23 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { MapPin, Phone, Mail, Compass } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Compass } from "lucide-react";
 import BookingIcon from "../assets/bookingcom.svg";
+import { useNewsletter } from "@/hooks/useNewsletter";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 const Footer: React.FC = () => {
+  const [email, setEmail] = useState("");
+  const { loading, subscribeToNewsletter } = useNewsletter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (await subscribeToNewsletter(email)) {
+      setEmail("");
+    }
+  };
+
   return (
     <footer className="bg-hotel-dark text-white pt-16 pb-8">
       <div className="container mx-auto px-4">
@@ -134,19 +148,23 @@ const Footer: React.FC = () => {
             <p className="text-hotel-accent mb-4">
               Subscribe to our newsletter for special offers and updates
             </p>
-            <form className="mb-4">
+            <form className="mb-4" onSubmit={handleSubmit}>
               <div className="flex">
-                <input
+                <Input
                   type="email"
                   placeholder="Your email address"
                   className="px-4 py-2 w-full text-gray-800 focus:outline-none"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
-                <button
+                <Button
                   type="submit"
                   className="bg-hotel-gold hover:bg-opacity-90 px-4 py-2 text-white"
+                  disabled={loading}
                 >
-                  Send
-                </button>
+                  {loading ? "..." : "Send"}
+                </Button>
               </div>
             </form>
             <a
@@ -157,7 +175,6 @@ const Footer: React.FC = () => {
             >
               <Compass className="mr-2 h-5 w-5 text-hotel-gold" />
               <p className="text-sm">Find directions to our hotel</p>
-              {/* </a> */}
             </a>
           </div>
         </div>
@@ -169,19 +186,7 @@ const Footer: React.FC = () => {
             reserved.
           </p>
           <p className="mt-2 md:mt-0">
-            {/* <Link
-              to="/privacy-policy"
-              className="hover:text-hotel-gold transition-colors"
-            >
-              Privacy Policy
-            </Link>{" "} */}
             <Link to={"/admin"}>|</Link>
-            {/* <Link
-              to="/terms"
-              className="hover:text-hotel-gold transition-colors ml-2"
-            >
-              Terms of Service
-            </Link> */}
           </p>
         </div>
       </div>

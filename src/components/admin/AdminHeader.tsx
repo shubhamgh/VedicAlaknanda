@@ -1,6 +1,6 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 interface AdminHeaderProps {
   onViewWebsite: () => void;
@@ -19,6 +19,9 @@ const AdminHeader = ({ onViewWebsite, onLogout }: AdminHeaderProps) => {
           <Button variant="outline" onClick={onLogout}>
             Logout
           </Button>
+          <Link to="/admin/newsletter" className="px-4 py-2 hover:bg-gray-700 rounded">
+            Newsletter
+          </Link>
         </div>
       </div>
     </header>
