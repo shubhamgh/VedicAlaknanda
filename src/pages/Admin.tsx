@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
@@ -147,8 +148,10 @@ const Admin = () => {
         room_id: item.room_id,
         status: item.status,
         total_price: item.total_price,
-        num_guests: item.adults + item.children,
-        notes: item.special_requests,
+        num_guests: item.adults + (item.children || 0),
+        notes: item.special_requests, // Map this correctly
+        address: item.address,
+        gov_id_number: item.gov_id_number,
       }));
 
       setBookings(mappedBookings);
@@ -218,7 +221,7 @@ const Admin = () => {
             adults: bookingData.num_adults || 1,
             children: bookingData.num_children || 0,
             total_price: bookingData.total_price,
-            special_requests: bookingData.notes,
+            special_requests: bookingData.special_requests, // Updated field name
             status: bookingData.status,
           })
           .eq("id", selectedBooking.id)
@@ -245,7 +248,7 @@ const Admin = () => {
               adults: bookingData.num_adults || 1,
               children: bookingData.num_children || 0,
               total_price: bookingData.total_price,
-              special_requests: bookingData.notes,
+              special_requests: bookingData.special_requests, // Updated field name
               status: "confirmed",
             },
           ])
