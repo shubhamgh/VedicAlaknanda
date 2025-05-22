@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { X, Menu } from "lucide-react";
+import {
+  X,
+  Menu,
+  Bed,
+  Contact,
+  Telescope,
+  HandPlatter,
+  Utensils,
+} from "lucide-react";
 
 const Header: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -14,7 +22,13 @@ const Header: React.FC = () => {
     setIsSidebarOpen(false);
   };
 
-  const HeaderLinks = ["Rooms", "Dining", "Amenities", "Explore", "Contact"];
+  const HeaderLinks = [
+    { icon: <Bed />, link: "Rooms" },
+    { icon: <Utensils />, link: "Dining" },
+    { icon: <HandPlatter />, link: "Amenities" },
+    { icon: <Telescope />, link: "Explore" },
+    { icon: <Contact />, link: "Contact" },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,13 +66,13 @@ const Header: React.FC = () => {
         <nav>
           <ul className="hidden md:flex space-x-8 items-center">
             {HeaderLinks.map((item) => (
-              <li key={item}>
+              <li key={item.link}>
                 <Link
-                  to={`/${item.toLowerCase()}`}
+                  to={`/${item.link.toLowerCase()}`}
                   className={`text-sm uppercase tracking-wider font-medium hover:text-hotel-gold transition-colors
                     ${scrolled ? "text-hotel-dark" : "text-white"}`}
                 >
-                  {item}
+                  {item.link}
                 </Link>
               </li>
             ))}
@@ -80,7 +94,7 @@ const Header: React.FC = () => {
           <div
             className={`fixed top-0 right-0 h-screen w-3/4 bg-white p-4 transform ${
               isSidebarOpen ? "translate-x-0" : "translate-x-full"
-            } transition-transform duration-700 ease-in-out md:hidden`}
+            } transition-transform duration-300 ease-in-out md:hidden`}
           >
             <button
               className="absolute top-4 right-4"
@@ -91,12 +105,13 @@ const Header: React.FC = () => {
             {/* Sidebar content here */}
             <ul>
               {HeaderLinks.map((item) => (
-                <li key={item}>
+                <li key={item.link} className="flex items-center space-x-4">
                   <Link
-                    to={`/${item.toLowerCase()}`}
-                    className="text-sm uppercase transition-colors"
+                    to={`/${item.link.toLowerCase()}`}
+                    className="text-lg font-bold text-gray-600 flex gap-2 items-center border-b border-gray-200 py-2"
                   >
-                    {item}
+                    {item.icon}
+                    {item.link}
                   </Link>
                 </li>
               ))}
