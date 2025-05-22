@@ -15,8 +15,8 @@ export interface FormValues {
   guest_name: string;
   guest_email: string;
   guest_phone: string;
-  address: string;
-  gov_id_number: string;
+  address?: string;
+  gov_id_number?: string;
 }
 
 const PersonalInfoForm: React.FC = () => {
@@ -81,13 +81,9 @@ const PersonalInfoForm: React.FC = () => {
       <FormField
         control={form.control}
         name="address"
-        rules={{ 
-          required: "Address is required",
-          validate: (value) => validateMinLength(value, 5, "Address") 
-        }}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Address</FormLabel>
+            <FormLabel>Address (optional)</FormLabel>
             <FormControl>
               <Input placeholder="Address" {...field} />
             </FormControl>
@@ -99,13 +95,9 @@ const PersonalInfoForm: React.FC = () => {
       <FormField
         control={form.control}
         name="gov_id_number"
-        rules={{ 
-          required: "Government ID number is required",
-          validate: (value) => validateMinLength(value, 5, "Government ID number") 
-        }}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Government ID Number</FormLabel>
+            <FormLabel>Government ID Number (optional)</FormLabel>
             <FormControl>
               <Input placeholder="ID number" {...field} />
             </FormControl>

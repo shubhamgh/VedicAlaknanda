@@ -29,6 +29,8 @@ interface Booking {
   notes?: string;
   address?: string;
   gov_id_number?: string;
+  booking_source?: string;
+  custom_booking_source?: string;
 }
 
 interface AdminBookingModalProps {

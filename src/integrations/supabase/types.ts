@@ -32,11 +32,15 @@ export type Database = {
       }
       bookings: {
         Row: {
+          address: string | null
           adults: number
+          booking_source: string | null
           check_in: string
           check_out: string
           children: number
           created_at: string | null
+          custom_booking_source: string | null
+          gov_id_number: string | null
           guest_email: string
           guest_name: string
           guest_phone: string
@@ -48,11 +52,15 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          address?: string | null
           adults?: number
+          booking_source?: string | null
           check_in: string
           check_out: string
           children?: number
           created_at?: string | null
+          custom_booking_source?: string | null
+          gov_id_number?: string | null
           guest_email: string
           guest_name: string
           guest_phone: string
@@ -64,11 +72,15 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          address?: string | null
           adults?: number
+          booking_source?: string | null
           check_in?: string
           check_out?: string
           children?: number
           created_at?: string | null
+          custom_booking_source?: string | null
+          gov_id_number?: string | null
           guest_email?: string
           guest_name?: string
           guest_phone?: string

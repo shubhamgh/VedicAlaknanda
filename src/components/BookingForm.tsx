@@ -9,20 +9,23 @@ import RoomSelectionForm from "./booking/RoomSelectionForm";
 import DateSelectionForm from "./booking/DateSelectionForm";
 import SpecialRequestsForm from "./booking/SpecialRequestsForm";
 import BookingSummary from "./booking/BookingSummary";
+import BookingSourceForm from "./booking/BookingSourceForm";
 import { calculateNights } from "@/utils/validationUtils";
 
 interface FormValues {
   guest_name: string;
   guest_email: string;
   guest_phone: string;
-  address: string;
-  gov_id_number: string;
+  address?: string;
+  gov_id_number?: string;
   room_id: string;
   check_in_date: Date;
   check_out_date: Date;
   num_guests: number;
-  special_requests: string;
+  special_requests?: string;
   status: string;
+  booking_source?: string;
+  custom_booking_source?: string;
 }
 
 interface Room {
@@ -60,6 +63,9 @@ const BookingForm = ({
   const [selectedRoomId, setSelectedRoomId] = useState<string>(
     booking?.room_id || ""
   );
+  const [bookingSource, setBookingSource] = useState<string | undefined>(
+    booking?.booking_source || undefined
+  );
 
   const methods = useForm<FormValues>({
     defaultValues: {
@@ -74,6 +80,8 @@ const BookingForm = ({
       num_guests: booking?.num_guests || 1,
       special_requests: booking?.notes || "",
       status: booking?.status || "confirmed",
+      booking_source: booking?.booking_source || undefined,
+      custom_booking_source: booking?.custom_booking_source || "",
     },
   });
 
@@ -102,8 +110,11 @@ const BookingForm = ({
       methods.setValue("num_guests", booking.num_guests);
       methods.setValue("special_requests", booking.notes || "");
       methods.setValue("status", booking.status);
+      methods.setValue("booking_source", booking.booking_source);
+      methods.setValue("custom_booking_source", booking.custom_booking_source || "");
 
       setSelectedRoomId(booking.room_id);
+      setBookingSource(booking.booking_source);
     }
   }, [booking, selectedDates, methods]);
 
@@ -143,6 +154,10 @@ const BookingForm = ({
               checkOutDate={checkOutDate}
               onCheckInChange={(date) => setCheckInDate(date || undefined)}
               onCheckOutChange={(date) => setCheckOutDate(date || undefined)}
+            />
+            
+            <BookingSourceForm
+              onBookingSourceChange={setBookingSource}
             />
           </div>
         </div>

@@ -17,6 +17,8 @@ interface Booking {
   notes?: string;
   address?: string;
   gov_id_number?: string;
+  booking_source?: string;
+  custom_booking_source?: string;
 }
 
 export const useBookings = () => {
@@ -46,6 +48,8 @@ export const useBookings = () => {
         notes: item.special_requests,
         address: item.address,
         gov_id_number: item.gov_id_number,
+        booking_source: item.booking_source,
+        custom_booking_source: item.custom_booking_source,
       }));
 
       setBookings(mappedBookings);
@@ -103,6 +107,10 @@ export const useBookings = () => {
             total_price: bookingData.total_price,
             special_requests: bookingData.notes,
             status: bookingData.status,
+            address: bookingData.address,
+            gov_id_number: bookingData.gov_id_number,
+            booking_source: bookingData.booking_source,
+            custom_booking_source: bookingData.custom_booking_source,
           })
           .eq("id", selectedBooking.id)
           .select();
@@ -130,6 +138,10 @@ export const useBookings = () => {
               total_price: bookingData.total_price,
               special_requests: bookingData.notes,
               status: "confirmed",
+              address: bookingData.address,
+              gov_id_number: bookingData.gov_id_number,
+              booking_source: bookingData.booking_source,
+              custom_booking_source: bookingData.custom_booking_source,
             },
           ])
           .select();

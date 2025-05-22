@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useBookings } from "@/hooks/useBookings";
@@ -14,6 +14,7 @@ interface CalendarEvent {
   title: string;
   start: Date;
   end: Date;
+  roomType: string;
   resource: any;
 }
 
@@ -30,24 +31,45 @@ const Admin = () => {
     start: Date;
     end: Date;
   } | null>(null);
+  const [selectedRoomType, setSelectedRoomType] = useState<string | null>(null);
+  const [filteredBookings, setFilteredBookings] = useState<any[]>([]);
 
-  // Convert bookings to calendar events
+  // Convert bookings to calendar events with room types
   useEffect(() => {
     const newEvents = bookings.map((booking) => {
       const room = rooms.find((r) => r.id === booking.room_id);
       const roomType = room ? room.room_type : "Unknown room";
+      const roomNumber = room ? room.room_number : "Unknown";
       
       return {
         id: booking.id,
-        title: `${booking.guest_name} - ${roomType}`,
+        title: `${booking.guest_name} - ${roomNumber}`,
         start: new Date(booking.check_in_date),
         end: new Date(booking.check_out_date),
+        roomType: roomType,
         resource: booking,
       };
     });
 
     setEvents(newEvents);
   }, [bookings, rooms]);
+
+  // Filter bookings based on selected room type
+  useEffect(() => {
+    if (selectedRoomType) {
+      const roomIds = rooms
+        .filter(room => room.room_type === selectedRoomType)
+        .map(room => room.id);
+      
+      const filtered = bookings.filter(booking => 
+        roomIds.includes(booking.room_id)
+      );
+      
+      setFilteredBookings(filtered);
+    } else {
+      setFilteredBookings(bookings);
+    }
+  }, [selectedRoomType, bookings, rooms]);
 
   const handleSelect = ({ start, end }: { start: Date; end: Date }) => {
     setSelectedDates({ start, end });
@@ -59,6 +81,10 @@ const Admin = () => {
     setSelectedBooking(event.resource);
     setSelectedDates(null);
     setIsModalOpen(true);
+  };
+
+  const handleRoomTypeSelect = (roomType: string) => {
+    setSelectedRoomType(prevType => prevType === roomType ? null : roomType);
   };
 
   const handleSubmit = async (bookingData: any) => {
@@ -86,12 +112,28 @@ const Admin = () => {
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <BookingCalendar 
           events={events}
+          rooms={rooms}
           onSelectSlot={handleSelect}
           onSelectEvent={handleEventSelect}
+          onSelectRoomType={handleRoomTypeSelect}
         />
 
+        <div className="mb-4">
+          {selectedRoomType && (
+            <div className="bg-blue-100 p-2 rounded-md inline-flex items-center">
+              <span>Filtering by room type: <strong>{selectedRoomType}</strong></span>
+              <button 
+                className="ml-2 text-blue-500 hover:text-blue-700"
+                onClick={() => setSelectedRoomType(null)}
+              >
+                Clear filter
+              </button>
+            </div>
+          )}
+        </div>
+
         <BookingsList
-          bookings={bookings}
+          bookings={filteredBookings}
           rooms={rooms}
           onEditBooking={(booking) => {
             setSelectedBooking(booking);
