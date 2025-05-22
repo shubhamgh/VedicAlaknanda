@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -8,6 +7,8 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import BookingCalendar from "@/components/admin/BookingCalendar";
 import BookingsList from "@/components/admin/BookingsList";
 import AdminBookingModal from "@/components/admin/AdminBookingModal";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface CalendarEvent {
   id: string;
@@ -110,37 +111,74 @@ const Admin = () => {
       />
       
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <BookingCalendar 
-          events={events}
-          rooms={rooms}
-          onSelectSlot={handleSelect}
-          onSelectEvent={handleEventSelect}
-          onSelectRoomType={handleRoomTypeSelect}
-        />
+        <Tabs defaultValue="bookings">
+          <TabsList className="mb-4">
+            <TabsTrigger value="bookings">Bookings</TabsTrigger>
+            <TabsTrigger value="inventory">Room Inventory</TabsTrigger>
+          </TabsList>
 
-        <div className="mb-4">
-          {selectedRoomType && (
-            <div className="bg-blue-100 p-2 rounded-md inline-flex items-center">
-              <span>Filtering by room type: <strong>{selectedRoomType}</strong></span>
-              <button 
-                className="ml-2 text-blue-500 hover:text-blue-700"
-                onClick={() => setSelectedRoomType(null)}
-              >
-                Clear filter
-              </button>
+          <TabsContent value="bookings">
+            <BookingCalendar 
+              events={events}
+              rooms={rooms}
+              onSelectSlot={handleSelect}
+              onSelectEvent={handleEventSelect}
+              onSelectRoomType={handleRoomTypeSelect}
+            />
+
+            <div className="mb-4">
+              {selectedRoomType && (
+                <div className="bg-blue-100 p-2 rounded-md inline-flex items-center">
+                  <span>Filtering by room type: <strong>{selectedRoomType}</strong></span>
+                  <button 
+                    className="ml-2 text-blue-500 hover:text-blue-700"
+                    onClick={() => setSelectedRoomType(null)}
+                  >
+                    Clear filter
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        <BookingsList
-          bookings={filteredBookings}
-          rooms={rooms}
-          onEditBooking={(booking) => {
-            setSelectedBooking(booking);
-            setIsModalOpen(true);
-          }}
-          onDeleteBooking={handleDeleteBooking}
-        />
+            <BookingsList
+              bookings={filteredBookings}
+              rooms={rooms}
+              onEditBooking={(booking) => {
+                setSelectedBooking(booking);
+                setIsModalOpen(true);
+              }}
+              onDeleteBooking={handleDeleteBooking}
+            />
+          </TabsContent>
+
+          <TabsContent value="inventory">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {rooms.map((room) => (
+                <Card key={room.id}>
+                  <CardHeader>
+                    <CardTitle>{room.type}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <p>Room Number: {room.number}</p>
+                      <p>Total Rooms: {room.total_rooms}</p>
+                      <p>Available Rooms: {room.available_rooms}</p>
+                      <p>Price per Night: ₹{room.price_per_night}</p>
+                      <div className="mt-4 h-2 bg-gray-200 rounded-full">
+                        <div 
+                          className="h-full bg-green-500 rounded-full"
+                          style={{ 
+                            width: `${(room.available_rooms / room.total_rooms) * 100}%` 
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
       </main>
 
       <AdminBookingModal

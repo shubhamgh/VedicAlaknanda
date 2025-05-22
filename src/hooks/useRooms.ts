@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +7,8 @@ interface Room {
   room_number: string;
   room_type: string;
   price_per_night: number;
+  total_rooms: number;
+  available_rooms: number;
 }
 
 export const useRooms = () => {
@@ -25,6 +26,8 @@ export const useRooms = () => {
         room_number: room.number,
         room_type: room.type,
         price_per_night: room.price_per_night,
+        total_rooms: room.total_rooms,
+        available_rooms: room.available_rooms,
       }));
 
       setRooms(mappedRooms);
