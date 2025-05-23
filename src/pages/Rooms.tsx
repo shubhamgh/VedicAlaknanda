@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import {
   Card,
   CardContent,
@@ -7,52 +8,52 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
-interface Room {
-  id: string;
-  number: string;
-  type: string;
-  capacity: number;
-  price_per_night: number;
-  description: string | null;
-  amenities: string[] | null;
-  status: string;
-}
+const roomTypes = [
+  {
+    id: 1,
+    type: "Deluxe Single Room with Balcony",
+    count: 15,
+    description: "Comfortable rooms with private balcony with valley views",
+    capacity: 2,
+    price: 5000,
+    amenities: ["Wi-Fi", "AC", "Smart TV", "Private Balcony"],
+    image: "" // Will be filled manually
+  },
+  {
+    id: 2,
+    type: "Standard Family Room", 
+    count: 12,
+    description: "Spacious deluxe room for the family",
+    capacity: 3,
+    price: 5000,
+    amenities: ["Wi-Fi", "Smart TV"],
+    image: "" // Will be filled manually
+  },
+  {
+    id: 3,
+    type: "Family Room with Terrace",
+    count: 3,
+    description: "Luxury and spacious room with direct access to terrace a splendid views",
+    capacity: 3,
+    price: 6000,
+    amenities: ["Wi-Fi", "AC", "Smart TV", "Terrace"],
+    image: "" // Will be filled manually
+  }
+];
 
 export default function Rooms() {
-  const [rooms, setRooms] = useState<Room[]>([]);
-
-  useEffect(() => {
-    async function fetchRooms() {
-      const { data, error } = await supabase
-        .from("rooms")
-        .select("*")
-        .eq("status", "available");
-
-      if (error) {
-        console.error("Error fetching rooms:", error);
-        return;
-      }
-
-      setRooms(data || []);
-    }
-
-    fetchRooms();
-  }, []);
-
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow container mx-auto px-4 py-20">
         <h1 className="text-4xl font-bold text-center mb-8">Our Rooms</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {rooms.map((room) => (
+          {roomTypes.map((room) => (
             <Card key={room.id}>
               <CardHeader>
                 <CardTitle>{room.type}</CardTitle>
-                <CardDescription>{room.number}</CardDescription>
+                <CardDescription>{room.count} rooms available</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -61,7 +62,7 @@ export default function Rooms() {
                     Capacity: {room.capacity} guests
                   </p>
                   <p className="font-semibold">
-                    Price: ₹{room.price_per_night} per night
+                    Price: ₹{room.price} per night
                   </p>
                   {room.amenities && room.amenities.length > 0 && (
                     <div>

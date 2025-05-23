@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -131,8 +132,8 @@ const Admin = () => {
   useEffect(() => {
     const newEvents = bookings.map((booking) => {
       const room = rooms.find((r) => r.id === booking.room_id);
-      const roomType = room ? room.room_type : "Unknown room";
-      const roomNumber = room ? room.room_number : "Unknown";
+      const roomType = room ? room.type : "Unknown room";
+      const roomNumber = room ? room.number : "Unknown";
       
       return {
         id: booking.id,
@@ -151,7 +152,7 @@ const Admin = () => {
   useEffect(() => {
     if (selectedRoomType) {
       const roomIds = rooms
-        .filter(room => room.room_type === selectedRoomType)
+        .filter(room => room.type === selectedRoomType)
         .map(room => room.id);
       
       const filtered = bookings.filter(booking => 
@@ -222,6 +223,19 @@ const Admin = () => {
     window.URL.revokeObjectURL(url);
   };
 
+  // Group rooms by type for inventory display
+  const roomsByType = useMemo(() => {
+    const grouped = rooms.reduce((acc, room) => {
+      if (!acc[room.type]) {
+        acc[room.type] = [];
+      }
+      acc[room.type].push(room);
+      return acc;
+    }, {} as Record<string, typeof rooms>);
+    
+    return grouped;
+  }, [rooms]);
+
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -281,26 +295,30 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="inventory">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {rooms.map((room) => (
-                <Card key={room.id}>
+            <div className="space-y-6">
+              {Object.entries(roomsByType).map(([roomType, roomList]) => (
+                <Card key={roomType}>
                   <CardHeader>
-                    <CardTitle>{room.type}</CardTitle>
+                    <CardTitle>{roomType}</CardTitle>
+                    <CardDescription>
+                      {roomList.length} rooms total
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-2">
-                      <p>Room Number: {room.number}</p>
-                      <p>Total Rooms: {room.total_rooms}</p>
-                      <p>Available Rooms: {room.available_rooms}</p>
-                      <p>Price per Night: ₹{room.price_per_night}</p>
-                      <div className="mt-4 h-2 bg-gray-200 rounded-full">
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                      {roomList.map((room) => (
                         <div 
-                          className="h-full bg-green-500 rounded-full"
-                          style={{ 
-                            width: `${(room.available_rooms / room.total_rooms) * 100}%` 
-                          }}
-                        />
-                      </div>
+                          key={room.id}
+                          className={`p-3 rounded border text-center ${
+                            room.status === 'available' 
+                              ? 'bg-green-100 border-green-300' 
+                              : 'bg-red-100 border-red-300'
+                          }`}
+                        >
+                          <div className="font-semibold">Room {room.number}</div>
+                          <div className="text-sm capitalize">{room.status}</div>
+                        </div>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
