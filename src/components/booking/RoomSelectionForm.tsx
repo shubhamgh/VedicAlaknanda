@@ -19,8 +19,9 @@ import {
 
 interface Room {
   id: string;
-  number: string;
-  type: string;
+  room_number: string;
+  room_type: string;
+  price_per_night: number;
 }
 
 interface RoomSelectionFormProps {
@@ -66,7 +67,7 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
               <SelectContent>
                 {rooms.map((room) => (
                   <SelectItem key={room.id} value={room.id}>
-                    {room.type} - Room {room.number}
+                    {room.room_type} - Room {room.room_number}
                   </SelectItem>
                 ))}
               </SelectContent>

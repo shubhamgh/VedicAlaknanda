@@ -9,11 +9,11 @@ import BookingCalendar from "@/components/admin/BookingCalendar";
 import BookingsList from "@/components/admin/BookingsList";
 import AdminBookingModal from "@/components/admin/AdminBookingModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
+import { Calendar, DateRange } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -34,6 +34,20 @@ interface CalendarEvent {
   end: Date;
   roomType: string;
   resource: any;
+}
+
+interface Room {
+  id: string;
+  room_number: string;
+  room_type: string;
+  price_per_night: number;
+}
+
+interface RoomInventory {
+  id: string;
+  number: string;
+  type: string;
+  status: string;
 }
 
 const ITEMS_PER_PAGE = 10;
@@ -58,13 +72,37 @@ const Admin = () => {
   const [messages, setMessages] = useState([]);
   const [messagePage, setMessagePage] = useState(1);
   const [totalMessages, setTotalMessages] = useState(0);
-  const [dateRange, setDateRange] = useState({ from: null, to: null });
+  const [dateRange, setDateRange] = useState<DateRange>({ from: undefined, to: undefined });
 
   // Logs state
   const [logs, setLogs] = useState([]);
   const [logPage, setLogPage] = useState(1);
   const [totalLogs, setTotalLogs] = useState(0);
-  const [logDateRange, setLogDateRange] = useState({ from: null, to: null });
+  const [logDateRange, setLogDateRange] = useState<DateRange>({ from: undefined, to: undefined });
+
+  // Room inventory state
+  const [roomInventory, setRoomInventory] = useState<RoomInventory[]>([]);
+
+  // Fetch room inventory for the inventory tab
+  useEffect(() => {
+    const fetchRoomInventory = async () => {
+      if (!isAuthenticated) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from("rooms")
+          .select("id, number, type, status")
+          .order("number");
+
+        if (error) throw error;
+        setRoomInventory(data || []);
+      } catch (error) {
+        console.error("Error fetching room inventory:", error);
+      }
+    };
+
+    fetchRoomInventory();
+  }, [isAuthenticated]);
 
   // Fetch messages
   useEffect(() => {
@@ -131,7 +169,7 @@ const Admin = () => {
   // Convert bookings to calendar events
   useEffect(() => {
     const newEvents = bookings.map((booking) => {
-      const room = rooms.find((r) => r.id === booking.room_id);
+      const room = roomInventory.find((r) => r.id === booking.room_id);
       const roomType = room ? room.type : "Unknown room";
       const roomNumber = room ? room.number : "Unknown";
       
@@ -146,12 +184,12 @@ const Admin = () => {
     });
 
     setEvents(newEvents);
-  }, [bookings, rooms]);
+  }, [bookings, roomInventory]);
 
   // Filter bookings based on selected room type
   useEffect(() => {
     if (selectedRoomType) {
-      const roomIds = rooms
+      const roomIds = roomInventory
         .filter(room => room.type === selectedRoomType)
         .map(room => room.id);
       
@@ -163,7 +201,7 @@ const Admin = () => {
     } else {
       setFilteredBookings(bookings);
     }
-  }, [selectedRoomType, bookings, rooms]);
+  }, [selectedRoomType, bookings, roomInventory]);
 
   const handleSelect = ({ start, end }: { start: Date; end: Date }) => {
     setSelectedDates({ start, end });
@@ -225,16 +263,16 @@ const Admin = () => {
 
   // Group rooms by type for inventory display
   const roomsByType = useMemo(() => {
-    const grouped = rooms.reduce((acc, room) => {
+    const grouped = roomInventory.reduce((acc, room) => {
       if (!acc[room.type]) {
         acc[room.type] = [];
       }
       acc[room.type].push(room);
       return acc;
-    }, {} as Record<string, typeof rooms>);
+    }, {} as Record<string, typeof roomInventory>);
     
     return grouped;
-  }, [rooms]);
+  }, [roomInventory]);
 
   if (isLoading) {
     return (
@@ -263,7 +301,7 @@ const Admin = () => {
           <TabsContent value="bookings">
             <BookingCalendar 
               events={events}
-              rooms={rooms}
+              rooms={roomInventory}
               onSelectSlot={handleSelect}
               onSelectEvent={handleEventSelect}
               onSelectRoomType={handleRoomTypeSelect}
@@ -352,8 +390,8 @@ const Admin = () => {
                       <Calendar
                         initialFocus
                         mode="range"
-                        selected={{ from: dateRange.from, to: dateRange.to }}
-                        onSelect={setDateRange}
+                        selected={dateRange}
+                        onSelect={(range) => setDateRange(range || { from: undefined, to: undefined })}
                         numberOfMonths={2}
                       />
                     </PopoverContent>
@@ -438,8 +476,8 @@ const Admin = () => {
                       <Calendar
                         initialFocus
                         mode="range"
-                        selected={{ from: logDateRange.from, to: logDateRange.to }}
-                        onSelect={setLogDateRange}
+                        selected={logDateRange}
+                        onSelect={(range) => setLogDateRange(range || { from: undefined, to: undefined })}
                         numberOfMonths={2}
                       />
                     </PopoverContent>

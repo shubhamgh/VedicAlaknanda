@@ -5,11 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface Room {
   id: string;
-  number: string;
-  type: string;
-  status: string;
-  created_at: string | null;
-  updated_at: string | null;
+  room_number: string;
+  room_type: string;
+  price_per_night: number;
 }
 
 export const useRooms = () => {
@@ -19,11 +17,19 @@ export const useRooms = () => {
     try {
       const { data, error } = await supabase
         .from("rooms")
-        .select("id, number, type, status, created_at, updated_at");
+        .select("id, number, type, status");
 
       if (error) throw error;
 
-      setRooms(data || []);
+      // Transform the data to match the expected interface
+      const transformedRooms = (data || []).map(room => ({
+        id: room.id,
+        room_number: room.number,
+        room_type: room.type,
+        price_per_night: room.type === "Family Room with Terrace" ? 6000 : 5000 // Set price based on type
+      }));
+
+      setRooms(transformedRooms);
     } catch (error: any) {
       toast({
         title: "Error fetching rooms",
