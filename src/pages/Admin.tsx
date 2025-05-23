@@ -8,12 +8,22 @@ import BookingCalendar from "@/components/admin/BookingCalendar";
 import BookingsList from "@/components/admin/BookingsList";
 import AdminBookingModal from "@/components/admin/AdminBookingModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -25,6 +35,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
+import NewsletterSubscribers from "./NewsletterSubscribers";
 
 interface CalendarEvent {
   id: string;
@@ -55,8 +66,9 @@ const Admin = () => {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, handleLogout } = useAdminAuth();
   const { bookings, handleDeleteBooking, handleBookingSubmit } = useBookings();
-  const { rooms, roomInventory, roomTypeAvailability, refetchRooms } = useRooms();
-  
+  const { rooms, roomInventory, roomTypeAvailability, refetchRooms } =
+    useRooms();
+
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -71,33 +83,40 @@ const Admin = () => {
   const [messages, setMessages] = useState([]);
   const [messagePage, setMessagePage] = useState(1);
   const [totalMessages, setTotalMessages] = useState(0);
-  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({ from: undefined, to: undefined });
+  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({
+    from: undefined,
+    to: undefined,
+  });
 
   // Logs state
   const [logs, setLogs] = useState([]);
   const [logPage, setLogPage] = useState(1);
   const [totalLogs, setTotalLogs] = useState(0);
-  const [logDateRange, setLogDateRange] = useState<{ from?: Date; to?: Date }>({ from: undefined, to: undefined });
+  const [logDateRange, setLogDateRange] = useState<{ from?: Date; to?: Date }>({
+    from: undefined,
+    to: undefined,
+  });
 
   // Fetch messages
   useEffect(() => {
     const fetchMessages = async () => {
       const start = (messagePage - 1) * ITEMS_PER_PAGE;
       let query = supabase
-        .from('contact_messages')
-        .select('*', { count: 'exact' })
+        .from("contact_messages")
+        .select("*", { count: "exact" })
         .range(start, start + ITEMS_PER_PAGE - 1)
-        .order('created_at', { ascending: false });
+        .order("created_at", { ascending: false });
 
       if (dateRange.from && dateRange.to) {
-        query = query.gte('created_at', dateRange.from.toISOString())
-                    .lte('created_at', dateRange.to.toISOString());
+        query = query
+          .gte("created_at", dateRange.from.toISOString())
+          .lte("created_at", dateRange.to.toISOString());
       }
 
       const { data, count, error } = await query;
 
       if (error) {
-        console.error('Error fetching messages:', error);
+        console.error("Error fetching messages:", error);
         return;
       }
 
@@ -115,20 +134,21 @@ const Admin = () => {
     const fetchLogs = async () => {
       const start = (logPage - 1) * ITEMS_PER_PAGE;
       let query = supabase
-        .from('user_logs')
-        .select('*', { count: 'exact' })
+        .from("user_logs")
+        .select("*", { count: "exact" })
         .range(start, start + ITEMS_PER_PAGE - 1)
-        .order('created_at', { ascending: false });
+        .order("created_at", { ascending: false });
 
       if (logDateRange.from && logDateRange.to) {
-        query = query.gte('created_at', logDateRange.from.toISOString())
-                    .lte('created_at', logDateRange.to.toISOString());
+        query = query
+          .gte("created_at", logDateRange.from.toISOString())
+          .lte("created_at", logDateRange.to.toISOString());
       }
 
       const { data, count, error } = await query;
 
       if (error) {
-        console.error('Error fetching logs:', error);
+        console.error("Error fetching logs:", error);
         return;
       }
 
@@ -147,7 +167,7 @@ const Admin = () => {
       const room = roomInventory.find((r) => r.id === booking.room_id);
       const roomType = room ? room.type : "Unknown room";
       const roomNumber = room ? room.number : "Unknown";
-      
+
       return {
         id: booking.id,
         title: `${booking.guest_name} - ${roomNumber}`,
@@ -165,13 +185,13 @@ const Admin = () => {
   useEffect(() => {
     if (selectedRoomType) {
       const roomIds = roomInventory
-        .filter(room => room.type === selectedRoomType)
-        .map(room => room.id);
-      
-      const filtered = bookings.filter(booking => 
+        .filter((room) => room.type === selectedRoomType)
+        .map((room) => room.id);
+
+      const filtered = bookings.filter((booking) =>
         roomIds.includes(booking.room_id)
       );
-      
+
       setFilteredBookings(filtered);
     } else {
       setFilteredBookings(bookings);
@@ -191,7 +211,9 @@ const Admin = () => {
   };
 
   const handleRoomTypeSelect = (roomType: string) => {
-    setSelectedRoomType(prevType => prevType === roomType ? null : roomType);
+    setSelectedRoomType((prevType) =>
+      prevType === roomType ? null : roomType
+    );
   };
 
   const handleSubmit = async (bookingData: any) => {
@@ -202,16 +224,17 @@ const Admin = () => {
     }
   };
 
-  const exportToCSV = async (type: 'messages' | 'logs') => {
-    const dateRangeToUse = type === 'messages' ? dateRange : logDateRange;
+  const exportToCSV = async (type: "messages" | "logs") => {
+    const dateRangeToUse = type === "messages" ? dateRange : logDateRange;
     let query = supabase
-      .from(type === 'messages' ? 'contact_messages' : 'user_logs')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .from(type === "messages" ? "contact_messages" : "user_logs")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (dateRangeToUse.from && dateRangeToUse.to) {
-      query = query.gte('created_at', dateRangeToUse.from.toISOString())
-                  .lte('created_at', dateRangeToUse.to.toISOString());
+      query = query
+        .gte("created_at", dateRangeToUse.from.toISOString())
+        .lte("created_at", dateRangeToUse.to.toISOString());
     }
 
     const { data, error } = await query;
@@ -222,15 +245,15 @@ const Admin = () => {
     }
 
     const csvContent = [
-      Object.keys(data[0]).join(','),
-      ...data.map(item => Object.values(item).join(','))
-    ].join('\n');
+      Object.keys(data[0]).join(","),
+      ...data.map((item) => Object.values(item).join(",")),
+    ].join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `${type}_${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    a.download = `${type}_${format(new Date(), "yyyy-MM-dd")}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -246,7 +269,7 @@ const Admin = () => {
       acc[room.type].push(room);
       return acc;
     }, {} as Record<string, typeof roomInventory>);
-    
+
     return grouped;
   }, [roomInventory]);
 
@@ -260,22 +283,23 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <AdminHeader 
-        onViewWebsite={() => navigate("/")} 
-        onLogout={handleLogout} 
+      <AdminHeader
+        onViewWebsite={() => navigate("/")}
+        onLogout={handleLogout}
       />
-      
+
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <Tabs defaultValue="bookings">
           <TabsList className="mb-4">
             <TabsTrigger value="bookings">Bookings</TabsTrigger>
             <TabsTrigger value="inventory">Room Inventory</TabsTrigger>
             <TabsTrigger value="messages">Messages</TabsTrigger>
+            <TabsTrigger value="newsletter">Newsletter</TabsTrigger>
             <TabsTrigger value="logs">User Logs</TabsTrigger>
           </TabsList>
 
           <TabsContent value="bookings">
-            <BookingCalendar 
+            <BookingCalendar
               events={events}
               rooms={roomInventory}
               onSelectSlot={handleSelect}
@@ -286,8 +310,10 @@ const Admin = () => {
             <div className="mb-4">
               {selectedRoomType && (
                 <div className="bg-blue-100 p-2 rounded-md inline-flex items-center">
-                  <span>Filtering by room type: <strong>{selectedRoomType}</strong></span>
-                  <button 
+                  <span>
+                    Filtering by room type: <strong>{selectedRoomType}</strong>
+                  </span>
+                  <button
                     className="ml-2 text-blue-500 hover:text-blue-700"
                     onClick={() => setSelectedRoomType(null)}
                   >
@@ -321,16 +347,20 @@ const Admin = () => {
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
                       {roomList.map((room) => (
-                        <div 
+                        <div
                           key={room.id}
                           className={`p-3 rounded border text-center ${
-                            room.status === 'available' 
-                              ? 'bg-green-100 border-green-300' 
-                              : 'bg-red-100 border-red-300'
+                            room.status === "available"
+                              ? "bg-green-100 border-green-300"
+                              : "bg-red-100 border-red-300"
                           }`}
                         >
-                          <div className="font-semibold">Room {room.number}</div>
-                          <div className="text-sm capitalize">{room.status}</div>
+                          <div className="font-semibold">
+                            Room {room.number}
+                          </div>
+                          <div className="text-sm capitalize">
+                            {room.status}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -366,13 +396,21 @@ const Admin = () => {
                       <Calendar
                         initialFocus
                         mode="range"
-                        selected={dateRange.from && dateRange.to ? { from: dateRange.from, to: dateRange.to } : undefined}
-                        onSelect={(range) => setDateRange(range || { from: undefined, to: undefined })}
+                        selected={
+                          dateRange.from && dateRange.to
+                            ? { from: dateRange.from, to: dateRange.to }
+                            : undefined
+                        }
+                        onSelect={(range) =>
+                          setDateRange(
+                            range || { from: undefined, to: undefined }
+                          )
+                        }
                         numberOfMonths={2}
                       />
                     </PopoverContent>
                   </Popover>
-                  <Button onClick={() => exportToCSV('messages')}>
+                  <Button onClick={() => exportToCSV("messages")}>
                     Export to CSV
                   </Button>
                 </div>
@@ -391,11 +429,15 @@ const Admin = () => {
                 <TableBody>
                   {messages.map((message) => (
                     <TableRow key={message.id}>
-                      <TableCell>{format(new Date(message.created_at), "PPp")}</TableCell>
+                      <TableCell>
+                        {format(new Date(message.created_at), "PPp")}
+                      </TableCell>
                       <TableCell>{message.name}</TableCell>
                       <TableCell>{message.email}</TableCell>
                       <TableCell>{message.subject}</TableCell>
-                      <TableCell className="max-w-md truncate">{message.message}</TableCell>
+                      <TableCell className="max-w-md truncate">
+                        {message.message}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -403,20 +445,21 @@ const Admin = () => {
 
               <div className="flex justify-between items-center mt-4">
                 <div>
-                  Showing {((messagePage - 1) * ITEMS_PER_PAGE) + 1} to{" "}
-                  {Math.min(messagePage * ITEMS_PER_PAGE, totalMessages)} of {totalMessages}
+                  Showing {(messagePage - 1) * ITEMS_PER_PAGE + 1} to{" "}
+                  {Math.min(messagePage * ITEMS_PER_PAGE, totalMessages)} of{" "}
+                  {totalMessages}
                 </div>
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
-                    onClick={() => setMessagePage(p => Math.max(1, p - 1))}
+                    onClick={() => setMessagePage((p) => Math.max(1, p - 1))}
                     disabled={messagePage === 1}
                   >
                     Previous
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => setMessagePage(p => p + 1)}
+                    onClick={() => setMessagePage((p) => p + 1)}
                     disabled={messagePage * ITEMS_PER_PAGE >= totalMessages}
                   >
                     Next
@@ -452,13 +495,21 @@ const Admin = () => {
                       <Calendar
                         initialFocus
                         mode="range"
-                        selected={logDateRange.from && logDateRange.to ? { from: logDateRange.from, to: logDateRange.to } : undefined}
-                        onSelect={(range) => setLogDateRange(range || { from: undefined, to: undefined })}
+                        selected={
+                          logDateRange.from && logDateRange.to
+                            ? { from: logDateRange.from, to: logDateRange.to }
+                            : undefined
+                        }
+                        onSelect={(range) =>
+                          setLogDateRange(
+                            range || { from: undefined, to: undefined }
+                          )
+                        }
                         numberOfMonths={2}
                       />
                     </PopoverContent>
                   </Popover>
-                  <Button onClick={() => exportToCSV('logs')}>
+                  <Button onClick={() => exportToCSV("logs")}>
                     Export to CSV
                   </Button>
                 </div>
@@ -479,12 +530,16 @@ const Admin = () => {
                 <TableBody>
                   {logs.map((log) => (
                     <TableRow key={log.id}>
-                      <TableCell>{format(new Date(log.created_at), "PPp")}</TableCell>
+                      <TableCell>
+                        {format(new Date(log.created_at), "PPp")}
+                      </TableCell>
                       <TableCell>{log.ip_address}</TableCell>
                       <TableCell>{log.device_type}</TableCell>
                       <TableCell>{log.browser}</TableCell>
                       <TableCell>{log.os}</TableCell>
-                      <TableCell>{log.city}, {log.country}</TableCell>
+                      <TableCell>
+                        {log.city}, {log.country}
+                      </TableCell>
                       <TableCell>{log.path}</TableCell>
                     </TableRow>
                   ))}
@@ -493,26 +548,32 @@ const Admin = () => {
 
               <div className="flex justify-between items-center mt-4">
                 <div>
-                  Showing {((logPage - 1) * ITEMS_PER_PAGE) + 1} to{" "}
+                  Showing {(logPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
                   {Math.min(logPage * ITEMS_PER_PAGE, totalLogs)} of {totalLogs}
                 </div>
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
-                    onClick={() => setLogPage(p => Math.max(1, p - 1))}
+                    onClick={() => setLogPage((p) => Math.max(1, p - 1))}
                     disabled={logPage === 1}
                   >
                     Previous
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => setLogPage(p => p + 1)}
+                    onClick={() => setLogPage((p) => p + 1)}
                     disabled={logPage * ITEMS_PER_PAGE >= totalLogs}
                   >
                     Next
                   </Button>
                 </div>
               </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="newsletter">
+            <div className="space-y-4">
+              <NewsletterSubscribers />
             </div>
           </TabsContent>
         </Tabs>
