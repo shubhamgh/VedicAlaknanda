@@ -1,4 +1,4 @@
-// Contact.jsx
+import React, { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,8 +6,41 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Map, Phone, Mail, Clock, Send } from "lucide-react";
+import { useContact } from "@/hooks/useContact";
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: ""
+  });
+  
+  const { submitContactForm, isSubmitting } = useContact();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    const success = await submitContactForm(formData);
+    
+    if (success) {
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: ""
+      });
+    }
+  };
+
   return (
     <main className="min-h-screen">
       <Header />
@@ -102,7 +135,7 @@ const Contact = () => {
                   Send Us a Message
                 </h2>
 
-                <form className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <label
                       htmlFor="name"
@@ -110,7 +143,14 @@ const Contact = () => {
                     >
                       Your Name
                     </label>
-                    <Input id="name" placeholder="Enter your name" />
+                    <Input 
+                      id="name" 
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      placeholder="Enter your name" 
+                      required 
+                    />
                   </div>
 
                   <div>
@@ -122,8 +162,12 @@ const Contact = () => {
                     </label>
                     <Input
                       id="email"
+                      name="email"
                       type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
                       placeholder="Enter your email"
+                      required
                     />
                   </div>
 
@@ -134,7 +178,14 @@ const Contact = () => {
                     >
                       Subject
                     </label>
-                    <Input id="subject" placeholder="Enter subject" />
+                    <Input 
+                      id="subject" 
+                      name="subject"
+                      value={formData.subject}
+                      onChange={handleInputChange}
+                      placeholder="Enter subject" 
+                      required 
+                    />
                   </div>
 
                   <div>
@@ -146,14 +197,23 @@ const Contact = () => {
                     </label>
                     <Textarea
                       id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleInputChange}
                       placeholder="Enter your message"
                       rows={5}
+                      required
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" size="lg">
+                  <Button 
+                    type="submit" 
+                    className="w-full" 
+                    size="lg"
+                    disabled={isSubmitting}
+                  >
                     <Send className="h-4 w-4 mr-2" />
-                    Send Message
+                    {isSubmitting ? "Sending..." : "Send Message"}
                   </Button>
                 </form>
               </CardContent>

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import {
   FormField,
@@ -17,6 +17,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+interface RoomInventory {
+  id: string;
+  number: string;
+  type: string;
+  status: string;
+}
+
+interface RoomTypeAvailability {
+  type: string;
+  availableCount: number;
+  totalCount: number;
+  availableRooms: RoomInventory[];
+}
+
 interface Room {
   id: string;
   room_number: string;
@@ -26,11 +40,13 @@ interface Room {
 
 interface RoomSelectionFormProps {
   rooms: Room[];
+  roomTypeAvailability: RoomTypeAvailability[];
   onRoomChange: (roomId: string) => void;
   booking?: any;
 }
 
 export interface RoomFormValues {
+  room_type: string;
   room_id: string;
   num_guests: number;
   status?: string;
@@ -38,17 +54,45 @@ export interface RoomFormValues {
 
 const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({ 
   rooms, 
+  roomTypeAvailability,
   onRoomChange,
   booking 
 }) => {
   const form = useFormContext<RoomFormValues>();
+  const [selectedRoomType, setSelectedRoomType] = useState<string>("");
+  const [availableRoomsForType, setAvailableRoomsForType] = useState<RoomInventory[]>([]);
+
+  // Watch for room type changes
+  const watchedRoomType = form.watch("room_type");
+
+  useEffect(() => {
+    if (watchedRoomType) {
+      setSelectedRoomType(watchedRoomType);
+      const typeData = roomTypeAvailability.find(rt => rt.type === watchedRoomType);
+      setAvailableRoomsForType(typeData?.availableRooms || []);
+      // Clear room selection when room type changes
+      form.setValue("room_id", "");
+    }
+  }, [watchedRoomType, roomTypeAvailability, form]);
+
+  // Set initial values for editing
+  useEffect(() => {
+    if (booking && rooms.length > 0) {
+      const bookingRoom = rooms.find(room => room.id === booking.room_id);
+      if (bookingRoom) {
+        form.setValue("room_type", bookingRoom.room_type);
+        form.setValue("room_id", booking.room_id);
+        setSelectedRoomType(bookingRoom.room_type);
+      }
+    }
+  }, [booking, rooms, form]);
 
   return (
     <>
       <FormField
         control={form.control}
-        name="room_id"
-        rules={{ required: "Room is required" }}
+        name="room_type"
+        rules={{ required: "Room type is required" }}
         render={({ field }) => (
           <FormItem>
             <FormLabel>Room Type</FormLabel>
@@ -56,19 +100,18 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
               value={field.value}
               onValueChange={(value) => {
                 field.onChange(value);
-                onRoomChange(value);
+                setSelectedRoomType(value);
               }}
             >
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a room" />
+                  <SelectValue placeholder="Select a room type" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {rooms.map((room) => (
-                  <SelectItem key={room.id} value={room.id}>
-                    {room.room_type} - Room {room.room_number} (₹
-                    {room.price_per_night}/night)
+                {roomTypeAvailability.map((roomType) => (
+                  <SelectItem key={roomType.type} value={roomType.type}>
+                    {roomType.type} - {roomType.availableCount} available
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -77,6 +120,40 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
           </FormItem>
         )}
       />
+
+      {selectedRoomType && availableRoomsForType.length > 0 && (
+        <FormField
+          control={form.control}
+          name="room_id"
+          rules={{ required: "Room number is required" }}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Room Number</FormLabel>
+              <Select
+                value={field.value}
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  onRoomChange(value);
+                }}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a room number" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {availableRoomsForType.map((room) => (
+                    <SelectItem key={room.id} value={room.id}>
+                      Room {room.number}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
 
       <FormField
         control={form.control}
