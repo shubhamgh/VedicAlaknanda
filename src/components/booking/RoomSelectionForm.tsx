@@ -152,8 +152,8 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
               <FormMessage />
             </FormItem>
           )}
-        )}
-      />
+        />
+      )}
 
       <FormField
         control={form.control}
