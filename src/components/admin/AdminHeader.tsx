@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -19,8 +20,11 @@ const AdminHeader = ({ onViewWebsite, onLogout }: AdminHeaderProps) => {
           <Button variant="outline" onClick={onLogout}>
             Logout
           </Button>
-          <Link to="/admin/newsletter" className="px-4 py-2 hover:bg-gray-700 rounded">
+          <Link to="/admin/newsletter" className="px-4 py-2 hover:bg-gray-100 rounded">
             Newsletter
+          </Link>
+          <Link to="/admin/contact-messages" className="px-4 py-2 hover:bg-gray-100 rounded">
+            Contact Messages
           </Link>
         </div>
       </div>

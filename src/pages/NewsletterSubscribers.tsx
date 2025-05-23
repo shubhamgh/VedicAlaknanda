@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/table";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 interface Subscriber {
   id: string;
@@ -27,6 +28,15 @@ const NewsletterSubscribers = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const { isAuthenticated, isLoading } = useAdminAuth();
+  const navigate = useNavigate();
+
+  const handleViewWebsite = () => {
+    navigate('/');
+  };
+
+  const handleLogout = () => {
+    navigate('/admin-login');
+  };
 
   useEffect(() => {
     const fetchSubscribers = async () => {
@@ -91,7 +101,7 @@ const NewsletterSubscribers = () => {
 
   return (
     <div>
-      <AdminHeader />
+      <AdminHeader onViewWebsite={handleViewWebsite} onLogout={handleLogout} />
       <div className="container mx-auto px-4 pt-8 pb-16">
         <h1 className="text-2xl font-bold mb-6">Newsletter Subscribers</h1>
         

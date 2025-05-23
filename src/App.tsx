@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +16,7 @@ import BookNow from "./pages/BookNow";
 import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
 import NewsletterSubscribers from "./pages/NewsletterSubscribers";
+import ContactMessages from "./pages/ContactMessages";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +49,7 @@ const App = () => (
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/admin/newsletter" element={<NewsletterSubscribers />} />
+          <Route path="/admin/contact-messages" element={<ContactMessages />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
