@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -8,7 +7,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Map, Phone, Mail, Clock, Send } from "lucide-react";
 import { useContact } from "@/hooks/useContact";
-import { useUserLogging } from "@/hooks/useUserLogging";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +17,6 @@ const Contact = () => {
   });
   
   const { submitContactForm, isSubmitting } = useContact();
-  useUserLogging(); // This will log the user visit
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

@@ -1,10 +1,10 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { useUserLogging } from "@/hooks/useUserLogging";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Rooms from "./pages/Rooms";
@@ -23,9 +23,11 @@ const queryClient = new QueryClient();
 // ScrollToTop component that handles the scrolling behavior
 function ScrollToTop() {
   const location = useLocation();
+  const { logUserVisit } = useUserLogging();
   
   useEffect(() => {
     window.scrollTo(0, 0);
+    logUserVisit();
   }, [location]);
 
   return null;
