@@ -1,17 +1,15 @@
-
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import AdminHeader from "@/components/admin/AdminHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { format } from "date-fns";
@@ -31,11 +29,11 @@ const NewsletterSubscribers = () => {
   const navigate = useNavigate();
 
   const handleViewWebsite = () => {
-    navigate('/');
+    navigate("/");
   };
 
   const handleLogout = () => {
-    navigate('/admin-login');
+    navigate("/admin-login");
   };
 
   useEffect(() => {
@@ -65,27 +63,32 @@ const NewsletterSubscribers = () => {
     }
   }, [isAuthenticated]);
 
-  const filteredSubscribers = subscribers.filter(subscriber =>
+  const filteredSubscribers = subscribers.filter((subscriber) =>
     subscriber.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const exportToCSV = () => {
     const csvContent = [
       ["Email", "Subscribed At"],
-      ...filteredSubscribers.map(sub => [
+      ...filteredSubscribers.map((sub) => [
         sub.email,
-        new Date(sub.subscribed_at).toLocaleString()
-      ])
-    ].map(row => row.join(",")).join("\n");
+        new Date(sub.subscribed_at).toLocaleString(),
+      ]),
+    ]
+      .map((row) => row.join(","))
+      .join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `newsletter_subscribers_${new Date().toISOString().split("T")[0]}.csv`);
+    link.setAttribute(
+      "download",
+      `newsletter_subscribers_${new Date().toISOString().split("T")[0]}.csv`
+    );
     link.style.display = "none";
-    
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -101,10 +104,9 @@ const NewsletterSubscribers = () => {
 
   return (
     <div>
-      <AdminHeader onViewWebsite={handleViewWebsite} onLogout={handleLogout} />
       <div className="container mx-auto px-4 pt-8 pb-16">
         <h1 className="text-2xl font-bold mb-6">Newsletter Subscribers</h1>
-        
+
         <div className="flex justify-between items-center mb-6">
           <div className="w-1/3">
             <Input
@@ -114,18 +116,16 @@ const NewsletterSubscribers = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          
-          <Button onClick={exportToCSV}>
-            Export to CSV
-          </Button>
+
+          <Button onClick={exportToCSV}>Export to CSV</Button>
         </div>
-        
+
         {loading ? (
           <div className="text-center py-8">Loading subscribers...</div>
         ) : (
           <>
             <p className="mb-4">Total subscribers: {subscribers.length}</p>
-            
+
             <Table>
               <TableHeader>
                 <TableRow>

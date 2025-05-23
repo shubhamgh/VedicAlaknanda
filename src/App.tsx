@@ -15,8 +15,6 @@ import Contact from "./pages/Contact";
 import BookNow from "./pages/BookNow";
 import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
-import NewsletterSubscribers from "./pages/NewsletterSubscribers";
-import ContactMessages from "./pages/ContactMessages";
 
 const queryClient = new QueryClient();
 
@@ -24,7 +22,7 @@ const queryClient = new QueryClient();
 function ScrollToTop() {
   const location = useLocation();
   const { logUserVisit } = useUserLogging();
-  
+
   useEffect(() => {
     window.scrollTo(0, 0);
     logUserVisit();
@@ -50,8 +48,6 @@ const App = () => (
           <Route path="/book-now" element={<BookNow />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin-login" element={<AdminLogin />} />
-          <Route path="/admin/newsletter" element={<NewsletterSubscribers />} />
-          <Route path="/admin/contact-messages" element={<ContactMessages />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
