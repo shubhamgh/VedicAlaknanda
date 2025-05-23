@@ -15,6 +15,13 @@ interface Room {
   price_per_night: number;
 }
 
+interface RoomTypeAvailability {
+  type: string;
+  availableCount: number;
+  totalCount: number;
+  availableRooms: any[];
+}
+
 interface Booking {
   id: string;
   guest_name: string;
@@ -39,6 +46,7 @@ interface AdminBookingModalProps {
   selectedBooking: Booking | null;
   selectedDates: { start: Date; end: Date } | null;
   rooms: Room[];
+  roomTypeAvailability: RoomTypeAvailability[];
   onSubmit: (data: any) => void;
 }
 
@@ -48,6 +56,7 @@ const AdminBookingModal = ({
   selectedBooking,
   selectedDates,
   rooms,
+  roomTypeAvailability,
   onSubmit,
 }: AdminBookingModalProps) => {
   return (
@@ -62,6 +71,7 @@ const AdminBookingModal = ({
           booking={selectedBooking}
           selectedDates={selectedDates}
           rooms={rooms}
+          roomTypeAvailability={roomTypeAvailability}
           onSubmit={onSubmit}
           onCancel={onClose}
         />

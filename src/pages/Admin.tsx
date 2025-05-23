@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -13,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
-import { Calendar, DateRange } from "@/components/ui/calendar";
+import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -56,7 +55,7 @@ const Admin = () => {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, handleLogout } = useAdminAuth();
   const { bookings, handleDeleteBooking, handleBookingSubmit } = useBookings();
-  const { rooms } = useRooms();
+  const { rooms, roomInventory, roomTypeAvailability, refetchRooms } = useRooms();
   
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
@@ -72,13 +71,13 @@ const Admin = () => {
   const [messages, setMessages] = useState([]);
   const [messagePage, setMessagePage] = useState(1);
   const [totalMessages, setTotalMessages] = useState(0);
-  const [dateRange, setDateRange] = useState<DateRange>({ from: undefined, to: undefined });
+  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({ from: undefined, to: undefined });
 
   // Logs state
   const [logs, setLogs] = useState([]);
   const [logPage, setLogPage] = useState(1);
   const [totalLogs, setTotalLogs] = useState(0);
-  const [logDateRange, setLogDateRange] = useState<DateRange>({ from: undefined, to: undefined });
+  const [logDateRange, setLogDateRange] = useState<{ from?: Date; to?: Date }>({ from: undefined, to: undefined });
 
   // Room inventory state
   const [roomInventory, setRoomInventory] = useState<RoomInventory[]>([]);
@@ -223,6 +222,7 @@ const Admin = () => {
     const success = await handleBookingSubmit(bookingData, selectedBooking);
     if (success) {
       setIsModalOpen(false);
+      refetchRooms(); // Refresh room availability
     }
   };
 
@@ -548,6 +548,7 @@ const Admin = () => {
         selectedBooking={selectedBooking}
         selectedDates={selectedDates}
         rooms={rooms}
+        roomTypeAvailability={roomTypeAvailability}
         onSubmit={handleSubmit}
       />
     </div>

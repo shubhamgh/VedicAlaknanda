@@ -69,13 +69,30 @@ export const useBookings = () => {
   const handleDeleteBooking = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this booking?")) {
       try {
-        const { error } = await supabase.from("bookings").delete().eq("id", id);
+        // First get the booking to find the room_id
+        const { data: booking, error: fetchError } = await supabase
+          .from("bookings")
+          .select("room_id")
+          .eq("id", id)
+          .single();
 
-        if (error) throw error;
+        if (fetchError) throw fetchError;
+
+        // Delete the booking
+        const { error: deleteError } = await supabase.from("bookings").delete().eq("id", id);
+        if (deleteError) throw deleteError;
+
+        // Update room status to available
+        const { error: roomError } = await supabase
+          .from("rooms")
+          .update({ status: "available" })
+          .eq("id", booking.room_id);
+
+        if (roomError) throw roomError;
 
         toast({
           title: "Booking deleted",
-          description: "The booking has been deleted successfully.",
+          description: "The booking has been deleted successfully and room is now available.",
         });
 
         fetchBookings();
@@ -117,6 +134,21 @@ export const useBookings = () => {
 
         if (error) throw error;
 
+        // If room changed, update room statuses
+        if (selectedBooking.room_id !== bookingData.room_id) {
+          // Make old room available
+          await supabase
+            .from("rooms")
+            .update({ status: "available" })
+            .eq("id", selectedBooking.room_id);
+
+          // Make new room booked
+          await supabase
+            .from("rooms")
+            .update({ status: "booked" })
+            .eq("id", bookingData.room_id);
+        }
+
         toast({
           title: "Booking updated",
           description: "The booking has been updated successfully.",
@@ -147,6 +179,14 @@ export const useBookings = () => {
           .select();
 
         if (error) throw error;
+
+        // Update room status to booked
+        const { error: roomError } = await supabase
+          .from("rooms")
+          .update({ status: "booked" })
+          .eq("id", bookingData.room_id);
+
+        if (roomError) throw roomError;
 
         toast({
           title: "Booking created",

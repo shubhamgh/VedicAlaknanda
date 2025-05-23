@@ -18,6 +18,7 @@ interface FormValues {
   guest_phone: string;
   address?: string;
   gov_id_number?: string;
+  room_type: string;
   room_id: string;
   check_in_date: Date;
   check_out_date: Date;
@@ -35,10 +36,18 @@ interface Room {
   price_per_night: number;
 }
 
+interface RoomTypeAvailability {
+  type: string;
+  availableCount: number;
+  totalCount: number;
+  availableRooms: any[];
+}
+
 interface BookingFormProps {
   booking: any | null;
   selectedDates: { start: Date; end: Date } | null;
   rooms: Room[];
+  roomTypeAvailability: RoomTypeAvailability[];
   onSubmit: (data: any) => void;
   onCancel: () => void;
 }
@@ -47,6 +56,7 @@ const BookingForm = ({
   booking,
   selectedDates,
   rooms,
+  roomTypeAvailability,
   onSubmit,
   onCancel,
 }: BookingFormProps) => {
@@ -74,6 +84,7 @@ const BookingForm = ({
       guest_phone: booking?.guest_phone || "",
       address: booking?.address || "",
       gov_id_number: booking?.gov_id_number || "",
+      room_type: "",
       room_id: booking?.room_id || "",
       check_in_date: checkInDate,
       check_out_date: checkOutDate,
@@ -113,10 +124,16 @@ const BookingForm = ({
       methods.setValue("booking_source", booking.booking_source);
       methods.setValue("custom_booking_source", booking.custom_booking_source || "");
 
+      // Set room type based on the room_id
+      const bookingRoom = rooms.find(room => room.id === booking.room_id);
+      if (bookingRoom) {
+        methods.setValue("room_type", bookingRoom.room_type);
+      }
+
       setSelectedRoomId(booking.room_id);
       setBookingSource(booking.booking_source);
     }
-  }, [booking, selectedDates, methods]);
+  }, [booking, selectedDates, methods, rooms]);
 
   const handleSubmit = (values: FormValues) => {
     // Calculate total price based on room rate and nights
@@ -145,6 +162,7 @@ const BookingForm = ({
           <div className="space-y-4">
             <RoomSelectionForm 
               rooms={rooms} 
+              roomTypeAvailability={roomTypeAvailability}
               onRoomChange={setSelectedRoomId} 
               booking={booking}
             />

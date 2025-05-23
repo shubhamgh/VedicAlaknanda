@@ -10,8 +10,24 @@ interface Room {
   price_per_night: number;
 }
 
+interface RoomInventory {
+  id: string;
+  number: string;
+  type: string;
+  status: string;
+}
+
+interface RoomTypeAvailability {
+  type: string;
+  availableCount: number;
+  totalCount: number;
+  availableRooms: RoomInventory[];
+}
+
 export const useRooms = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [roomInventory, setRoomInventory] = useState<RoomInventory[]>([]);
+  const [roomTypeAvailability, setRoomTypeAvailability] = useState<RoomTypeAvailability[]>([]);
 
   const fetchRooms = async () => {
     try {
@@ -21,7 +37,29 @@ export const useRooms = () => {
 
       if (error) throw error;
 
-      // Transform the data to match the expected interface
+      setRoomInventory(data || []);
+
+      // Group rooms by type and calculate availability
+      const roomGroups = (data || []).reduce((acc, room) => {
+        if (!acc[room.type]) {
+          acc[room.type] = {
+            type: room.type,
+            totalCount: 0,
+            availableCount: 0,
+            availableRooms: []
+          };
+        }
+        acc[room.type].totalCount++;
+        if (room.status === 'available') {
+          acc[room.type].availableCount++;
+          acc[room.type].availableRooms.push(room);
+        }
+        return acc;
+      }, {} as Record<string, RoomTypeAvailability>);
+
+      setRoomTypeAvailability(Object.values(roomGroups));
+
+      // Transform the data to match the expected interface for backward compatibility
       const transformedRooms = (data || []).map(room => ({
         id: room.id,
         room_number: room.number,
@@ -43,5 +81,5 @@ export const useRooms = () => {
     fetchRooms();
   }, []);
 
-  return { rooms };
+  return { rooms, roomInventory, roomTypeAvailability, refetchRooms: fetchRooms };
 };
