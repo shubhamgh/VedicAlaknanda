@@ -79,30 +79,6 @@ const Admin = () => {
   const [totalLogs, setTotalLogs] = useState(0);
   const [logDateRange, setLogDateRange] = useState<{ from?: Date; to?: Date }>({ from: undefined, to: undefined });
 
-  // Room inventory state
-  const [roomInventory, setRoomInventory] = useState<RoomInventory[]>([]);
-
-  // Fetch room inventory for the inventory tab
-  useEffect(() => {
-    const fetchRoomInventory = async () => {
-      if (!isAuthenticated) return;
-      
-      try {
-        const { data, error } = await supabase
-          .from("rooms")
-          .select("id, number, type, status")
-          .order("number");
-
-        if (error) throw error;
-        setRoomInventory(data || []);
-      } catch (error) {
-        console.error("Error fetching room inventory:", error);
-      }
-    };
-
-    fetchRoomInventory();
-  }, [isAuthenticated]);
-
   // Fetch messages
   useEffect(() => {
     const fetchMessages = async () => {
@@ -390,7 +366,7 @@ const Admin = () => {
                       <Calendar
                         initialFocus
                         mode="range"
-                        selected={dateRange}
+                        selected={dateRange.from && dateRange.to ? { from: dateRange.from, to: dateRange.to } : undefined}
                         onSelect={(range) => setDateRange(range || { from: undefined, to: undefined })}
                         numberOfMonths={2}
                       />
@@ -476,7 +452,7 @@ const Admin = () => {
                       <Calendar
                         initialFocus
                         mode="range"
-                        selected={logDateRange}
+                        selected={logDateRange.from && logDateRange.to ? { from: logDateRange.from, to: logDateRange.to } : undefined}
                         onSelect={(range) => setLogDateRange(range || { from: undefined, to: undefined })}
                         numberOfMonths={2}
                       />
