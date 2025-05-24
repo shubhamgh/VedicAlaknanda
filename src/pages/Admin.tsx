@@ -289,13 +289,23 @@ const Admin = () => {
       />
 
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <Tabs defaultValue="bookings">
-          <TabsList className="mb-4">
-            <TabsTrigger value="bookings">Bookings</TabsTrigger>
-            <TabsTrigger value="inventory">Room Inventory</TabsTrigger>
-            <TabsTrigger value="messages">Messages</TabsTrigger>
-            <TabsTrigger value="newsletter">Newsletter</TabsTrigger>
-            <TabsTrigger value="logs">User Logs</TabsTrigger>
+        <Tabs defaultValue="bookings" className="w-full overflow-x-auto">
+          <TabsList className="mb-4 w-full flex-nowrap">
+            <TabsTrigger value="bookings" className="whitespace-nowrap">
+              Bookings
+            </TabsTrigger>
+            <TabsTrigger value="inventory" className="whitespace-nowrap">
+              Room Inventory
+            </TabsTrigger>
+            <TabsTrigger value="messages" className="whitespace-nowrap">
+              Messages
+            </TabsTrigger>
+            <TabsTrigger value="newsletter" className="whitespace-nowrap">
+              Newsletter
+            </TabsTrigger>
+            <TabsTrigger value="logs" className="whitespace-nowrap">
+              User Logs
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="bookings">

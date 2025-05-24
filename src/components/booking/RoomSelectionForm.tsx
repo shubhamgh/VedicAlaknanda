@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import {
@@ -52,15 +51,17 @@ export interface RoomFormValues {
   status?: string;
 }
 
-const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({ 
-  rooms, 
+const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
+  rooms,
   roomTypeAvailability,
   onRoomChange,
-  booking 
+  booking,
 }) => {
   const form = useFormContext<RoomFormValues>();
   const [selectedRoomType, setSelectedRoomType] = useState<string>("");
-  const [availableRoomsForType, setAvailableRoomsForType] = useState<RoomInventory[]>([]);
+  const [availableRoomsForType, setAvailableRoomsForType] = useState<
+    RoomInventory[]
+  >([]);
 
   // Watch for room type changes
   const watchedRoomType = form.watch("room_type");
@@ -68,24 +69,41 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
   useEffect(() => {
     if (watchedRoomType) {
       setSelectedRoomType(watchedRoomType);
-      const typeData = roomTypeAvailability.find(rt => rt.type === watchedRoomType);
+      const typeData = roomTypeAvailability.find(
+        (rt) => rt.type === watchedRoomType
+      );
       setAvailableRoomsForType(typeData?.availableRooms || []);
-      // Clear room selection when room type changes
-      form.setValue("room_id", "");
+
+      // Only reset room_id if it's not already set (avoids resetting during edit)
+      const currentRoomId = form.getValues("room_id");
+      if (currentRoomId) {
+        const roomStillAvailable = typeData?.availableRooms.some(
+          (room) => room.id === currentRoomId
+        );
+        if (!roomStillAvailable) {
+          form.setValue("room_id", "");
+        }
+      } else {
+        form.setValue("room_id", "");
+      }
     }
-  }, [watchedRoomType, roomTypeAvailability, form]);
+  }, [watchedRoomType, roomTypeAvailability]);
 
   // Set initial values for editing
   useEffect(() => {
     if (booking && rooms.length > 0) {
-      const bookingRoom = rooms.find(room => room.id === booking.room_id);
+      const bookingRoom = rooms.find((room) => room.id === booking.room_id);
       if (bookingRoom) {
-        form.setValue("room_type", bookingRoom.room_type);
-        form.setValue("room_id", booking.room_id);
+        form.reset({
+          room_type: bookingRoom.room_type,
+          room_id: booking.room_id,
+          num_guests: booking.num_guests,
+          status: booking.status || "confirmed",
+        });
         setSelectedRoomType(bookingRoom.room_type);
       }
     }
-  }, [booking, rooms, form]);
+  }, [booking, rooms]);
 
   return (
     <>
@@ -158,9 +176,9 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
       <FormField
         control={form.control}
         name="num_guests"
-        rules={{ 
+        rules={{
           required: "Number of guests is required",
-          min: { value: 1, message: "At least 1 guest is required" }
+          min: { value: 1, message: "At least 1 guest is required" },
         }}
         render={({ field }) => (
           <FormItem>
