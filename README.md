@@ -1,73 +1,72 @@
-# Welcome to your Lovable project
+# Hotel Booking Website 🏨
 
-## Project info
+This is a **full-stack hotel booking web application** built with **ReactJS** and **Supabase**. It powers the actual online presence and booking system for a real hotel located in Uttarakhand, India.
 
-**URL**: https://lovable.dev/projects/03855b86-f4b0-4986-836b-d40691054b28
+## 🌐 Live Features
 
-## How can I edit this code?
+- **Frontend** built using **ReactJS**
+- **Backend / Database** handled via **Supabase**
+- Fully functional **admin portal** with authentication, live room inventory, and booking management
+- **Secure login** for administrators
+- **Room booking management** including:
+  - Guest information entry
+  - Room assignment based on availability
+  - Live inventory tracking of room status (available/booked)
+- Support for **special requests** and tracking **booking sources**
 
-There are several ways of editing your application.
+## 📁 Tech Stack
 
-**Use Lovable**
+| Layer      | Technology                                                                |
+| ---------- | ------------------------------------------------------------------------- |
+| Frontend   | ReactJS, TailwindCSS                                                      |
+| Backend    | Supabase (PostgreSQL + Auth)                                              |
+| Auth       | Supabase Auth                                                             |
+| Deployment | Hosted Live ([Hotel Vedic Alaknanda](https://vedicalaknanda.netlify.app)) |
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/03855b86-f4b0-4986-836b-d40691054b28) and start prompting.
+## 📦 Features for Admins
 
-Changes made via Lovable will be committed automatically to this repo.
+- Secure login and authentication
+- View available room inventory by type
+- Create, edit, and cancel bookings with guest details
+- Track booking sources (e.g., direct, phone, walk-in, website)
+- Responsive design for desktop and mobile use
 
-**Use your preferred IDE**
+## 🛏️ Room Types
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Although 30 rooms exist in the hotel, the public site displays only **3 main room types**, hardcoded into the frontend. The full room-level data is used only in the admin panel to manage booking operations.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Room Types:
 
-Follow these steps:
+- Deluxe Single Room with Balcony
+- Standard Family Room
+- Family Room with Terrace
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🔐 Admin Operations
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+- Admin login system with secure Supabase authentication
+- Calendar UI for managing room availability and bookings
+- Booking form with room type selection and auto-filtering of available rooms
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 🧱 Database Schema (Simplified)
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### `rooms` Table
 
-**Edit a file directly in GitHub**
+Stores room inventory used by the admin portal.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- `id`, `number`, `type`, `status`, `created_at`, `updated_at`
 
-**Use GitHub Codespaces**
+### `bookings` Table
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Stores all guest booking information.
 
-## What technologies are used for this project?
+- `id`, `room_id`, `guest_name`, `guest_email`, `phone`, `check_in`, `check_out`, `adult`, `total_price`, `status`, `special_request`, `address`, `gov_id_number`, `booking_source`
 
-This project is built with:
+## 📌 Notes
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Only admins can access the backend/admin portal.
+- Public users can view room types, but not individual room availability.
+- Project is production-ready and actively used by the hotel staff.
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/03855b86-f4b0-4986-836b-d40691054b28) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+🧑‍💻 Built with ❤️ using ReactJS + Supabase
