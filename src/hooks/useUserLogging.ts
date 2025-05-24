@@ -1,5 +1,4 @@
-
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLocation } from "react-router-dom";
 
@@ -17,6 +16,7 @@ interface UserLogData {
 
 export const useUserLogging = () => {
   const location = useLocation();
+  const loggedRef = useRef(false);
 
   const getDeviceInfo = () => {
     const userAgent = navigator.userAgent;
@@ -49,6 +49,9 @@ export const useUserLogging = () => {
   };
 
   const logUserVisit = async () => {
+    if (loggedRef.current) return;
+    loggedRef.current = true;
+
     try {
       const { deviceType, browser, os, userAgent } = getDeviceInfo();
       
@@ -61,7 +64,6 @@ export const useUserLogging = () => {
         referrer: document.referrer || null,
       };
 
-      // Try to get IP and location info from a free service
       try {
         const response = await fetch('https://ipapi.co/json/');
         if (response.ok) {
@@ -87,6 +89,7 @@ export const useUserLogging = () => {
   };
 
   useEffect(() => {
+    loggedRef.current = false;
     logUserVisit();
   }, [location.pathname]);
 
