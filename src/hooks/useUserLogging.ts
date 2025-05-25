@@ -67,7 +67,7 @@ export const useUserLogging = () => {
         path: location.pathname,
         referrer: document.referrer || null,
       };
-
+      if (!window.location.href.includes("vedicalaknanda.netlify.app")) return;
       try {
         const response = await fetch("https://ipapi.co/json/");
         if (response.ok) {
