@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import Slideshow from "../components/Slideshow";
 import ContentSection from "../components/ContentSection";
 import Footer from "../components/Footer";
+import Reviews from "../components/Reviews";
 import { Link } from "react-router-dom";
 
 const Index = () => {
@@ -15,7 +16,7 @@ const Index = () => {
         id="welcome"
         title="Welcome to Hotel Vedic Alaknanda"
         subtitle="A sanctuary of luxury and comfort away from the city's hustle and bustle."
-        className="bg-white"
+        className="bg-gray-50"
       >
         <div className="max-w-4xl mx-auto text-center">
           <p className="mb-8 text-gray-600">
@@ -58,6 +59,8 @@ const Index = () => {
           </div>
         </div>
       </ContentSection>
+
+      <Reviews />
 
       {/* More content sections can be added here in the future */}
 

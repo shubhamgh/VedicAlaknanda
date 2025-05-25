@@ -1,4 +1,3 @@
-
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import {
@@ -18,28 +17,29 @@ const roomTypes = [
     capacity: 2,
     price: 5000,
     amenities: ["Wi-Fi", "AC", "Smart TV", "Private Balcony"],
-    image: "" // Will be filled manually
+    image: "", // Will be filled manually
   },
   {
     id: 2,
-    type: "Standard Family Room", 
+    type: "Standard Family Room",
     count: 12,
     description: "Spacious deluxe room for the family",
     capacity: 3,
     price: 5000,
     amenities: ["Wi-Fi", "Smart TV"],
-    image: "" // Will be filled manually
+    image: "", // Will be filled manually
   },
   {
     id: 3,
     type: "Family Room with Terrace",
     count: 3,
-    description: "Luxury and spacious room with direct access to terrace a splendid views",
+    description:
+      "Luxury and spacious room with direct access to terrace a splendid views",
     capacity: 3,
     price: 6000,
     amenities: ["Wi-Fi", "AC", "Smart TV", "Terrace"],
-    image: "" // Will be filled manually
-  }
+    image: "", // Will be filled manually
+  },
 ];
 
 export default function Rooms() {
@@ -60,9 +60,6 @@ export default function Rooms() {
                   <p>{room.description}</p>
                   <p className="font-semibold">
                     Capacity: {room.capacity} guests
-                  </p>
-                  <p className="font-semibold">
-                    Price: ₹{room.price} per night
                   </p>
                   {room.amenities && room.amenities.length > 0 && (
                     <div>

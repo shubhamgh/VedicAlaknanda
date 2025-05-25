@@ -7,13 +7,18 @@ interface SlideProps {
   subheading: string;
 }
 
-import hotelImage from "../assets/hotel.jpg";
-import diningImage from "../assets/dining.jpg";
-import viewImage from "../assets/view.jpg";
-import roomImage from "../assets/room.jpg";
+import hotelImage from "../assets/hotel.webp";
+import diningImage from "../assets/dining.webp";
+import viewImage from "../assets/view.webp";
+import roomImage from "../assets/room.webp";
 import { Link } from "react-router-dom";
 
 const slides: SlideProps[] = [
+  {
+    imageUrl: viewImage,
+    heading: "Breathtaking Views",
+    subheading: "Wake up to stunning panoramic scenery that inspires your day",
+  },
   {
     imageUrl: hotelImage,
     heading: "Experience Luxury",
@@ -25,11 +30,6 @@ const slides: SlideProps[] = [
     heading: "Exquisite Dining",
     subheading:
       "Savor culinary masterpieces in our hygenic and inviting restaurants",
-  },
-  {
-    imageUrl: viewImage,
-    heading: "Breathtaking Views",
-    subheading: "Wake up to stunning panoramic scenery that inspires your day",
   },
   {
     imageUrl: roomImage,
