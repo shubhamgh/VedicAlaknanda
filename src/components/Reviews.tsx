@@ -68,10 +68,10 @@ const Reviews = () => {
 
   const getInitials = (name: string) => {
     return name
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase())
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase())
       .slice(0, 2)
-      .join('');
+      .join("");
   };
 
   const getAvatarBackgroundColor = (gender: string | null) => {
@@ -129,27 +129,50 @@ const Reviews = () => {
         </h2>
         <div className="max-w-4xl mx-auto">
           <div className="relative overflow-hidden">
-            <div 
+            <div
               className="flex transition-transform duration-500 ease-in-out"
               style={{ transform: `translateX(-${currentReview * 100}%)` }}
             >
               {reviews.map((review, index) => (
-                <div
-                  key={review.id}
-                  className="w-full flex-shrink-0 px-2"
-                >
+                <div key={review.id} className="w-full flex-shrink-0 px-2">
                   <Card className="border-none shadow-lg">
                     <CardContent className="p-8">
                       <div className="flex flex-col items-center text-center">
-                        <div className={`w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(review.gender)}`}>
-                          {getInitials(review.name)}
-                        </div>
+                        {review.image ? (
+                          <img
+                            src={review.image}
+                            alt={review.name}
+                            className="w-20 h-20 rounded-full mb-4 object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = "none";
+                              const parent = target.parentElement;
+                              if (parent) {
+                                const initialsDiv =
+                                  document.createElement("div");
+                                initialsDiv.className = `w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(
+                                  review.gender
+                                )}`;
+                                initialsDiv.textContent = getInitials(
+                                  review.name
+                                );
+                                parent.insertBefore(initialsDiv, target);
+                              }
+                            }}
+                          />
+                        ) : (
+                          <div
+                            className={`w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(
+                              review.gender
+                            )}`}
+                          >
+                            {getInitials(review.name)}
+                          </div>
+                        )}
                         <div className="flex mb-4">
                           {renderStars(review.rating)}
                         </div>
-                        <p className="text-lg italic mb-4">
-                          "{review.review}"
-                        </p>
+                        <p className="text-lg italic mb-4">"{review.review}"</p>
                         <p className="font-semibold text-gray-800 mb-2">
                           {review.name}
                         </p>
