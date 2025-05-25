@@ -33,7 +33,6 @@ const Reviews = () => {
           return;
         }
 
-        console.log("Reviews fetched:", data);
         setReviews(data || []);
       } catch (error) {
         console.error("Error:", error);
