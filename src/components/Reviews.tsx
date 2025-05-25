@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react";
@@ -17,6 +16,7 @@ interface Review {
 const Reviews = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [currentReview, setCurrentReview] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   // Fetch reviews from database
   useEffect(() => {
@@ -37,6 +37,8 @@ const Reviews = () => {
         setReviews(data || []);
       } catch (error) {
         console.error("Error:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -82,6 +84,28 @@ const Reviews = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">
+            What Our Guests Say
+          </h2>
+          <div className="flex justify-center items-center">
+            <div className="relative w-24 h-24">
+              {/* Loading animation */}
+              <div className="absolute inset-0 border-4 border-hotel-gold rounded-full animate-[spin_2s_linear_infinite]">
+                <div className="absolute top-1/2 left-1/2 w-3 h-3 -translate-x-1/2 -translate-y-1/2 bg-hotel-gold rounded-full"></div>
+              </div>
+              <div className="absolute inset-2 border-4 border-hotel-gold rounded-full animate-[spin_3s_linear_infinite]"></div>
+              <div className="absolute inset-4 border-4 border-hotel-gold rounded-full animate-[spin_4s_linear_infinite]"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   if (reviews.length === 0) {
     return (
       <section className="py-16 bg-gray-50">
@@ -89,8 +113,8 @@ const Reviews = () => {
           <h2 className="text-3xl font-bold text-center mb-12">
             What Our Guests Say
           </h2>
-          <div className="text-center">
-            <p className="text-gray-600">Loading reviews...</p>
+          <div className="text-center text-gray-600">
+            <p>No reviews available yet.</p>
           </div>
         </div>
       </section>
