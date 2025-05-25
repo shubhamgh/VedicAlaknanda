@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react";
@@ -21,6 +22,7 @@ const Reviews = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
+        console.log("Fetching reviews from Supabase...");
         const { data, error } = await supabase
           .from("reviews")
           .select("*")
@@ -31,6 +33,7 @@ const Reviews = () => {
           return;
         }
 
+        console.log("Reviews fetched:", data);
         setReviews(data || []);
       } catch (error) {
         console.error("Error:", error);
@@ -80,7 +83,18 @@ const Reviews = () => {
   };
 
   if (reviews.length === 0) {
-    return null;
+    return (
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">
+            What Our Guests Say
+          </h2>
+          <div className="text-center">
+            <p className="text-gray-600">Loading reviews...</p>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -98,9 +112,9 @@ const Reviews = () => {
               {reviews.map((review, index) => (
                 <div
                   key={review.id}
-                  className="w-full flex-shrink-0"
+                  className="w-full flex-shrink-0 px-2"
                 >
-                  <Card className="border-none shadow-lg mx-2">
+                  <Card className="border-none shadow-lg">
                     <CardContent className="p-8">
                       <div className="flex flex-col items-center text-center">
                         <div className={`w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(review.gender)}`}>
