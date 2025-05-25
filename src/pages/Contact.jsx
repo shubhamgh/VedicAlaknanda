@@ -13,30 +13,30 @@ const Contact = () => {
     name: "",
     email: "",
     subject: "",
-    message: ""
+    message: "",
   });
-  
+
   const { submitContactForm, isSubmitting } = useContact();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const success = await submitContactForm(formData);
-    
+
     if (success) {
       setFormData({
         name: "",
         email: "",
         subject: "",
-        message: ""
+        message: "",
       });
     }
   };
@@ -106,22 +106,12 @@ const Contact = () => {
                       <p className="text-gray-600 mt-1">
                         Reception: 24/7
                         <br />
-                        Check-in: 11:00 PM
+                        Check-in: 24/7
                         <br />
                         Check-out: 10:00 AM
                       </p>
                     </div>
                   </div>
-                </div>
-
-                <div className="mt-8">
-                  <h3 className="font-medium mb-2">Getting Here</h3>
-                  <p className="text-gray-600">
-                    We are located on the banks of the serene Alaknanda River,
-                    just 4 km from Rudraprayag. The nearest major airport is
-                    Jolly Grant Airport in Dehradun (143 km). We can arrange
-                    transportation from any mojor city upon request.
-                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -143,13 +133,13 @@ const Contact = () => {
                     >
                       Your Name
                     </label>
-                    <Input 
-                      id="name" 
+                    <Input
+                      id="name"
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      placeholder="Enter your name" 
-                      required 
+                      placeholder="Enter your name"
+                      required
                     />
                   </div>
 
@@ -178,13 +168,13 @@ const Contact = () => {
                     >
                       Subject
                     </label>
-                    <Input 
-                      id="subject" 
+                    <Input
+                      id="subject"
                       name="subject"
                       value={formData.subject}
                       onChange={handleInputChange}
-                      placeholder="Enter subject" 
-                      required 
+                      placeholder="Enter subject"
+                      required
                     />
                   </div>
 
@@ -206,9 +196,9 @@ const Contact = () => {
                     />
                   </div>
 
-                  <Button 
-                    type="submit" 
-                    className="w-full" 
+                  <Button
+                    type="submit"
+                    className="w-full"
                     size="lg"
                     disabled={isSubmitting}
                   >
@@ -221,12 +211,86 @@ const Contact = () => {
           </div>
         </div>
 
-        {/* Map */}
-        <div className="mt-12">
+        {/* Map + Getting Here Section */}
+        <div className="mt-12 grid md:grid-cols-2 gap-8">
+          {/* Getting Here */}
           <Card className="shadow-md">
-            <CardContent className="pt-6">
-              <h2 className="text-2xl font-semibold mb-4">Our Location</h2>
-              <div className="aspect-video bg-gray-200 rounded-md flex items-center justify-center">
+            <CardContent className="pt-6 space-y-4">
+              <h2 className="text-2xl font-semibold mb-4">🗺️ How to Reach</h2>
+              <p>
+                Hotel Vedic Alaknanda is nestled on the scenic Badrinath Highway
+                in Narkota, just 4 km before Rudraprayag when coming from
+                Rishikesh/Dehradun. Located right by the Alaknanda River and
+                surrounded by lush Himalayan valleys, our hotel is a peaceful
+                stopover for pilgrims and travelers headed to Sri Kedarnath and
+                Sri Badrinath Dham.
+              </p>
+              <p className="font-medium text-gray-800">
+                📍 Ideal for guests looking to stay close to nature while on the
+                Char Dham Yatra route.
+              </p>
+
+              <div>
+                <h3 className="font-semibold text-gray-900">
+                  🚗 Getting There
+                </h3>
+                <p className="text-gray-700">
+                  Rudraprayag is a key junction town that separates the roadways
+                  leading to Kedarnath and Badrinath. The sacred confluence of
+                  the Alaknanda and Mandakini rivers lies just a few kilometers
+                  from our hotel.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-gray-900">✈️ By Air:</h3>
+                <p className="text-gray-700">
+                  <strong>Nearest Airport:</strong> Jolly Grant Airport,
+                  Dehradun – approx. 140 km
+                  <br />
+                  Regular flights operate from Delhi, Mumbai, Bengaluru,
+                  Lucknow, and other cities via IndiGo, Air India, SpiceJet, and
+                  more.
+                  <br />
+                  Taxis and buses are readily available from the airport to
+                  Rishikesh, Devprayag, Srinagar, and Rudraprayag.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-gray-900">🚉 By Train:</h3>
+                <p className="text-gray-700">
+                  <strong>Nearest Railway Station:</strong> Rishikesh – approx.
+                  130 km
+                  <br />
+                  Rishikesh is well-connected to Haridwar, Delhi, and other
+                  major stations.
+                  <br />
+                  From Rishikesh, you can hire a taxi or take a bus to
+                  Rudraprayag/Narkota.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-gray-900">🚌 By Road:</h3>
+                <p className="text-gray-700">
+                  Excellent road connectivity from Delhi (370 km) via
+                  Meerut–Haridwar–Rishikesh–Devprayag–Srinagar.
+                  <br />
+                  Buses to Rudraprayag are available from ISBT Kashmiri Gate,
+                  Delhi, and other Uttarakhand cities.
+                  <br />
+                  Taxis and shared vehicles are available from Rishikesh,
+                  Haridwar, Dehradun, Srinagar, and beyond.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Map */}
+          <Card className="shadow-md">
+            <CardContent className="pt-6 h-full">
+              <div className="aspect-video bg-gray-200 rounded-md flex items-center justify-center h-full">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1702.7380136428335!2d78.93092549077694!3d30.257979148865914!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3909b7ef1c0aa69f%3A0x94b35599cfe216b2!2sVedic%20Alaknanda%20Seva%20Sadan!5e0!3m2!1sen!2sin!4v1747835192254!5m2!1sen!2sin"
                   width="100%"
