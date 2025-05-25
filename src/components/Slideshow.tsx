@@ -41,9 +41,9 @@ const slides: SlideProps[] = [
 const Slideshow: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
-  const slideRefs = useRef<(HTMLImageElement | null)[]>([]);
 
   // Preload images
   useEffect(() => {
@@ -51,11 +51,7 @@ const Slideshow: React.FC = () => {
       const img = new Image();
       img.src = slide.imageUrl;
       img.onload = () => {
-        if (slideRefs.current[index]) {
-          slideRefs.current[
-            index
-          ]!.style.backgroundImage = `url(${slide.imageUrl})`;
-        }
+        setLoadedImages((prev) => new Set([...prev, index]));
       };
     });
   }, []);
@@ -132,7 +128,6 @@ const Slideshow: React.FC = () => {
         return (
           <div
             key={index}
-            ref={(el) => (slideRefs.current[index] = el as HTMLImageElement)}
             className={cn(
               "absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-500",
               index === currentSlide
@@ -140,9 +135,13 @@ const Slideshow: React.FC = () => {
                 : index === (currentSlide - 1 + slides.length) % slides.length
                 ? "-translate-x-full"
                 : "translate-x-full",
-              isTransitioning ? "transition-transform" : ""
+              isTransitioning ? "transition-transform" : "",
+              !loadedImages.has(index) && "opacity-0"
             )}
-            style={{ willChange: "transform" }}
+            style={{
+              willChange: "transform",
+              backgroundImage: `url(${slide.imageUrl})`,
+            }}
           />
         );
       })}
@@ -162,10 +161,11 @@ const Slideshow: React.FC = () => {
         <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8">
           {slides[currentSlide].subheading}
         </p>
-        <Link to="/book-now">
-          <a className="bg-hotel-gold hover:bg-opacity-90 text-white py-3 px-8 text-base uppercase tracking-wider font-medium transition-all">
-            Book Your Stay
-          </a>
+        <Link
+          to="/book-now"
+          className="bg-hotel-gold hover:bg-opacity-90 text-white py-3 px-8 text-base uppercase tracking-wider font-medium transition-all"
+        >
+          Book Your Stay
         </Link>
       </div>
 
