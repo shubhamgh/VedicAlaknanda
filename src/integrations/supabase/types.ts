@@ -149,39 +149,57 @@ export type Database = {
         }
         Relationships: []
       }
+      reviews: {
+        Row: {
+          entered_on: string
+          gender: string | null
+          id: string
+          image: string | null
+          name: string
+          rating: number
+          review: string
+        }
+        Insert: {
+          entered_on?: string
+          gender?: string | null
+          id?: string
+          image?: string | null
+          name: string
+          rating: number
+          review: string
+        }
+        Update: {
+          entered_on?: string
+          gender?: string | null
+          id?: string
+          image?: string | null
+          name?: string
+          rating?: number
+          review?: string
+        }
+        Relationships: []
+      }
       rooms: {
         Row: {
-          amenities: string[] | null
-          capacity: number
           created_at: string | null
-          description: string | null
           id: string
           number: string
-          price_per_night: number
           status: string
           type: string
           updated_at: string | null
         }
         Insert: {
-          amenities?: string[] | null
-          capacity: number
           created_at?: string | null
-          description?: string | null
           id?: string
           number: string
-          price_per_night: number
           status?: string
           type: string
           updated_at?: string | null
         }
         Update: {
-          amenities?: string[] | null
-          capacity?: number
           created_at?: string | null
-          description?: string | null
           id?: string
           number?: string
-          price_per_night?: number
           status?: string
           type?: string
           updated_at?: string | null

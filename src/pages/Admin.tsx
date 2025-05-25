@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -7,6 +8,7 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import BookingCalendar from "@/components/admin/BookingCalendar";
 import BookingsList from "@/components/admin/BookingsList";
 import AdminBookingModal from "@/components/admin/AdminBookingModal";
+import ReviewsManagement from "@/components/admin/ReviewsManagement";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
@@ -197,9 +199,9 @@ const Admin = () => {
     }
   }, [selectedRoomType, bookings, roomInventory]);
 
-  // Transform roomInventory to Room type for BookingsList
+  // Transform roomInventory to Room type for BookingsList - FIXED TYPE ERROR
   const transformedRooms = useMemo(() => {
-    return roomInventory.map((room) => ({
+    return roomInventory.map((room): Room => ({
       id: room.id,
       room_number: room.number,
       room_type: room.type,
@@ -326,6 +328,9 @@ const Admin = () => {
             <TabsTrigger value="inventory" className="whitespace-nowrap">
               Room Inventory
             </TabsTrigger>
+            <TabsTrigger value="reviews" className="whitespace-nowrap">
+              Reviews
+            </TabsTrigger>
             <TabsTrigger value="messages" className="whitespace-nowrap">
               Messages
             </TabsTrigger>
@@ -407,6 +412,10 @@ const Admin = () => {
                 </Card>
               ))}
             </div>
+          </TabsContent>
+
+          <TabsContent value="reviews">
+            <ReviewsManagement />
           </TabsContent>
 
           <TabsContent value="messages">
