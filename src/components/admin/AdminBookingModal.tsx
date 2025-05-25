@@ -77,7 +77,7 @@ const AdminBookingModal = ({
         <BookingForm
           booking={selectedBooking}
           selectedDates={selectedDates}
-          rooms={transformedRooms}
+          rooms={rooms} // Use original rooms array instead of transformed
           roomTypeAvailability={roomTypeAvailability}
           onSubmit={onSubmit}
           onCancel={onClose}
