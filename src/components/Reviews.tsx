@@ -61,13 +61,21 @@ const Reviews = () => {
     ));
   };
 
-  const getDefaultAvatar = (gender: string | null) => {
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase())
+      .slice(0, 2)
+      .join('');
+  };
+
+  const getAvatarBackgroundColor = (gender: string | null) => {
     if (gender === "female") {
-      return "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150&h=150&fit=crop&crop=face";
+      return "bg-pink-500";
     } else if (gender === "male") {
-      return "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face";
+      return "bg-blue-500";
     } else {
-      return "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face";
+      return "bg-purple-500";
     }
   };
 
@@ -82,42 +90,56 @@ const Reviews = () => {
           What Our Guests Say
         </h2>
         <div className="max-w-4xl mx-auto">
-          <div className="relative h-[400px]">
-            {reviews.map((review, index) => (
-              <div
-                key={review.id}
-                className={`absolute inset-0 transition-all duration-500 transform ${
-                  index === currentReview
-                    ? "opacity-100 translate-x-0"
-                    : "opacity-0 translate-x-full pointer-events-none"
-                }`}
-              >
-                <Card className="border-none shadow-lg h-full">
-                  <CardContent className="p-8 h-full flex flex-col justify-center">
-                    <div className="flex flex-col items-center text-center">
-                      <img
-                        src={review.image || getDefaultAvatar(review.gender)}
-                        alt={review.name}
-                        className="w-20 h-20 rounded-full mb-4 object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = getDefaultAvatar(review.gender);
-                        }}
-                      />
-                      <div className="flex mb-4">
-                        {renderStars(review.rating)}
+          <div className="relative overflow-hidden">
+            <div 
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{ transform: `translateX(-${currentReview * 100}%)` }}
+            >
+              {reviews.map((review, index) => (
+                <div
+                  key={review.id}
+                  className="w-full flex-shrink-0"
+                >
+                  <Card className="border-none shadow-lg mx-2">
+                    <CardContent className="p-8">
+                      <div className="flex flex-col items-center text-center">
+                        {review.image ? (
+                          <img
+                            src={review.image}
+                            alt={review.name}
+                            className="w-20 h-20 rounded-full mb-4 object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const parent = target.parentElement;
+                              if (parent) {
+                                const initialsDiv = document.createElement('div');
+                                initialsDiv.className = `w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(review.gender)}`;
+                                initialsDiv.textContent = getInitials(review.name);
+                                parent.insertBefore(initialsDiv, target);
+                              }
+                            }}
+                          />
+                        ) : (
+                          <div className={`w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(review.gender)}`}>
+                            {getInitials(review.name)}
+                          </div>
+                        )}
+                        <div className="flex mb-4">
+                          {renderStars(review.rating)}
+                        </div>
+                        <p className="text-lg italic mb-4">
+                          "{review.review}"
+                        </p>
+                        <p className="font-semibold text-gray-800">
+                          {review.name}
+                        </p>
                       </div>
-                      <p className="text-lg italic mb-4">
-                        "{review.review}"
-                      </p>
-                      <p className="font-semibold text-gray-800">
-                        {review.name}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            ))}
+                    </CardContent>
+                  </Card>
+                </div>
+              ))}
+            </div>
           </div>
           {reviews.length > 1 && (
             <div className="flex justify-center mt-8 gap-2">
