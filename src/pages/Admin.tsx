@@ -66,8 +66,7 @@ const Admin = () => {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, handleLogout } = useAdminAuth();
   const { bookings, handleDeleteBooking, handleBookingSubmit } = useBookings();
-  const { rooms, roomInventory, roomTypeAvailability, refetchRooms } =
-    useRooms();
+  const { roomInventory, roomTypeAvailability, refetchRooms } = useRooms();
 
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
@@ -198,6 +197,16 @@ const Admin = () => {
     }
   }, [selectedRoomType, bookings, roomInventory]);
 
+  // Transform roomInventory to Room type for BookingsList
+  const transformedRooms = useMemo(() => {
+    return roomInventory.map((room) => ({
+      id: room.id,
+      room_number: room.number,
+      room_type: room.type,
+      price_per_night: room.type === "Family Room with Terrace" ? 6000 : 5000,
+    }));
+  }, [roomInventory]);
+
   const handleSelect = ({ start, end }: { start: Date; end: Date }) => {
     setSelectedDates({ start, end });
     setSelectedBooking(null);
@@ -225,22 +234,39 @@ const Admin = () => {
   };
 
   const exportToCSV = async (type: "messages" | "logs") => {
-    const dateRangeToUse = type === "messages" ? dateRange : logDateRange;
+    const config = {
+      messages: {
+        table: "contact_messages" as const,
+        dateRange: dateRange,
+      },
+      logs: {
+        table: "user_logs" as const,
+        dateRange: logDateRange,
+      },
+    };
+
+    const { table, dateRange: selectedRange } = config[type];
+
     let query = supabase
-      .from(type === "messages" ? "contact_messages" : "user_logs")
+      .from(table)
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (dateRangeToUse.from && dateRangeToUse.to) {
+    if (selectedRange.from && selectedRange.to) {
       query = query
-        .gte("created_at", dateRangeToUse.from.toISOString())
-        .lte("created_at", dateRangeToUse.to.toISOString());
+        .gte("created_at", selectedRange.from.toISOString())
+        .lte("created_at", selectedRange.to.toISOString());
     }
 
     const { data, error } = await query;
 
     if (error) {
       console.error(`Error fetching ${type}:`, error);
+      return;
+    }
+
+    if (!data?.length) {
+      console.error(`No ${type} data found`);
       return;
     }
 
@@ -262,15 +288,13 @@ const Admin = () => {
 
   // Group rooms by type for inventory display
   const roomsByType = useMemo(() => {
-    const grouped = roomInventory.reduce((acc, room) => {
+    return roomInventory.reduce((acc, room) => {
       if (!acc[room.type]) {
         acc[room.type] = [];
       }
       acc[room.type].push(room);
       return acc;
-    }, {} as Record<string, typeof roomInventory>);
-
-    return grouped;
+    }, {} as Record<string, RoomInventory[]>);
   }, [roomInventory]);
 
   if (isLoading) {
@@ -279,6 +303,11 @@ const Admin = () => {
         <div className="text-xl">Loading...</div>
       </div>
     );
+  }
+
+  if (!isAuthenticated) {
+    navigate("/admin/login");
+    return null;
   }
 
   return (
@@ -335,7 +364,7 @@ const Admin = () => {
 
             <BookingsList
               bookings={filteredBookings}
-              rooms={rooms}
+              rooms={transformedRooms}
               onEditBooking={(booking) => {
                 setSelectedBooking(booking);
                 setIsModalOpen(true);
@@ -594,7 +623,7 @@ const Admin = () => {
         onClose={() => setIsModalOpen(false)}
         selectedBooking={selectedBooking}
         selectedDates={selectedDates}
-        rooms={rooms}
+        rooms={roomInventory}
         roomTypeAvailability={roomTypeAvailability}
         onSubmit={handleSubmit}
       />

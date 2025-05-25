@@ -1,7 +1,6 @@
-
-import React from 'react';
-import { format } from 'date-fns';
-import { calculateNights } from '@/utils/validationUtils';
+import React from "react";
+import { format } from "date-fns";
+import { calculateNights } from "@/lib/utils";
 
 interface Room {
   id: string;
@@ -17,39 +16,34 @@ interface BookingSummaryProps {
   rooms: Room[];
 }
 
-const BookingSummary: React.FC<BookingSummaryProps> = ({ 
-  selectedRoomId, 
-  checkInDate, 
+const BookingSummary: React.FC<BookingSummaryProps> = ({
+  selectedRoomId,
+  checkInDate,
   checkOutDate,
-  rooms 
+  rooms,
 }) => {
   if (!selectedRoomId || !checkInDate || !checkOutDate) {
     return null;
   }
-  
+
   const selectedRoom = rooms.find((r) => r.id === selectedRoomId);
   const nights = calculateNights(checkInDate, checkOutDate);
   const totalPrice = selectedRoom ? nights * selectedRoom.price_per_night : 0;
-  
+
   return (
     <div className="p-4 bg-gray-50 rounded-md">
       <h3 className="font-semibold mb-2">Booking Summary</h3>
       <div className="space-y-1 text-sm">
-        <p>
-          Room: {selectedRoom?.room_type || ""}
-        </p>
+        <p>Room: {selectedRoom?.room_type || ""}</p>
         <p>
           Check-in: {checkInDate ? format(checkInDate, "PPP") : "Not selected"}
         </p>
         <p>
-          Check-out: {checkOutDate ? format(checkOutDate, "PPP") : "Not selected"}
+          Check-out:{" "}
+          {checkOutDate ? format(checkOutDate, "PPP") : "Not selected"}
         </p>
-        <p>
-          Total nights: {nights}
-        </p>
-        <p className="font-semibold">
-          Total price: ₹{totalPrice.toFixed(2)}
-        </p>
+        <p>Total nights: {nights}</p>
+        <p className="font-semibold">Total price: ₹{totalPrice.toFixed(2)}</p>
       </div>
     </div>
   );

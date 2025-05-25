@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -9,7 +8,7 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { validateMinLength, validateEmail } from "@/utils/validationUtils";
+import { validateMinLength, validateEmail } from "@/lib/utils";
 
 export interface FormValues {
   guest_name: string;
@@ -27,9 +26,9 @@ const PersonalInfoForm: React.FC = () => {
       <FormField
         control={form.control}
         name="guest_name"
-        rules={{ 
+        rules={{
           required: "Name is required",
-          validate: (value) => validateMinLength(value, 2, "Name") 
+          validate: (value) => validateMinLength(value, 2, "Name"),
         }}
         render={({ field }) => (
           <FormItem>
@@ -45,9 +44,9 @@ const PersonalInfoForm: React.FC = () => {
       <FormField
         control={form.control}
         name="guest_email"
-        rules={{ 
+        rules={{
           required: "Email is required",
-          validate: validateEmail 
+          validate: validateEmail,
         }}
         render={({ field }) => (
           <FormItem>
@@ -63,9 +62,9 @@ const PersonalInfoForm: React.FC = () => {
       <FormField
         control={form.control}
         name="guest_phone"
-        rules={{ 
+        rules={{
           required: "Phone number is required",
-          validate: (value) => validateMinLength(value, 5, "Phone number") 
+          validate: (value) => validateMinLength(value, 5, "Phone number"),
         }}
         render={({ field }) => (
           <FormItem>

@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   Dialog,
@@ -8,18 +7,18 @@ import {
 } from "@/components/ui/dialog";
 import BookingForm from "@/components/BookingForm";
 
-interface Room {
+interface RoomInventory {
   id: string;
-  room_number: string;
-  room_type: string;
-  price_per_night: number;
+  number: string;
+  type: string;
+  status: string;
 }
 
 interface RoomTypeAvailability {
   type: string;
   availableCount: number;
   totalCount: number;
-  availableRooms: any[];
+  availableRooms: RoomInventory[];
 }
 
 interface Booking {
@@ -45,7 +44,7 @@ interface AdminBookingModalProps {
   onClose: () => void;
   selectedBooking: Booking | null;
   selectedDates: { start: Date; end: Date } | null;
-  rooms: Room[];
+  rooms: RoomInventory[];
   roomTypeAvailability: RoomTypeAvailability[];
   onSubmit: (data: any) => void;
 }
@@ -59,6 +58,14 @@ const AdminBookingModal = ({
   roomTypeAvailability,
   onSubmit,
 }: AdminBookingModalProps) => {
+  // Transform rooms to match the expected format for BookingForm
+  const transformedRooms = rooms.map((room) => ({
+    id: room.id,
+    room_number: room.number,
+    room_type: room.type,
+    price_per_night: room.type === "Family Room with Terrace" ? 6000 : 5000,
+  }));
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
@@ -70,7 +77,7 @@ const AdminBookingModal = ({
         <BookingForm
           booking={selectedBooking}
           selectedDates={selectedDates}
-          rooms={rooms}
+          rooms={transformedRooms}
           roomTypeAvailability={roomTypeAvailability}
           onSubmit={onSubmit}
           onCancel={onClose}

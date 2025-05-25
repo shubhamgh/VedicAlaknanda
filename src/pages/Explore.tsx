@@ -1,3 +1,4 @@
+import React, { lazy, Suspense } from "react";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Badrinath from "../assets/badrinath-temple-bnr-removebg-preview.png";
@@ -21,7 +22,7 @@ const localAttractions = [
   {
     name: "Koteshwar Mahadev Temple",
     description:
-      "Located in a cave by the Alaknanda River, this temple dedicated to Lord Shiva is believed to be where he meditated before going to Kedarnath. It’s a serene and spiritually rich destination.",
+      "Located in a cave by the Alaknanda River, this temple dedicated to Lord Shiva is believed to be where he meditated before going to Kedarnath. It's a serene and spiritually rich destination.",
     image: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Koteshwar1.jpg",
     distance: "11 km",
   },
@@ -51,7 +52,7 @@ const localAttractions = [
   {
     name: "Deoria Tal",
     description:
-      "A serene, high-altitude lake known for its mirror-like reflections of the Chaukhamba peaks. Popular for trekking, camping, and photography, it’s a peaceful escape into nature.",
+      "A serene, high-altitude lake known for its mirror-like reflections of the Chaukhamba peaks. Popular for trekking, camping, and photography, it's a peaceful escape into nature.",
     image: "https://t.eucdn.in/tourism/lg/deoriyatal-1155775.webp",
     distance: "49 km",
   },
@@ -124,6 +125,65 @@ const localAttractions = [
     distance: "110 km (starting point: Lohajung)",
   },
 ];
+
+const ImageWithFallback = ({
+  src,
+  alt,
+  className,
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+}) => {
+  const [error, setError] = React.useState(false);
+
+  if (!src || error) {
+    return (
+      <div
+        className={`${className} bg-gray-200 flex items-center justify-center`}
+      >
+        <span className="text-gray-400">No image available</span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      loading="lazy"
+      onError={() => setError(true)}
+    />
+  );
+};
+
+const AttractionCard = React.memo(
+  ({ attraction }: { attraction: (typeof localAttractions)[0] }) => (
+    <div className="bg-white shadow-md p-4 rounded-xl flex flex-col md:flex-row gap-4">
+      <div className="flex-1">
+        <h3 className="text-xl font-semibold">{attraction.name}</h3>
+        <p className="text-gray-600 mt-2">{attraction.description}</p>
+        <p className="mt-2 text-sm text-gray-700">
+          <strong>Distance:</strong> {attraction.distance}
+        </p>
+      </div>
+
+      {attraction.image && (
+        <div className="md:w-64 w-full">
+          <ImageWithFallback
+            src={attraction.image}
+            alt={attraction.name}
+            className="w-full h-48 object-cover rounded-lg"
+          />
+        </div>
+      )}
+    </div>
+  )
+);
+
+AttractionCard.displayName = "AttractionCard";
+
 const Explore = () => {
   return (
     <div className="min-h-screen bg-white">
@@ -142,28 +202,7 @@ const Explore = () => {
 
           <div className="flex flex-col gap-6">
             {localAttractions.map((attraction, index) => (
-              <div
-                key={index}
-                className="bg-white shadow-md p-4 rounded-xl flex flex-col md:flex-row gap-4"
-              >
-                <div className="flex-1">
-                  <h3 className="text-xl font-semibold">{attraction.name}</h3>
-                  <p className="text-gray-600 mt-2">{attraction.description}</p>
-                  <p className="mt-2 text-sm text-gray-700">
-                    <strong>Distance:</strong> {attraction.distance}
-                  </p>
-                </div>
-
-                {attraction.image?.length > 0 && (
-                  <div className="md:w-64 w-full">
-                    <img
-                      src={attraction.image}
-                      alt={attraction.name}
-                      className="w-full h-48 object-cover rounded-lg"
-                    />
-                  </div>
-                )}
-              </div>
+              <AttractionCard key={index} attraction={attraction} />
             ))}
           </div>
         </section>
@@ -172,4 +211,5 @@ const Explore = () => {
     </div>
   );
 };
+
 export default Explore;

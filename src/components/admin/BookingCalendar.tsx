@@ -1,9 +1,16 @@
-
 import React, { useMemo } from "react";
 import { Calendar, dateFnsLocalizer, Views } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay, addDays } from "date-fns";
 import { enUS } from "date-fns/locale/en-US";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const localizer = dateFnsLocalizer({
   format,
@@ -15,13 +22,6 @@ const localizer = dateFnsLocalizer({
   },
 });
 
-interface Room {
-  id: string;
-  room_number: string;
-  room_type: string;
-  price_per_night: number;
-}
-
 interface CalendarEvent {
   id: string;
   title: string;
@@ -31,9 +31,16 @@ interface CalendarEvent {
   roomType: string;
 }
 
+interface RoomInventory {
+  id: string;
+  number: string;
+  type: string;
+  status: string;
+}
+
 interface BookingCalendarProps {
   events: CalendarEvent[];
-  rooms: Room[];
+  rooms: RoomInventory[];
   onSelectSlot: (slotInfo: { start: Date; end: Date }) => void;
   onSelectEvent: (event: CalendarEvent) => void;
   onSelectRoomType?: (roomType: string) => void;
@@ -49,37 +56,37 @@ const BookingCalendar = ({
   // Group events by room type
   const eventsByRoomType = useMemo(() => {
     // Adjust end dates to be one day before the check-out date for visualization
-    return events.map(event => ({
+    return events.map((event) => ({
       ...event,
       end: addDays(new Date(event.end), -1), // End date is now check-out day - 1
     }));
   }, [events]);
-  
+
   // Create color mapping for room types
   const roomTypeColors = useMemo(() => {
-    const uniqueRoomTypes = [...new Set(rooms.map(room => room.room_type))];
+    const uniqueRoomTypes = [...new Set(rooms.map((room) => room.type))];
     const colors = ["#3182CE", "#E53E3E", "#38A169", "#D69E2E", "#805AD5"];
-    
+
     return uniqueRoomTypes.reduce((acc, type, index) => {
       acc[type] = colors[index % colors.length];
       return acc;
     }, {} as Record<string, string>);
   }, [rooms]);
-  
+
   // Custom event component to show room type colors
   const EventComponent = ({ event }: { event: CalendarEvent }) => {
-    const backgroundColor = roomTypeColors[event.roomType] || '#3182CE';
-    
+    const backgroundColor = roomTypeColors[event.roomType] || "#3182CE";
+
     return (
-      <div 
-        style={{ 
-          backgroundColor, 
-          color: 'white',
-          borderRadius: '4px',
-          padding: '2px 4px',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap'
+      <div
+        style={{
+          backgroundColor,
+          color: "white",
+          borderRadius: "4px",
+          padding: "2px 4px",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
         }}
         title={`${event.title} (${event.roomType})`}
       >
@@ -94,20 +101,20 @@ const BookingCalendar = ({
       <div className="bg-white p-4 rounded-lg shadow">
         <div className="mb-4 flex flex-wrap gap-2">
           {Object.entries(roomTypeColors).map(([roomType, color]) => (
-            <div 
-              key={roomType} 
+            <div
+              key={roomType}
               className="inline-flex items-center cursor-pointer"
               onClick={() => onSelectRoomType && onSelectRoomType(roomType)}
             >
-              <div 
-                className="w-4 h-4 mr-1 rounded-sm" 
-                style={{ backgroundColor: color }} 
+              <div
+                className="w-4 h-4 mr-1 rounded-sm"
+                style={{ backgroundColor: color }}
               />
               <span>{roomType}</span>
             </div>
           ))}
         </div>
-        
+
         <Calendar
           localizer={localizer}
           events={eventsByRoomType}
@@ -118,9 +125,9 @@ const BookingCalendar = ({
           onSelectSlot={onSelectSlot}
           onSelectEvent={onSelectEvent}
           components={{
-            event: EventComponent
+            event: EventComponent,
           }}
-          views={['month', 'week', 'day']}
+          views={["month", "week", "day"]}
         />
       </div>
     </div>

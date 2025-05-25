@@ -30,15 +30,8 @@ interface RoomTypeAvailability {
   availableRooms: RoomInventory[];
 }
 
-interface Room {
-  id: string;
-  room_number: string;
-  room_type: string;
-  price_per_night: number;
-}
-
 interface RoomSelectionFormProps {
-  rooms: Room[];
+  rooms: RoomInventory[];
   roomTypeAvailability: RoomTypeAvailability[];
   onRoomChange: (roomId: string) => void;
   booking?: any;
@@ -95,12 +88,12 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
       const bookingRoom = rooms.find((room) => room.id === booking.room_id);
       if (bookingRoom) {
         form.reset({
-          room_type: bookingRoom.room_type,
+          room_type: bookingRoom.type,
           room_id: booking.room_id,
           num_guests: booking.num_guests,
           status: booking.status || "confirmed",
         });
-        setSelectedRoomType(bookingRoom.room_type);
+        setSelectedRoomType(bookingRoom.type);
       }
     }
   }, [booking, rooms]);

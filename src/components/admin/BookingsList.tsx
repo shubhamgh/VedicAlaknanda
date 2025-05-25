@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,22 +33,31 @@ interface Room {
   price_per_night: number;
 }
 
-interface BookingsListProps {
-  bookings: Booking[];
-  rooms: Room[];
-  onEditBooking: (booking: Booking) => void;
-  onDeleteBooking: (id: string) => void;
+interface RoomInventory {
+  id: string;
+  number: string;
+  type: string;
+  status: string;
 }
 
-const BookingsList = ({
+interface BookingsListProps {
+  bookings: any[];
+  rooms: Room[];
+  onEditBooking: (booking: any) => void;
+  onDeleteBooking: (bookingId: string) => void;
+}
+
+const BookingsList: React.FC<BookingsListProps> = ({
   bookings,
   rooms,
   onEditBooking,
   onDeleteBooking,
-}: BookingsListProps) => {
-  const getRoomTypeById = (roomId: string) => {
+}) => {
+  const getRoomDetails = (roomId: string) => {
     const room = rooms.find((r) => r.id === roomId);
-    return room ? room.room_type : "Unknown room";
+    return room
+      ? `${room.room_type} - Room ${room.room_number}`
+      : "Unknown Room";
   };
 
   return (
@@ -71,7 +79,7 @@ const BookingsList = ({
             {bookings.map((booking) => (
               <TableRow key={booking.id}>
                 <TableCell>{booking.guest_name}</TableCell>
-                <TableCell>{getRoomTypeById(booking.room_id)}</TableCell>
+                <TableCell>{getRoomDetails(booking.room_id)}</TableCell>
                 <TableCell>
                   {new Date(booking.check_in_date).toLocaleDateString()}
                 </TableCell>
