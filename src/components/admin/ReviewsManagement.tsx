@@ -37,6 +37,7 @@ interface Review {
   review: string;
   rating: number;
   gender: string | null;
+  source: string | null;
   entered_on: string;
 }
 
@@ -50,6 +51,7 @@ const ReviewsManagement = () => {
     review: "",
     rating: 5,
     gender: "",
+    source: "",
   });
 
   // Fetch reviews from database
@@ -89,6 +91,7 @@ const ReviewsManagement = () => {
             review: formData.review,
             rating: formData.rating,
             gender: formData.gender || null,
+            source: formData.source || null,
           })
           .eq("id", editingReview.id);
 
@@ -104,6 +107,7 @@ const ReviewsManagement = () => {
           review: formData.review,
           rating: formData.rating,
           gender: formData.gender || null,
+          source: formData.source || null,
         });
 
         if (error) {
@@ -119,6 +123,7 @@ const ReviewsManagement = () => {
         review: "",
         rating: 5,
         gender: "",
+        source: "",
       });
       setEditingReview(null);
       setIsDialogOpen(false);
@@ -135,6 +140,7 @@ const ReviewsManagement = () => {
       review: review.review,
       rating: review.rating,
       gender: review.gender || "",
+      source: review.source || "",
     });
     setEditingReview(review);
     setIsDialogOpen(true);
@@ -268,6 +274,18 @@ const ReviewsManagement = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Source (optional)
+                  </label>
+                  <Input
+                    value={formData.source}
+                    onChange={(e) =>
+                      setFormData({ ...formData, source: e.target.value })
+                    }
+                    placeholder="e.g., Google, Booking.com, TripAdvisor"
+                  />
+                </div>
                 <div className="flex gap-2">
                   <Button type="submit" className="flex-1">
                     {editingReview ? "Update" : "Create"} Review
@@ -284,6 +302,7 @@ const ReviewsManagement = () => {
                         review: "",
                         rating: 5,
                         gender: "",
+                        source: "",
                       });
                     }}
                   >
@@ -302,6 +321,7 @@ const ReviewsManagement = () => {
                 <TableHead>Review</TableHead>
                 <TableHead>Rating</TableHead>
                 <TableHead>Gender</TableHead>
+                <TableHead>Source</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -318,6 +338,9 @@ const ReviewsManagement = () => {
                   </TableCell>
                   <TableCell className="capitalize">
                     {review.gender || "Not specified"}
+                  </TableCell>
+                  <TableCell>
+                    {review.source || "Not specified"}
                   </TableCell>
                   <TableCell>
                     {format(new Date(review.entered_on), "MMM dd, yyyy")}
@@ -344,7 +367,7 @@ const ReviewsManagement = () => {
               ))}
               {reviews.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8">
+                  <TableCell colSpan={7} className="text-center py-8">
                     No reviews found. Add your first review!
                   </TableCell>
                 </TableRow>

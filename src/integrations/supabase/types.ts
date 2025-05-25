@@ -158,6 +158,7 @@ export type Database = {
           name: string
           rating: number
           review: string
+          source: string | null
         }
         Insert: {
           entered_on?: string
@@ -167,6 +168,7 @@ export type Database = {
           name: string
           rating: number
           review: string
+          source?: string | null
         }
         Update: {
           entered_on?: string
@@ -176,6 +178,7 @@ export type Database = {
           name?: string
           rating?: number
           review?: string
+          source?: string | null
         }
         Relationships: []
       }

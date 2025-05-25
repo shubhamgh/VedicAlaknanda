@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react";
@@ -11,6 +10,7 @@ interface Review {
   rating: number;
   image?: string | null;
   gender?: string | null;
+  source?: string | null;
 }
 
 const Reviews = () => {
@@ -103,37 +103,23 @@ const Reviews = () => {
                   <Card className="border-none shadow-lg mx-2">
                     <CardContent className="p-8">
                       <div className="flex flex-col items-center text-center">
-                        {review.image ? (
-                          <img
-                            src={review.image}
-                            alt={review.name}
-                            className="w-20 h-20 rounded-full mb-4 object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = 'none';
-                              const parent = target.parentElement;
-                              if (parent) {
-                                const initialsDiv = document.createElement('div');
-                                initialsDiv.className = `w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(review.gender)}`;
-                                initialsDiv.textContent = getInitials(review.name);
-                                parent.insertBefore(initialsDiv, target);
-                              }
-                            }}
-                          />
-                        ) : (
-                          <div className={`w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(review.gender)}`}>
-                            {getInitials(review.name)}
-                          </div>
-                        )}
+                        <div className={`w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(review.gender)}`}>
+                          {getInitials(review.name)}
+                        </div>
                         <div className="flex mb-4">
                           {renderStars(review.rating)}
                         </div>
                         <p className="text-lg italic mb-4">
                           "{review.review}"
                         </p>
-                        <p className="font-semibold text-gray-800">
+                        <p className="font-semibold text-gray-800 mb-2">
                           {review.name}
                         </p>
+                        {review.source && (
+                          <p className="text-sm text-gray-600">
+                            via {review.source}
+                          </p>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
