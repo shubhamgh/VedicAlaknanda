@@ -44,9 +44,16 @@ const Contact = () => {
   return (
     <main className="min-h-screen">
       <Header />
-      <div className="container mx-auto px-4 bg-gray-50 py-20">
-        <h1 className="text-4xl font-bold text-center mb-8">Contact Us</h1>
+      <section className="relative h-64 bg-gradient-to-r from-hotel-dark to-hotel-gold flex items-center justify-center">
+        <div className="text-center text-white">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">Contact Us</h1>
+          <p className="text-lg md:text-xl">
+            Reach out to us for any inquiries or assistance
+          </p>
+        </div>
+      </section>
 
+      <div className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-2 gap-8">
           {/* Contact Information */}
           <div>
@@ -62,14 +69,14 @@ const Contact = () => {
                       <p className="text-gray-600 mt-1">
                         Hotel Vedic Alaknanda
                         <br />
-                        Narkota, near Rudraprayag
+                        Rudraprayag (Narkota)
                         <br />
                         Uttarakhand, India
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-start">
+                  <a href="tel:+918267020926" className="flex items-start">
                     <Phone className="h-5 w-5 mr-3 text-blue-600 mt-1 flex-shrink-0" />
                     <div>
                       <h3 className="font-medium">Phone</h3>
@@ -82,9 +89,12 @@ const Contact = () => {
                         </a>
                       </p>
                     </div>
-                  </div>
+                  </a>
 
-                  <div className="flex items-start">
+                  <a
+                    href="mailto:vedicalaknanda@gmail.com"
+                    className="flex items-start"
+                  >
                     <Mail className="h-5 w-5 mr-3 text-blue-600 mt-1 flex-shrink-0" />
                     <div>
                       <h3 className="font-medium">Email</h3>
@@ -97,7 +107,7 @@ const Contact = () => {
                         </a>
                       </p>
                     </div>
-                  </div>
+                  </a>
 
                   <div className="flex items-start">
                     <Clock className="h-5 w-5 mr-3 text-blue-600 mt-1 flex-shrink-0" />
