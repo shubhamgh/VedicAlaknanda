@@ -1,7 +1,5 @@
-import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import BookingIcon from "../assets/bookingcom.svg";
 import { Mail, MapPin, Phone, Instagram } from "lucide-react";
 
 const BookNow = () => {
@@ -22,7 +20,7 @@ const BookNow = () => {
       </section>
 
       <main className="container mx-auto px-4 py-20 flex-1">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-8">
           <h2>
             For all your booking needs you can contact us on the following
             places:
