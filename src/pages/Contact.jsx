@@ -300,7 +300,7 @@ const Contact = () => {
           {/* Map */}
           <Card className="shadow-md">
             <CardContent className="pt-6 h-full">
-              <div className="aspect-video bg-gray-200 rounded-md flex items-center justify-center h-full">
+              <div className="aspect-video bg-gray-200 rounded-md flex items-center justify-center h-full w-full">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1702.7380136428335!2d78.93092549077694!3d30.257979148865914!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3909b7ef1c0aa69f%3A0x94b35599cfe216b2!2sVedic%20Alaknanda%20Seva%20Sadan!5e0!3m2!1sen!2sin!4v1747835192254!5m2!1sen!2sin"
                   width="100%"

@@ -127,10 +127,10 @@ const Footer: React.FC = () => {
             <h3 className="text-xl font-bold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               {[
-                "About Us",
                 "Rooms",
                 "Dining",
                 // "Events",
+                "Gallery",
                 "Amenities",
                 "Explore",
                 "Contact",
