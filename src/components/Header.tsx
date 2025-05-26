@@ -53,7 +53,12 @@ const Header: React.FC = () => {
     <header
       className={cn(
         "fixed w-full z-50 transition-all duration-700 ease-in-out",
-        scrolled ? "opaque-header" : "transparent-header"
+
+        scrolled
+          ? "opaque-header"
+          : window.location.pathname === "/"
+          ? "translucent-header"
+          : "transparent-header"
       )}
     >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -129,7 +134,6 @@ const Header: React.FC = () => {
                     className="text-lg font-bold text-gray-600 flex gap-2 items-center border-b border-gray-200 py-2"
                   >
                     {item.icon}
-                    {item.name ? item.name : item.link}
                   </Link>
                 </li>
               ))}

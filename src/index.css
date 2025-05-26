@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -91,19 +90,32 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Playfair Display', serif;
+    font-family: "Playfair Display", serif;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Playfair Display", serif;
   }
-  
-  p, a, button, input, textarea {
-    font-family: 'Montserrat', sans-serif;
+
+  p,
+  a,
+  button,
+  input,
+  textarea {
+    font-family: "Montserrat", sans-serif;
   }
 }
 
 .transparent-header {
+  transition: background-color 0.3s ease;
+}
+
+.translucent-header {
   background-color: rgba(0, 0, 0, 0.3);
   transition: background-color 0.3s ease;
 }

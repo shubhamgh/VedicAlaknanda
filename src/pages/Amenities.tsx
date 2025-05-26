@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -51,40 +50,38 @@ const Amenities = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      
+
       {/* Hero Section */}
       <section className="relative h-64 bg-gradient-to-r from-hotel-dark to-hotel-gold flex items-center justify-center">
         <div className="text-center text-white">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">Hotel Amenities</h1>
-          <p className="text-lg md:text-xl">Modern comforts and convenience for your perfect stay</p>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+            Premium Facilities
+          </h1>
+          <p className="text-lg md:text-xl">
+            Enjoy our comprehensive range of amenities designed for your comfort
+            and convenience
+          </p>
         </div>
       </section>
 
-      <div className="flex-1">
-        <ContentSection
-          id="amenities-content"
-          title="Premium Facilities"
-          subtitle="Enjoy our comprehensive range of amenities designed for your comfort and convenience"
-          className="bg-gray-50"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {amenities.map((amenity, index) => (
-              <Card key={index}>
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center">
-                    {amenity.icon}
-                    <h2 className="text-xl font-semibold mb-2">
-                      {amenity.title}
-                    </h2>
-                    <p className="text-gray-600">{amenity.description}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </ContentSection>
+      <div className="flex-1 p-10 ">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {amenities.map((amenity, index) => (
+            <Card key={index}>
+              <CardContent className="p-6">
+                <div className="flex flex-col items-center text-center">
+                  {amenity.icon}
+                  <h2 className="text-xl font-semibold mb-2">
+                    {amenity.title}
+                  </h2>
+                  <p className="text-gray-600">{amenity.description}</p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
-      
+
       <Footer />
     </div>
   );
