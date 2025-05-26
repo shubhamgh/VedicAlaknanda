@@ -17,6 +17,7 @@ const Contact = lazy(() => import("./pages/Contact"));
 const BookNow = lazy(() => import("./pages/BookNow"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const Gallery = lazy(() => import("./pages/Gallery"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -100,6 +101,7 @@ function App() {
               <Route path="/explore" element={<Explore />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/book-now" element={<BookNow />} />
+              <Route path="/gallery" element={<Gallery />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="*" element={<NotFound />} />
