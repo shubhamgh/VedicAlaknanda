@@ -1,11 +1,17 @@
-
 import React, { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Play } from "lucide-react";
 
 // Import images from slideshow
 import hotelImage from "../assets/hotel.webp";
@@ -54,10 +60,26 @@ const galleryImages: GalleryImage[] = [
 
 const categoryOptions = [
   { value: "all", label: "All Photos", count: galleryImages.length },
-  { value: "hotel", label: "Hotel", count: galleryImages.filter(img => img.category === "hotel").length },
-  { value: "rooms", label: "Rooms", count: galleryImages.filter(img => img.category === "rooms").length },
-  { value: "dining", label: "Dining", count: galleryImages.filter(img => img.category === "dining").length },
-  { value: "views", label: "Views", count: galleryImages.filter(img => img.category === "views").length },
+  {
+    value: "hotel",
+    label: "Hotel",
+    count: galleryImages.filter((img) => img.category === "hotel").length,
+  },
+  {
+    value: "rooms",
+    label: "Rooms",
+    count: galleryImages.filter((img) => img.category === "rooms").length,
+  },
+  {
+    value: "dining",
+    label: "Dining",
+    count: galleryImages.filter((img) => img.category === "dining").length,
+  },
+  {
+    value: "views",
+    label: "Views",
+    count: galleryImages.filter((img) => img.category === "views").length,
+  },
 ];
 
 const Gallery = () => {
@@ -68,7 +90,9 @@ const Gallery = () => {
       ? galleryImages
       : galleryImages.filter((img) => img.category === selectedCategory);
 
-  const selectedOption = categoryOptions.find(option => option.value === selectedCategory);
+  const selectedOption = categoryOptions.find(
+    (option) => option.value === selectedCategory
+  );
 
   return (
     <main className="min-h-screen flex flex-col">
@@ -86,6 +110,26 @@ const Gallery = () => {
         </div>
       </section>
 
+      {/* Video Section */}
+      <section className="py-12 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+              Experience Our Hotel
+            </h2>
+            <div className="relative aspect-video rounded-lg overflow-hidden shadow-xl">
+              <iframe
+                src="https://www.youtube.com/embed/HxqucXjyz0o"
+                title="Hotel Vedic Alaknanda Tour"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="absolute inset-0 w-full h-full"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div className="flex-1 px-4 md:px-6 lg:px-8 py-8 md:py-10 max-w-7xl mx-auto w-full">
         {/* Category Selector */}
         <div className="mb-6 md:mb-8">
@@ -94,7 +138,10 @@ const Gallery = () => {
               Browse by Category
             </h2>
             <div className="w-full sm:w-64">
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <Select
+                value={selectedCategory}
+                onValueChange={setSelectedCategory}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue>
                     <div className="flex items-center gap-2">
@@ -158,7 +205,9 @@ const Gallery = () => {
                       <h3 className="text-xl md:text-2xl font-bold mb-2">
                         {image.title}
                       </h3>
-                      <p className="text-gray-600 text-sm md:text-base">{image.description}</p>
+                      <p className="text-gray-600 text-sm md:text-base">
+                        {image.description}
+                      </p>
                       <Badge variant="outline" className="mt-3 capitalize">
                         {image.category}
                       </Badge>

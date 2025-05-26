@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import BookingIcon from "../assets/bookingcom.svg";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone, Instagram } from "lucide-react";
 
 const BookNow = () => {
   return (
@@ -50,6 +50,17 @@ const BookNow = () => {
                   className="hover:text-hotel-gold transition-colors"
                 >
                   +91 8267 020 926
+                </a>
+              </li>
+              <li className="flex items-center">
+                <Instagram className="mr-3 h-5 w-5 text-hotel-gold" />
+                <a
+                  href="https://www.instagram.com/vedic.alaknanda"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-hotel-gold transition-colors"
+                >
+                  @vedic.alaknanda
                 </a>
               </li>
               <li className="flex items-center">
