@@ -9,6 +9,7 @@ import {
   Telescope,
   HandPlatter,
   Utensils,
+  Calendar,
 } from "lucide-react";
 
 const Header: React.FC = () => {
@@ -28,6 +29,7 @@ const Header: React.FC = () => {
     { icon: <HandPlatter />, link: "Amenities" },
     { icon: <Telescope />, link: "Explore" },
     { icon: <Contact />, link: "Contact" },
+    { icon: <Calendar />, link: "book-now", name: "Book now" },
   ];
 
   useEffect(() => {
@@ -111,7 +113,7 @@ const Header: React.FC = () => {
                     className="text-lg font-bold text-gray-600 flex gap-2 items-center border-b border-gray-200 py-2"
                   >
                     {item.icon}
-                    {item.link}
+                    {item.name ? item.name : item.link}
                   </Link>
                 </li>
               ))}
