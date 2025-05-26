@@ -13,7 +13,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import BookingForm from "@/components/BookingForm";
-import { useMediaQuery } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface RoomInventory {
   id: string;
@@ -66,7 +66,7 @@ const AdminBookingModal = ({
   roomTypeAvailability,
   onSubmit,
 }: AdminBookingModalProps) => {
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useIsMobile();
 
   const content = (
     <BookingForm
