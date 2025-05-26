@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useMemo } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { format } from "date-fns";
@@ -167,8 +168,8 @@ const BookingForm = ({
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-4 md:space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <div className="space-y-4">
             <PersonalInfoForm />
           </div>
@@ -203,11 +204,11 @@ const BookingForm = ({
           />
         )}
 
-        <div className="flex justify-end space-x-2">
-          <Button type="button" variant="outline" onClick={onCancel}>
+        <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2 pt-4">
+          <Button type="button" variant="outline" onClick={onCancel} className="w-full sm:w-auto">
             Cancel
           </Button>
-          <Button type="submit">
+          <Button type="submit" className="w-full sm:w-auto">
             {booking ? "Update Booking" : "Create Booking"}
           </Button>
         </div>

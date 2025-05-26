@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -319,90 +318,92 @@ const Admin = () => {
         onLogout={handleLogout}
       />
 
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <Tabs defaultValue="bookings" className="w-full overflow-x-auto">
-          <TabsList className="mb-4 w-full flex-nowrap">
-            <TabsTrigger value="bookings" className="whitespace-nowrap">
+      <main className="mx-auto max-w-7xl px-2 sm:px-4 py-4 sm:py-6 lg:px-8">
+        <Tabs defaultValue="bookings" className="w-full">
+          <TabsList className="mb-4 w-full grid grid-cols-3 md:grid-cols-6 text-xs sm:text-sm">
+            <TabsTrigger value="bookings" className="px-2 py-1">
               Bookings
             </TabsTrigger>
-            <TabsTrigger value="inventory" className="whitespace-nowrap">
-              Room Inventory
+            <TabsTrigger value="inventory" className="px-2 py-1">
+              Inventory
             </TabsTrigger>
-            <TabsTrigger value="reviews" className="whitespace-nowrap">
+            <TabsTrigger value="reviews" className="px-2 py-1">
               Reviews
             </TabsTrigger>
-            <TabsTrigger value="messages" className="whitespace-nowrap">
+            <TabsTrigger value="messages" className="px-2 py-1">
               Messages
             </TabsTrigger>
-            <TabsTrigger value="newsletter" className="whitespace-nowrap">
+            <TabsTrigger value="newsletter" className="px-2 py-1">
               Newsletter
             </TabsTrigger>
-            <TabsTrigger value="logs" className="whitespace-nowrap">
-              User Logs
+            <TabsTrigger value="logs" className="px-2 py-1">
+              Logs
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="bookings">
-            <BookingCalendar
-              events={events}
-              rooms={roomInventory}
-              onSelectSlot={handleSelect}
-              onSelectEvent={handleEventSelect}
-              onSelectRoomType={handleRoomTypeSelect}
-            />
+            <div className="space-y-4">
+              <BookingCalendar
+                events={events}
+                rooms={roomInventory}
+                onSelectSlot={handleSelect}
+                onSelectEvent={handleEventSelect}
+                onSelectRoomType={handleRoomTypeSelect}
+              />
 
-            <div className="mb-4">
               {selectedRoomType && (
-                <div className="bg-blue-100 p-2 rounded-md inline-flex items-center">
-                  <span>
-                    Filtering by room type: <strong>{selectedRoomType}</strong>
-                  </span>
-                  <button
-                    className="ml-2 text-blue-500 hover:text-blue-700"
-                    onClick={() => setSelectedRoomType(null)}
-                  >
-                    Clear filter
-                  </button>
+                <div className="bg-blue-100 p-3 rounded-md">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <span className="text-sm">
+                      Filtering by: <strong>{selectedRoomType}</strong>
+                    </span>
+                    <button
+                      className="text-blue-500 hover:text-blue-700 text-sm underline"
+                      onClick={() => setSelectedRoomType(null)}
+                    >
+                      Clear filter
+                    </button>
+                  </div>
                 </div>
               )}
-            </div>
 
-            <BookingsList
-              bookings={filteredBookings}
-              rooms={transformedRooms}
-              onEditBooking={(booking) => {
-                setSelectedBooking(booking);
-                setIsModalOpen(true);
-              }}
-              onDeleteBooking={handleDeleteBooking}
-            />
+              <BookingsList
+                bookings={filteredBookings}
+                rooms={transformedRooms}
+                onEditBooking={(booking) => {
+                  setSelectedBooking(booking);
+                  setIsModalOpen(true);
+                }}
+                onDeleteBooking={handleDeleteBooking}
+              />
+            </div>
           </TabsContent>
 
           <TabsContent value="inventory">
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {Object.entries(roomsByType).map(([roomType, roomList]) => (
                 <Card key={roomType}>
                   <CardHeader>
-                    <CardTitle>{roomType}</CardTitle>
+                    <CardTitle className="text-lg sm:text-xl">{roomType}</CardTitle>
                     <CardDescription>
                       {roomList.length} rooms total
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
                       {roomList.map((room) => (
                         <div
                           key={room.id}
-                          className={`p-3 rounded border text-center ${
+                          className={`p-2 sm:p-3 rounded border text-center text-sm ${
                             room.status === "available"
                               ? "bg-green-100 border-green-300"
                               : "bg-red-100 border-red-300"
                           }`}
                         >
-                          <div className="font-semibold">
+                          <div className="font-semibold text-xs sm:text-sm">
                             Room {room.number}
                           </div>
-                          <div className="text-sm capitalize">
+                          <div className="text-xs capitalize">
                             {room.status}
                           </div>
                         </div>
@@ -420,23 +421,23 @@ const Admin = () => {
 
           <TabsContent value="messages">
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Button variant="outline">
+                      <Button variant="outline" className="w-full sm:w-auto text-xs sm:text-sm">
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {dateRange.from ? (
                           dateRange.to ? (
                             <>
-                              {format(dateRange.from, "LLL dd, y")} -{" "}
-                              {format(dateRange.to, "LLL dd, y")}
+                              {format(dateRange.from, "MMM dd")} -{" "}
+                              {format(dateRange.to, "MMM dd")}
                             </>
                           ) : (
-                            format(dateRange.from, "LLL dd, y")
+                            format(dateRange.from, "MMM dd, y")
                           )
                         ) : (
-                          <span>Pick a date range</span>
+                          <span>Pick dates</span>
                         )}
                       </Button>
                     </PopoverTrigger>
@@ -454,45 +455,48 @@ const Admin = () => {
                             range || { from: undefined, to: undefined }
                           )
                         }
-                        numberOfMonths={2}
+                        numberOfMonths={1}
+                        className="pointer-events-auto"
                       />
                     </PopoverContent>
                   </Popover>
-                  <Button onClick={() => exportToCSV("messages")}>
-                    Export to CSV
+                  <Button onClick={() => exportToCSV("messages")} className="w-full sm:w-auto text-xs sm:text-sm">
+                    Export CSV
                   </Button>
                 </div>
               </div>
 
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Subject</TableHead>
-                    <TableHead>Message</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {messages.map((message) => (
-                    <TableRow key={message.id}>
-                      <TableCell>
-                        {format(new Date(message.created_at), "PPp")}
-                      </TableCell>
-                      <TableCell>{message.name}</TableCell>
-                      <TableCell>{message.email}</TableCell>
-                      <TableCell>{message.subject}</TableCell>
-                      <TableCell className="max-w-md truncate">
-                        {message.message}
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-xs sm:text-sm">Date</TableHead>
+                      <TableHead className="text-xs sm:text-sm">Name</TableHead>
+                      <TableHead className="text-xs sm:text-sm hidden sm:table-cell">Email</TableHead>
+                      <TableHead className="text-xs sm:text-sm">Subject</TableHead>
+                      <TableHead className="text-xs sm:text-sm hidden md:table-cell">Message</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {messages.map((message) => (
+                      <TableRow key={message.id}>
+                        <TableCell className="text-xs sm:text-sm">
+                          {format(new Date(message.created_at), "MM/dd")}
+                        </TableCell>
+                        <TableCell className="text-xs sm:text-sm">{message.name}</TableCell>
+                        <TableCell className="text-xs sm:text-sm hidden sm:table-cell">{message.email}</TableCell>
+                        <TableCell className="text-xs sm:text-sm">{message.subject}</TableCell>
+                        <TableCell className="text-xs sm:text-sm hidden md:table-cell max-w-xs truncate">
+                          {message.message}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
 
-              <div className="flex justify-between items-center mt-4">
-                <div>
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4">
+                <div className="text-xs sm:text-sm">
                   Showing {(messagePage - 1) * ITEMS_PER_PAGE + 1} to{" "}
                   {Math.min(messagePage * ITEMS_PER_PAGE, totalMessages)} of{" "}
                   {totalMessages}
@@ -500,6 +504,7 @@ const Admin = () => {
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
+                    size="sm"
                     onClick={() => setMessagePage((p) => Math.max(1, p - 1))}
                     disabled={messagePage === 1}
                   >
@@ -507,6 +512,7 @@ const Admin = () => {
                   </Button>
                   <Button
                     variant="outline"
+                    size="sm"
                     onClick={() => setMessagePage((p) => p + 1)}
                     disabled={messagePage * ITEMS_PER_PAGE >= totalMessages}
                   >
@@ -519,23 +525,23 @@ const Admin = () => {
 
           <TabsContent value="logs">
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Button variant="outline">
+                      <Button variant="outline" className="w-full sm:w-auto text-xs sm:text-sm">
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {logDateRange.from ? (
                           logDateRange.to ? (
                             <>
-                              {format(logDateRange.from, "LLL dd, y")} -{" "}
-                              {format(logDateRange.to, "LLL dd, y")}
+                              {format(logDateRange.from, "MMM dd")} -{" "}
+                              {format(logDateRange.to, "MMM dd")}
                             </>
                           ) : (
-                            format(logDateRange.from, "LLL dd, y")
+                            format(logDateRange.from, "MMM dd, y")
                           )
                         ) : (
-                          <span>Pick a date range</span>
+                          <span>Pick dates</span>
                         )}
                       </Button>
                     </PopoverTrigger>
@@ -553,55 +559,59 @@ const Admin = () => {
                             range || { from: undefined, to: undefined }
                           )
                         }
-                        numberOfMonths={2}
+                        numberOfMonths={1}
+                        className="pointer-events-auto"
                       />
                     </PopoverContent>
                   </Popover>
-                  <Button onClick={() => exportToCSV("logs")}>
-                    Export to CSV
+                  <Button onClick={() => exportToCSV("logs")} className="w-full sm:w-auto text-xs sm:text-sm">
+                    Export CSV
                   </Button>
                 </div>
               </div>
 
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>IP Address</TableHead>
-                    <TableHead>Device</TableHead>
-                    <TableHead>Browser</TableHead>
-                    <TableHead>OS</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Path</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {logs.map((log) => (
-                    <TableRow key={log.id}>
-                      <TableCell>
-                        {format(new Date(log.created_at), "PPp")}
-                      </TableCell>
-                      <TableCell>{log.ip_address}</TableCell>
-                      <TableCell>{log.device_type}</TableCell>
-                      <TableCell>{log.browser}</TableCell>
-                      <TableCell>{log.os}</TableCell>
-                      <TableCell>
-                        {log.city}, {log.country}
-                      </TableCell>
-                      <TableCell>{log.path}</TableCell>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-xs sm:text-sm">Date</TableHead>
+                      <TableHead className="text-xs sm:text-sm hidden sm:table-cell">IP</TableHead>
+                      <TableHead className="text-xs sm:text-sm">Device</TableHead>
+                      <TableHead className="text-xs sm:text-sm hidden md:table-cell">Browser</TableHead>
+                      <TableHead className="text-xs sm:text-sm hidden lg:table-cell">OS</TableHead>
+                      <TableHead className="text-xs sm:text-sm hidden lg:table-cell">Location</TableHead>
+                      <TableHead className="text-xs sm:text-sm">Path</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {logs.map((log) => (
+                      <TableRow key={log.id}>
+                        <TableCell className="text-xs sm:text-sm">
+                          {format(new Date(log.created_at), "MM/dd")}
+                        </TableCell>
+                        <TableCell className="text-xs sm:text-sm hidden sm:table-cell">{log.ip_address}</TableCell>
+                        <TableCell className="text-xs sm:text-sm">{log.device_type}</TableCell>
+                        <TableCell className="text-xs sm:text-sm hidden md:table-cell">{log.browser}</TableCell>
+                        <TableCell className="text-xs sm:text-sm hidden lg:table-cell">{log.os}</TableCell>
+                        <TableCell className="text-xs sm:text-sm hidden lg:table-cell">
+                          {log.city}, {log.country}
+                        </TableCell>
+                        <TableCell className="text-xs sm:text-sm">{log.path}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
 
-              <div className="flex justify-between items-center mt-4">
-                <div>
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4">
+                <div className="text-xs sm:text-sm">
                   Showing {(logPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
                   {Math.min(logPage * ITEMS_PER_PAGE, totalLogs)} of {totalLogs}
                 </div>
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
+                    size="sm"
                     onClick={() => setLogPage((p) => Math.max(1, p - 1))}
                     disabled={logPage === 1}
                   >
@@ -609,6 +619,7 @@ const Admin = () => {
                   </Button>
                   <Button
                     variant="outline"
+                    size="sm"
                     onClick={() => setLogPage((p) => p + 1)}
                     disabled={logPage * ITEMS_PER_PAGE >= totalLogs}
                   >
