@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -9,17 +8,21 @@ const BookNow = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
-      
+
       {/* Hero Section */}
       <section className="relative h-64 bg-gradient-to-r from-hotel-dark to-hotel-gold flex items-center justify-center">
         <div className="text-center text-white">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">Book Your Stay</h1>
-          <p className="text-lg md:text-xl">Reserve your perfect mountain getaway</p>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+            Book Your Stay
+          </h1>
+          <p className="text-lg md:text-xl">
+            Reserve your perfect mountain getaway
+          </p>
         </div>
       </section>
 
       <main className="container mx-auto px-4 py-20 flex-1">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-10">
           <h2>
             For all your booking needs you can contact us on the following
             places:
@@ -66,7 +69,7 @@ const BookNow = () => {
                   className="h-5 w-5 flex"
                 >
                   <p className="text-hotel-gold font-bold mr-3 px-1 h-5 w-5 text-xl flex items-center">
-                    B
+                    B.
                   </p>
                   <span className="hover:text-hotel-gold transition-colors">
                     Booking.com

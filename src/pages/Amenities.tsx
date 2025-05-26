@@ -64,7 +64,7 @@ const Amenities = () => {
         </div>
       </section>
 
-      <div className="flex-1 p-10 ">
+      <div className="flex-1 p-4 ">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {amenities.map((amenity, index) => (
             <Card key={index}>
