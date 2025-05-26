@@ -9,7 +9,10 @@ import {
   Telescope,
   HandPlatter,
   Utensils,
+  Calendar,
+  Camera,
 } from "lucide-react";
+import Logo from "../assets/Logo.webp";
 
 const Header: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -26,6 +29,7 @@ const Header: React.FC = () => {
     { icon: <Bed />, link: "Rooms" },
     { icon: <Utensils />, link: "Dining" },
     { icon: <HandPlatter />, link: "Amenities" },
+    { icon: <Camera />, link: "Gallery" },
     { icon: <Telescope />, link: "Explore" },
     { icon: <Contact />, link: "Contact" },
   ];
@@ -53,9 +57,14 @@ const Header: React.FC = () => {
       )}
     >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold">
+        <Link to="/" className="flex items-center gap-3">
+          <img
+            src={Logo}
+            alt="Hotel Vedic Alaknanda Logo"
+            className="h-10 w-10 object-contain"
+          />
           <span
-            className={`transition-colors duration-700 pr-4 ${
+            className={`transition-colors duration-700 text-xl font-bold ${
               scrolled ? "text-hotel-dark" : "text-white"
             }`}
           >
@@ -103,7 +112,16 @@ const Header: React.FC = () => {
               <X className="h-6 w-6 text-gray-500" />
             </button>
             {/* Sidebar content here */}
-            <ul>
+            <ul className="flex flex-col gap-4 justify-center">
+              <li>
+                <Link
+                  to="/book-now"
+                  className="bg-hotel-gold hover:bg-opacity-90 text-white py-2 text-sm uppercase tracking-wider font-medium transition-all flex gap-2 items-center justify-center rounded-xl mt-8"
+                >
+                  <Calendar />
+                  Book Now
+                </Link>
+              </li>
               {HeaderLinks.map((item) => (
                 <li key={item.link} className="flex items-center space-x-4">
                   <Link
@@ -111,7 +129,7 @@ const Header: React.FC = () => {
                     className="text-lg font-bold text-gray-600 flex gap-2 items-center border-b border-gray-200 py-2"
                   >
                     {item.icon}
-                    {item.link}
+                    {item.name ? item.name : item.link}
                   </Link>
                 </li>
               ))}
