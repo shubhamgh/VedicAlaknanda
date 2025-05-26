@@ -57,41 +57,43 @@ export default function Rooms() {
         </div>
       </section>
 
-      <ContentSection
-        id="rooms-content"
-        title="Accommodation Options"
-        subtitle="Choose from our variety of rooms designed for your comfort"
-        className="bg-gray-50"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {roomTypes.map((room) => (
-            <Card key={room.id}>
-              <CardHeader>
-                <CardTitle>{room.type}</CardTitle>
-                <CardDescription>{room.count} rooms available</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <p>{room.description}</p>
-                  <p className="font-semibold">
-                    Capacity: {room.capacity} guests
-                  </p>
-                  {room.amenities && room.amenities.length > 0 && (
-                    <div>
-                      <p className="font-semibold">Amenities:</p>
-                      <ul className="list-disc list-inside">
-                        {room.amenities.map((amenity, index) => (
-                          <li key={index}>{amenity}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </ContentSection>
+      <div className="flex-1">
+        <ContentSection
+          id="rooms-content"
+          title="Accommodation Options"
+          subtitle="Choose from our variety of rooms designed for your comfort"
+          className="bg-gray-50"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {roomTypes.map((room) => (
+              <Card key={room.id}>
+                <CardHeader>
+                  <CardTitle>{room.type}</CardTitle>
+                  <CardDescription>{room.count} rooms available</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <p>{room.description}</p>
+                    <p className="font-semibold">
+                      Capacity: {room.capacity} guests
+                    </p>
+                    {room.amenities && room.amenities.length > 0 && (
+                      <div>
+                        <p className="font-semibold">Amenities:</p>
+                        <ul className="list-disc list-inside">
+                          {room.amenities.map((amenity, index) => (
+                            <li key={index}>{amenity}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </ContentSection>
+      </div>
       
       <Footer />
     </div>
