@@ -20,8 +20,8 @@ const Dining = () => {
         </div>
       </section>
 
-      <div className="flex-1 p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="flex-1 bg-gray-50 py-16 md:py-20">
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
           <Card>
             <CardContent className="p-6">
               <h2 className="text-2xl font-semibold mb-4">Restaurant</h2>
