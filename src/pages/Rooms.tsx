@@ -1,5 +1,7 @@
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ContentSection from "@/components/ContentSection";
 import {
   Card,
   CardContent,
@@ -46,8 +48,21 @@ export default function Rooms() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-20">
-        <h1 className="text-4xl font-bold text-center mb-8">Our Rooms</h1>
+      
+      {/* Hero Section */}
+      <section className="relative h-64 bg-gradient-to-r from-hotel-dark to-hotel-gold flex items-center justify-center">
+        <div className="text-center text-white">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">Our Rooms</h1>
+          <p className="text-lg md:text-xl">Comfortable accommodations for your perfect stay</p>
+        </div>
+      </section>
+
+      <ContentSection
+        id="rooms-content"
+        title="Accommodation Options"
+        subtitle="Choose from our variety of rooms designed for your comfort"
+        className="bg-gray-50"
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {roomTypes.map((room) => (
             <Card key={room.id}>
@@ -76,7 +91,8 @@ export default function Rooms() {
             </Card>
           ))}
         </div>
-      </main>
+      </ContentSection>
+      
       <Footer />
     </div>
   );

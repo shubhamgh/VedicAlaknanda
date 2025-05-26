@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -13,6 +12,7 @@ import {
   Calendar,
   Camera,
 } from "lucide-react";
+import Logo from "../assets/Logo.webp";
 
 const Header: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -58,9 +58,14 @@ const Header: React.FC = () => {
       )}
     >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold">
+        <Link to="/" className="flex items-center gap-3">
+          <img 
+            src={Logo} 
+            alt="Hotel Vedic Alaknanda Logo" 
+            className="h-10 w-10 object-contain"
+          />
           <span
-            className={`transition-colors duration-700 pr-4 ${
+            className={`transition-colors duration-700 text-xl font-bold ${
               scrolled ? "text-hotel-dark" : "text-white"
             }`}
           >
