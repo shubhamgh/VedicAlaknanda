@@ -101,7 +101,7 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/book-now" element={<BookNow />} />
               <Route path="/admin" element={<Admin />} />
-              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
