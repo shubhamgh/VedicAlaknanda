@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -10,6 +11,7 @@ import {
   HandPlatter,
   Utensils,
   Calendar,
+  Camera,
 } from "lucide-react";
 
 const Header: React.FC = () => {
@@ -27,6 +29,7 @@ const Header: React.FC = () => {
     { icon: <Bed />, link: "Rooms" },
     { icon: <Utensils />, link: "Dining" },
     { icon: <HandPlatter />, link: "Amenities" },
+    { icon: <Camera />, link: "Gallery" },
     { icon: <Telescope />, link: "Explore" },
     { icon: <Contact />, link: "Contact" },
     { icon: <Calendar />, link: "book-now", name: "Book now" },
