@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   Dialog,
@@ -5,7 +6,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import BookingForm from "@/components/BookingForm";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface RoomInventory {
   id: string;
@@ -58,30 +66,45 @@ const AdminBookingModal = ({
   roomTypeAvailability,
   onSubmit,
 }: AdminBookingModalProps) => {
-  // Transform rooms to match the expected format for BookingForm
-  const transformedRooms = rooms.map((room) => ({
-    id: room.id,
-    room_number: room.number,
-    room_type: room.type,
-    price_per_night: room.type === "Family Room with Terrace" ? 6000 : 5000,
-  }));
+  const isMobile = useIsMobile();
+
+  const content = (
+    <BookingForm
+      booking={selectedBooking}
+      selectedDates={selectedDates}
+      rooms={rooms}
+      roomTypeAvailability={roomTypeAvailability}
+      onSubmit={onSubmit}
+      onCancel={onClose}
+    />
+  );
+
+  if (isMobile) {
+    return (
+      <Sheet open={isOpen} onOpenChange={onClose}>
+        <SheetContent side="bottom" className="h-[90vh] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>
+              {selectedBooking ? "Edit Booking" : "New Booking"}
+            </SheetTitle>
+          </SheetHeader>
+          <div className="mt-4">
+            {content}
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {selectedBooking ? "Edit Booking" : "New Booking"}
           </DialogTitle>
         </DialogHeader>
-        <BookingForm
-          booking={selectedBooking}
-          selectedDates={selectedDates}
-          rooms={rooms} // Use original rooms array instead of transformed
-          roomTypeAvailability={roomTypeAvailability}
-          onSubmit={onSubmit}
-          onCancel={onClose}
-        />
+        {content}
       </DialogContent>
     </Dialog>
   );

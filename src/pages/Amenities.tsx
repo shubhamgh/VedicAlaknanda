@@ -1,6 +1,8 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import ContentSection from "@/components/ContentSection";
 import {
   Wifi,
   ArrowUpDown,
@@ -49,24 +51,40 @@ const Amenities = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-20">
-        <h1 className="text-4xl font-bold text-center mb-8">Hotel Amenities</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {amenities.map((amenity, index) => (
-            <Card key={index}>
-              <CardContent className="p-6">
-                <div className="flex flex-col items-center text-center">
-                  {amenity.icon}
-                  <h2 className="text-xl font-semibold mb-2">
-                    {amenity.title}
-                  </h2>
-                  <p className="text-gray-600">{amenity.description}</p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+      
+      {/* Hero Section */}
+      <section className="relative h-64 bg-gradient-to-r from-hotel-dark to-hotel-gold flex items-center justify-center">
+        <div className="text-center text-white">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">Hotel Amenities</h1>
+          <p className="text-lg md:text-xl">Modern comforts and convenience for your perfect stay</p>
         </div>
-      </main>
+      </section>
+
+      <div className="flex-1">
+        <ContentSection
+          id="amenities-content"
+          title="Premium Facilities"
+          subtitle="Enjoy our comprehensive range of amenities designed for your comfort and convenience"
+          className="bg-gray-50"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {amenities.map((amenity, index) => (
+              <Card key={index}>
+                <CardContent className="p-6">
+                  <div className="flex flex-col items-center text-center">
+                    {amenity.icon}
+                    <h2 className="text-xl font-semibold mb-2">
+                      {amenity.title}
+                    </h2>
+                    <p className="text-gray-600">{amenity.description}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </ContentSection>
+      </div>
+      
       <Footer />
     </div>
   );

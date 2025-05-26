@@ -188,18 +188,20 @@ const Explore = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <div className="container mx-auto px-4 py-20">
-        <h1 className="text-4xl font-bold text-center mb-8">
-          Explore Our Area
-        </h1>
 
-        <section className="mt-10">
-          <h2 className="text-3xl font-bold mb-4">Local Attractions</h2>
-          <h3 className="pb-4 text-gray-700">
+      <section className="relative h-64 bg-gradient-to-r from-hotel-dark to-hotel-gold flex items-center justify-center">
+        <div className="text-center text-white">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+            Local Attractions
+          </h1>
+          <p className="text-lg md:text-xl">
             Explore the vibrant local culture, historic sites and temples, and
             natural wonders surrounding our hotel.
-          </h3>
-
+          </p>
+        </div>
+      </section>
+      <div className="container mx-auto px-4 ">
+        <section className="mt-10">
           <div className="flex flex-col gap-6">
             {localAttractions.map((attraction, index) => (
               <AttractionCard key={index} attraction={attraction} />
