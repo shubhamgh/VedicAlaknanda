@@ -12,32 +12,29 @@ import {
 const roomTypes = [
   {
     id: 1,
-    type: "Deluxe Single Room with Balcony",
+    type: "Deluxe Room with Balcony",
+    size: "180 sq.ft",
     count: 15,
     description: "Comfortable rooms with private balcony with valley views",
-    capacity: 2,
-    price: 5000,
     amenities: ["Wi-Fi", "AC", "Smart TV", "Private Balcony"],
     image: "", // Will be filled manually
   },
   {
     id: 2,
     type: "Standard Family Room",
+    size: "205 sq.ft",
     count: 12,
     description: "Spacious deluxe room for the family",
-    capacity: 3,
-    price: 5000,
     amenities: ["Wi-Fi", "Smart TV"],
     image: "", // Will be filled manually
   },
   {
     id: 3,
     type: "Family Room with Terrace",
+    size: "215 sq.ft",
     count: 3,
     description:
       "Luxury and spacious room with direct access to terrace a splendid views",
-    capacity: 3,
-    price: 6000,
     amenities: ["Wi-Fi", "AC", "Smart TV", "Terrace"],
     image: "", // Will be filled manually
   },
@@ -71,9 +68,7 @@ export default function Rooms() {
               <CardContent>
                 <div className="space-y-2">
                   <p>{room.description}</p>
-                  <p className="font-semibold">
-                    Capacity: {room.capacity} guests
-                  </p>
+                  <p className="font-semibold">Room size: {room.size}</p>
                   {room.amenities && room.amenities.length > 0 && (
                     <div>
                       <p className="font-semibold">Amenities:</p>

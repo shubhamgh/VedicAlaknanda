@@ -17,6 +17,10 @@ import hotelImage from "../assets/hotel.webp";
 import diningImage from "../assets/dining.webp";
 import viewImage from "../assets/view.webp";
 import roomImage from "../assets/room.webp";
+import dining2 from "../assets/dining2.webp";
+import customerDining from "../assets/CustomerDining.webp";
+import hotel2 from "../assets/hotel2.webp";
+import reception from "../assets/reception.webp";
 
 interface GalleryImage {
   id: number;
@@ -54,6 +58,34 @@ const galleryImages: GalleryImage[] = [
     title: "Comfortable Rooms",
     description: "Luxurious and comfortable guest accommodations",
     category: "rooms",
+  },
+  {
+    id: 5,
+    src: dining2,
+    title: "Dining Area",
+    description: "Elegant dining space with mountain views",
+    category: "dining",
+  },
+  {
+    id: 6,
+    src: customerDining,
+    title: "Customer Dining",
+    description: "Customer dining experience",
+    category: "dining",
+  },
+  {
+    id: 7,
+    src: hotel2,
+    title: "Hotel Exterior",
+    description: "Beautiful exterior view of Hotel Vedic Alaknanda",
+    category: "hotel",
+  },
+  {
+    id: 8,
+    src: reception,
+    title: "Reception",
+    description: "Reception area of Hotel Vedic Alaknanda",
+    category: "hotel",
   },
 ];
 

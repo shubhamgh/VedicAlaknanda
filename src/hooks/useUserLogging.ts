@@ -67,17 +67,23 @@ export const useUserLogging = () => {
         path: location.pathname,
         referrer: document.referrer || null,
       };
-      if (!window.location.href.includes("vedicalaknanda.netlify.app")) return;
-      try {
-        const response = await fetch("https://ipapi.co/json/");
-        if (response.ok) {
-          const locationData = await response.json();
-          logData.ip_address = locationData.ip;
-          logData.country = locationData.country_name;
-          logData.city = locationData.city;
+      if (
+        window.location.href.includes("vedicalaknanda.com") ||
+        window.location.href.includes("vedicalaknanda.netlify.app")
+      ) {
+        try {
+          const response = await fetch("https://ipapi.co/json/");
+          if (response.ok) {
+            const locationData = await response.json();
+            logData.ip_address = locationData.ip;
+            logData.country = locationData.country_name;
+            logData.city = locationData.city;
+          }
+        } catch (error) {
+          console.log("Could not fetch location data:", error);
         }
-      } catch (error) {
-        console.log("Could not fetch location data:", error);
+      } else {
+        return;
       }
 
       const { error } = await supabase.from("user_logs").insert([logData]);

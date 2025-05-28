@@ -9,6 +9,7 @@ import {
   Car,
   Camera,
   CarTaxiFront,
+  Stethoscope,
 } from "lucide-react";
 
 const Amenities = () => {
@@ -44,6 +45,12 @@ const Amenities = () => {
       description:
         "Get a cab service on demand to all nearby attractions including Shri Badrinath, Kedarnath and Airport.",
       icon: <CarTaxiFront className="h-8 w-8 text-hotel-gold mb-4" />,
+    },
+    {
+      title: "Doctor on Call",
+      description:
+        "For your peace of mind, we offer prompt access to medical assistance with a doctor available on call.",
+      icon: <Stethoscope className="h-8 w-8 text-hotel-gold mb-4" />,
     },
   ];
 

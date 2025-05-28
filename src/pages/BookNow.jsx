@@ -49,6 +49,13 @@ const BookNow = () => {
                 >
                   +91 8267 020 926
                 </a>
+                ,&nbsp;
+                <a
+                  href="tel:+919815812309"
+                  className="hover:text-hotel-gold transition-colors"
+                >
+                  +91 98158 123 09
+                </a>
               </li>
               <li className="flex items-center">
                 <Instagram className="mr-3 h-5 w-5 text-hotel-gold" />
@@ -64,10 +71,10 @@ const BookNow = () => {
               <li className="flex items-center">
                 <Mail className="mr-3 h-5 w-5 text-hotel-gold" />
                 <a
-                  href="mailto:vedicalaknanda@gmail.com"
+                  href="mailto:booking@vedicalaknanda.com"
                   className="hover:text-hotel-gold transition-colors"
                 >
-                  VedicAlaknanda@gmail.com
+                  booking@VedicAlaknanda.com
                 </a>
               </li>
               <li className="flex items-center">

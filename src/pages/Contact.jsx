@@ -80,31 +80,34 @@ const Contact = () => {
                     <Phone className="h-5 w-5 mr-3 text-blue-600 mt-1 flex-shrink-0" />
                     <div>
                       <h3 className="font-medium">Phone</h3>
-                      <p className="text-gray-600 mt-1">
+                      <p className="text-gray-600 mt-1 flex flex-col">
                         <a
                           href="tel:+918267020926"
                           className="hover:text-blue-600 transition-colors"
                         >
                           +91 82670 20926
                         </a>
+                        <a
+                          href="tel:+919815812309"
+                          className="hover:text-blue-600 transition-colors"
+                        >
+                          +91 98158 123 09
+                        </a>
                       </p>
                     </div>
                   </a>
 
                   <a
-                    href="mailto:vedicalaknanda@gmail.com"
+                    href="mailto:contact@vedicalaknanda.com"
                     className="flex items-start"
                   >
                     <Mail className="h-5 w-5 mr-3 text-blue-600 mt-1 flex-shrink-0" />
                     <div>
                       <h3 className="font-medium">Email</h3>
                       <p className="text-gray-600 mt-1">
-                        <a
-                          href="mailto:vedicalaknanda@gmail.com"
-                          className="hover:text-blue-600 transition-colors"
-                        >
-                          VedicalAknanda@gmail.com
-                        </a>
+                        <div className="hover:text-blue-600 transition-colors">
+                          contact@VedicAlaknanda.com
+                        </div>
                       </p>
                     </div>
                   </a>
