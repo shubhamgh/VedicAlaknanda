@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Badrinath from "../assets/badrinath-temple-bnr-removebg-preview.png";
@@ -20,6 +20,30 @@ const localAttractions = [
     distance: "7 km",
   },
   {
+    name: "Kartik Swami Temple",
+    description:
+      "Dedicated to Lord Kartikeya, this hilltop temple is accessible via a scenic trek. It offers breathtaking panoramic views of the Himalayas, making it a favorite among trekkers and pilgrims alike.",
+    image:
+      "https://uttarakhandtourism.gov.in/assets/media/UTDB_media_1736320040Photography-Kartik.jpeg",
+    distance: "40 km",
+  },
+  {
+    name: "Kedarnath",
+    description:
+      "Located at 3,583 meters and accessible via a scenic 16 km trek from Gaurikund, Kedarnath is one of the 12 Jyotirlingas of Lord Shiva. Surrounded by majestic snow-covered peaks, it is a deeply revered spiritual destination.",
+    image:
+      "https://badrinath-kedarnath.gov.in/css_js_2024/img/kedarnath-4k.jpg",
+    distance: "85 km (plus 16 km trek from Gaurikund)",
+  },
+  {
+    name: "Badrinath",
+    description:
+      "One of the most sacred Char Dham pilgrimage sites, Badrinath is dedicated to Lord Vishnu and set amidst the Nar and Narayan mountain ranges. It combines spiritual significance with natural grandeur.",
+    image: Badrinath,
+    distance: "140 km",
+  },
+
+  {
     name: "Koteshwar Mahadev Temple",
     description:
       "Located in a cave by the Alaknanda River, this temple dedicated to Lord Shiva is believed to be where he meditated before going to Kedarnath. It's a serene and spiritually rich destination.",
@@ -40,14 +64,6 @@ const localAttractions = [
       "Named after Sage Agastya, this small town is known for the Agasteshwar Mahadev Temple on the banks of the Mandakini River. It's a cultural and spiritual hub with an annual fair in April.",
     image: "",
     distance: "25 km",
-  },
-  {
-    name: "Kartik Swami Temple",
-    description:
-      "Dedicated to Lord Kartikeya, this hilltop temple is accessible via a scenic trek. It offers breathtaking panoramic views of the Himalayas, making it a favorite among trekkers and pilgrims alike.",
-    image:
-      "https://uttarakhandtourism.gov.in/assets/media/UTDB_media_1736320040Photography-Kartik.jpeg",
-    distance: "40 km",
   },
   {
     name: "Deoria Tal",
@@ -95,26 +111,11 @@ const localAttractions = [
     distance: "80 km",
   },
   {
-    name: "Badrinath",
-    description:
-      "One of the most sacred Char Dham pilgrimage sites, Badrinath is dedicated to Lord Vishnu and set amidst the Nar and Narayan mountain ranges. It combines spiritual significance with natural grandeur.",
-    image: Badrinath,
-    distance: "140 km",
-  },
-  {
-    name: "Kedarnath",
-    description:
-      "Located at 3,583 meters and accessible via a scenic 16 km trek from Gaurikund, Kedarnath is one of the 12 Jyotirlingas of Lord Shiva. Surrounded by majestic snow-covered peaks, it is a deeply revered spiritual destination.",
-    image:
-      "https://badrinath-kedarnath.gov.in/css_js_2024/img/kedarnath-4k.jpg",
-    distance: "85 km (plus 16 km trek from Gaurikund)",
-  },
-  {
     name: "Ali Bedni Bugyal",
     description:
       "These twin alpine meadows are part of one of the most beautiful treks in Uttarakhand. Known for their vast green pastures, wildflowers, and panoramic Himalayan views, they are perfect for trekkers and campers.",
     image: "https://t.eucdn.in/tourism/lg/roopkund-8152361.webp",
-    distance: "100 km (starting point: Lohajung)",
+    distance: "125 km (starting point: Lohajung)",
   },
   {
     name: "Roopkund",
@@ -122,7 +123,38 @@ const localAttractions = [
       "Famous for the mysterious skeletal remains at the lake bed, Roopkund is a high-altitude glacial lake surrounded by mountains and myth. The trek to Roopkund is challenging but immensely rewarding for adventure lovers.",
     image:
       "https://ichef.bbci.co.uk/news/1536/cpsprodpb/DE2D/production/_117077865_atish_waghwase_1.jpg.webp",
-    distance: "110 km (starting point: Lohajung)",
+    distance: "130 km (starting point: Lohajung)",
+  },
+  {
+    name: "Valley of Flowers",
+    description:
+      "A UNESCO World Heritage Site, the Valley of Flowers is a vibrant alpine meadow adorned with a stunning variety of endemic flora. Surrounded by snow-capped peaks, it's a paradise for trekkers, botanists, and nature lovers.",
+    image:
+      "https://uttarakhandtourism.gov.in/assets/media/UTDB_media_1736759310Nanda_Devi_National_Park.jpg",
+    distance: "130 km",
+  },
+  {
+    name: "Kashi Vishwanath Temple, Guptkashi",
+    description:
+      "Located in the spiritual town of Guptkashi, this ancient temple is dedicated to Lord Shiva and mirrors the famous Kashi Vishwanath of Varanasi. It holds great significance for pilgrims en route to Kedarnath.",
+    image:
+      "https://uttarakhandguide.com/wp-content/uploads/2023/04/Vishwanath.jpg",
+    distance: "50 km",
+  },
+  {
+    name: "Gwaldam",
+    description:
+      "A peaceful hill town perched at the junction of the Garhwal and Kumaon regions, Gwaldam is known for its apple orchards, serene landscapes, and panoramic views of the Himalayan peaks.",
+    image:
+      "https://uttarakhandtourism.gov.in/assets/media/UTDB_media_1736246207Village-Tourism.jpg",
+    distance: "100 km",
+  },
+  {
+    name: "Chidang Khalsa Village",
+    description:
+      "A quaint Himalayan village near Tharali Block, Chidang Khalsa offers an authentic glimpse into Garhwali rural life. Surrounded by lush green hills and terraced fields, it's an ideal stop for peaceful walks, cultural exploration, and nature photography.",
+    image: "https://myroots.euttaranchal.com/photos/41736-1656084559-99749.jpg",
+    distance: "7 km",
   },
 ];
 
@@ -135,11 +167,39 @@ const ImageWithFallback = ({
   alt: string;
   className?: string;
 }) => {
-  const [error, setError] = React.useState(false);
+  const [error, setError] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const imgRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      {
+        rootMargin: "50px",
+        threshold: 0.1,
+      }
+    );
+
+    if (imgRef.current) {
+      observer.observe(imgRef.current);
+    }
+
+    return () => {
+      if (imgRef.current) {
+        observer.disconnect();
+      }
+    };
+  }, []);
 
   if (!src || error) {
     return (
       <div
+        ref={imgRef}
         className={`${className} bg-gray-200 flex items-center justify-center`}
       >
         <span className="text-gray-400">No image available</span>
@@ -148,13 +208,19 @@ const ImageWithFallback = ({
   }
 
   return (
-    <img
-      src={src}
-      alt={alt}
-      className={className}
-      loading="lazy"
-      onError={() => setError(true)}
-    />
+    <div ref={imgRef} className={className}>
+      {isVisible ? (
+        <img
+          src={src}
+          alt={alt}
+          className="w-full h-full object-cover rounded-lg"
+          loading="lazy"
+          onError={() => setError(true)}
+        />
+      ) : (
+        <div className="w-full h-full bg-gray-200 animate-pulse rounded-lg" />
+      )}
+    </div>
   );
 };
 
