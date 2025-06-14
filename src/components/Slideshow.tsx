@@ -137,16 +137,17 @@ const Slideshow: React.FC = () => {
         className="flex transition-transform duration-500 ease-in-out h-full"
         style={{
           transform: `translateX(-${currentSlide * 100}%)`,
-          width: `${slides.length * 100}%`
+          width: `${slides.length * 100}vw`
         }}
       >
         {slides.map((slide, index) => (
           <div
             key={index}
-            className="relative w-full h-full flex-shrink-0 bg-cover bg-center bg-no-repeat"
+            className="relative flex-shrink-0 bg-cover bg-center bg-no-repeat"
             style={{
               backgroundImage: `url(${slide.imageUrl})`,
-              width: `${100 / slides.length}%`
+              width: '100vw',
+              height: '100vh'
             }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
