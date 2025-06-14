@@ -1,49 +1,12 @@
 
-import React, { useEffect, useState, useMemo } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import React from "react";
+import { FormProvider } from "react-hook-form";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
-import PersonalInfoForm from "./booking/PersonalInfoForm";
-import RoomSelectionForm from "./booking/RoomSelectionForm";
-import DateSelectionForm from "./booking/DateSelectionForm";
-import SpecialRequestsForm from "./booking/SpecialRequestsForm";
-import BookingSummary from "./booking/BookingSummary";
-import BookingSourceForm from "./booking/BookingSourceForm";
-import PricePerNightForm from "./booking/PricePerNightForm";
 import { calculateNights } from "@/lib/utils";
-
-interface FormValues {
-  guest_name: string;
-  guest_email: string;
-  guest_phone: string;
-  address?: string;
-  gov_id_number?: string;
-  room_type: string;
-  room_id: string;
-  check_in_date: Date;
-  check_out_date: Date;
-  num_guests: number;
-  special_requests?: string;
-  status: string;
-  booking_source?: string;
-  custom_booking_source?: string;
-  price_per_night: number;
-}
-
-interface RoomInventory {
-  id: string;
-  number: string;
-  type: string;
-  status: string;
-}
-
-interface RoomTypeAvailability {
-  type: string;
-  availableCount: number;
-  totalCount: number;
-  availableRooms: RoomInventory[];
-}
+import { useBookingFormLogic } from "./booking/useBookingFormLogic";
+import BookingFormLayout from "./booking/BookingFormLayout";
+import { FormValues, RoomInventory, RoomTypeAvailability } from "./booking/types";
 
 interface BookingFormProps {
   booking: any | null;
@@ -68,144 +31,26 @@ const BookingForm = ({
   onFetchAvailability,
   lockDates = false,
 }: BookingFormProps) => {
-  const [checkInDate, setCheckInDate] = useState<Date | undefined>(
-    booking?.check_in_date
-      ? new Date(booking.check_in_date)
-      : selectedDates?.start
-  );
-  const [checkOutDate, setCheckOutDate] = useState<Date | undefined>(
-    booking?.check_out_date
-      ? new Date(booking.check_out_date)
-      : selectedDates?.end
-  );
-  const [selectedRoomId, setSelectedRoomId] = useState<string>(
-    booking?.room_id || selectedRoom?.id || ""
-  );
-  const [bookingSource, setBookingSource] = useState<string | undefined>(
-    booking?.booking_source || undefined
-  );
-  const [datesConfirmed, setDatesConfirmed] = useState<boolean>(false);
-  const [availabilityLoading, setAvailabilityLoading] = useState<boolean>(false);
-
-  // Default price based on room type, but allow user to override
-  const getDefaultPrice = (roomType?: string) => {
-    if (roomType === "Family Room with Terrace") return 6000;
-    return 5000;
-  };
-
-  const methods = useForm<FormValues>({
-    defaultValues: {
-      guest_name: booking?.guest_name || "",
-      guest_email: booking?.guest_email || "",
-      guest_phone: booking?.guest_phone || "",
-      address: booking?.address || "",
-      gov_id_number: booking?.gov_id_number || "",
-      room_type: selectedRoom?.type || "",
-      room_id: booking?.room_id || selectedRoom?.id || "",
-      check_in_date: checkInDate,
-      check_out_date: checkOutDate,
-      num_guests: booking?.num_guests || 1,
-      special_requests: booking?.notes || "",
-      status: booking?.status || "confirmed",
-      booking_source: booking?.booking_source || undefined,
-      custom_booking_source: booking?.custom_booking_source || "",
-      price_per_night: booking?.total_price && checkInDate && checkOutDate 
-        ? Math.round(booking.total_price / calculateNights(checkInDate, checkOutDate))
-        : getDefaultPrice(selectedRoom?.type),
-    },
+  const {
+    methods,
+    checkInDate,
+    checkOutDate,
+    selectedRoomId,
+    bookingSource,
+    datesConfirmed,
+    availabilityLoading,
+    transformedRooms,
+    handleConfirmDates,
+    handleDateChange,
+    setSelectedRoomId,
+    setBookingSource,
+  } = useBookingFormLogic({
+    booking,
+    selectedDates,
+    selectedRoom,
+    rooms,
+    onFetchAvailability,
   });
-
-  // Transform rooms to match the expected format for BookingSummary
-  const transformedRooms = useMemo(() => {
-    return rooms.map((room) => {
-      const pricePerNight = methods.watch("price_per_night") || getDefaultPrice(room.type);
-      return {
-        id: room.id,
-        room_number: room.number,
-        room_type: room.type,
-        price_per_night: pricePerNight,
-      };
-    });
-  }, [rooms, methods.watch("price_per_night")]);
-
-  // Auto-confirm dates if they come from calendar selection or editing existing booking
-  useEffect(() => {
-    if ((selectedDates || booking) && checkInDate && checkOutDate) {
-      setDatesConfirmed(true);
-      handleConfirmDates();
-    }
-  }, [selectedDates, booking, checkInDate, checkOutDate]);
-
-  // Update form when dates, booking, or selectedRoom changes
-  useEffect(() => {
-    if (selectedDates) {
-      methods.setValue("check_in_date", selectedDates.start);
-      methods.setValue("check_out_date", selectedDates.end);
-      setCheckInDate(selectedDates.start);
-      setCheckOutDate(selectedDates.end);
-    } else if (booking) {
-      const checkIn = new Date(booking.check_in_date);
-      const checkOut = new Date(booking.check_out_date);
-      methods.setValue("check_in_date", checkIn);
-      methods.setValue("check_out_date", checkOut);
-      setCheckInDate(checkIn);
-      setCheckOutDate(checkOut);
-
-      // Set all other values
-      methods.setValue("guest_name", booking.guest_name);
-      methods.setValue("guest_email", booking.guest_email);
-      methods.setValue("guest_phone", booking.guest_phone);
-      methods.setValue("address", booking.address || "");
-      methods.setValue("gov_id_number", booking.gov_id_number || "");
-      methods.setValue("room_id", booking.room_id);
-      methods.setValue("num_guests", booking.num_guests);
-      methods.setValue("special_requests", booking.notes || "");
-      methods.setValue("status", booking.status);
-      methods.setValue("booking_source", booking.booking_source);
-      methods.setValue(
-        "custom_booking_source",
-        booking.custom_booking_source || ""
-      );
-
-      // Calculate price per night from total price and nights
-      const nights = calculateNights(checkIn, checkOut);
-      const pricePerNight = nights > 0 ? Math.round(booking.total_price / nights) : getDefaultPrice();
-      methods.setValue("price_per_night", pricePerNight);
-
-      // Set room type based on the room_id
-      const bookingRoom = rooms.find((room) => room.id === booking.room_id);
-      if (bookingRoom) {
-        methods.setValue("room_type", bookingRoom.type);
-      }
-
-      setSelectedRoomId(booking.room_id);
-      setBookingSource(booking.booking_source);
-    }
-
-    // If we have a selectedRoom, pre-fill the room type and room ID
-    if (selectedRoom) {
-      methods.setValue("room_type", selectedRoom.type);
-      methods.setValue("room_id", selectedRoom.id);
-      methods.setValue("price_per_night", getDefaultPrice(selectedRoom.type));
-      setSelectedRoomId(selectedRoom.id);
-    }
-  }, [booking, selectedDates, selectedRoom, methods, rooms]);
-
-  const handleConfirmDates = async () => {
-    if (!checkInDate || !checkOutDate || !onFetchAvailability) return;
-    
-    setAvailabilityLoading(true);
-    try {
-      const checkInStr = format(checkInDate, "yyyy-MM-dd");
-      const checkOutStr = format(checkOutDate, "yyyy-MM-dd");
-      await onFetchAvailability(checkInStr, checkOutStr);
-      setDatesConfirmed(true);
-    } catch (error) {
-      console.error("Error fetching availability:", error);
-    } finally {
-      setAvailabilityLoading(false);
-    }
-  };
 
   const handleSubmit = (values: FormValues) => {
     // Calculate total price based on entered price per night and nights
@@ -224,56 +69,24 @@ const BookingForm = ({
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-4 md:space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-          <div className="space-y-4">
-            <PersonalInfoForm />
-          </div>
-
-          <div className="space-y-4">
-            <DateSelectionForm
-              checkInDate={checkInDate}
-              checkOutDate={checkOutDate}
-              onCheckInChange={(date) => {
-                setCheckInDate(date || undefined);
-                setDatesConfirmed(false);
-              }}
-              onCheckOutChange={(date) => {
-                setCheckOutDate(date || undefined);
-                setDatesConfirmed(false);
-              }}
-              onConfirmDates={handleConfirmDates}
-              datesConfirmed={datesConfirmed}
-              loading={availabilityLoading}
-              disabled={lockDates}
-            />
-
-            {datesConfirmed && (
-              <RoomSelectionForm
-                rooms={rooms}
-                roomTypeAvailability={roomTypeAvailability}
-                onRoomChange={setSelectedRoomId}
-                booking={booking}
-                selectedRoom={selectedRoom}
-                datesConfirmed={datesConfirmed}
-              />
-            )}
-
-            <PricePerNightForm />
-
-            <BookingSourceForm onBookingSourceChange={setBookingSource} />
-          </div>
-        </div>
-
-        <SpecialRequestsForm />
-
-        {selectedRoomId && checkInDate && checkOutDate && (
-          <BookingSummary
-            selectedRoomId={selectedRoomId}
-            checkInDate={checkInDate}
-            checkOutDate={checkOutDate}
-            rooms={transformedRooms}
-          />
-        )}
+        <BookingFormLayout
+          methods={methods}
+          checkInDate={checkInDate}
+          checkOutDate={checkOutDate}
+          selectedRoomId={selectedRoomId}
+          datesConfirmed={datesConfirmed}
+          availabilityLoading={availabilityLoading}
+          transformedRooms={transformedRooms}
+          rooms={rooms}
+          roomTypeAvailability={roomTypeAvailability}
+          booking={booking}
+          selectedRoom={selectedRoom}
+          lockDates={lockDates}
+          onDateChange={handleDateChange}
+          onConfirmDates={handleConfirmDates}
+          onRoomChange={setSelectedRoomId}
+          onBookingSourceChange={setBookingSource}
+        />
 
         <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2 pt-4">
           <Button type="button" variant="outline" onClick={onCancel} className="w-full sm:w-auto">
