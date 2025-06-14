@@ -1,5 +1,13 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -15,7 +23,6 @@ interface Review {
 
 const Reviews = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [currentReview, setCurrentReview] = useState(0);
   const [loading, setLoading] = useState(true);
 
   // Fetch reviews from database
@@ -43,16 +50,6 @@ const Reviews = () => {
 
     fetchReviews();
   }, []);
-
-  useEffect(() => {
-    if (reviews.length === 0) return;
-
-    const timer = setInterval(() => {
-      setCurrentReview((prev) => (prev + 1) % reviews.length);
-    }, 5000); // Change review every 5 seconds
-
-    return () => clearInterval(timer);
-  }, [reviews.length]);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }).map((_, index) => (
@@ -127,80 +124,73 @@ const Reviews = () => {
           What Our Guests Say
         </h2>
         <div className="max-w-4xl mx-auto">
-          <div className="relative overflow-hidden">
-            <div
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${currentReview * 100}%)` }}
-            >
-              {reviews.map((review, index) => (
-                <div key={review.id} className="w-full flex-shrink-0 px-2">
-                  <Card className="border-none shadow-lg">
-                    <CardContent className="p-8">
-                      <div className="flex flex-col items-center text-center">
-                        {review.image ? (
-                          <img
-                            src={review.image}
-                            alt={review.name}
-                            className="w-20 h-20 rounded-full mb-4 object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = "none";
-                              const parent = target.parentElement;
-                              if (parent) {
-                                const initialsDiv =
-                                  document.createElement("div");
-                                initialsDiv.className = `w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(
-                                  review.gender
-                                )}`;
-                                initialsDiv.textContent = getInitials(
-                                  review.name
-                                );
-                                parent.insertBefore(initialsDiv, target);
-                              }
-                            }}
-                          />
-                        ) : (
-                          <div
-                            className={`w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(
-                              review.gender
-                            )}`}
-                          >
-                            {getInitials(review.name)}
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent>
+              {reviews.map((review) => (
+                <CarouselItem key={review.id}>
+                  <div className="p-1">
+                    <Card className="border-none shadow-lg">
+                      <CardContent className="p-8">
+                        <div className="flex flex-col items-center text-center">
+                          {review.image ? (
+                            <img
+                              src={review.image}
+                              alt={review.name}
+                              className="w-20 h-20 rounded-full mb-4 object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = "none";
+                                const parent = target.parentElement;
+                                if (parent) {
+                                  const initialsDiv =
+                                    document.createElement("div");
+                                  initialsDiv.className = `w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(
+                                    review.gender
+                                  )}`;
+                                  initialsDiv.textContent = getInitials(
+                                    review.name
+                                  );
+                                  parent.insertBefore(initialsDiv, target);
+                                }
+                              }}
+                            />
+                          ) : (
+                            <div
+                              className={`w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(
+                                review.gender
+                              )}`}
+                            >
+                              {getInitials(review.name)}
+                            </div>
+                          )}
+                          <div className="flex mb-4">
+                            {renderStars(review.rating)}
                           </div>
-                        )}
-                        <div className="flex mb-4">
-                          {renderStars(review.rating)}
-                        </div>
-                        <p className="text-lg italic mb-4">"{review.review}"</p>
-                        <p className="font-semibold text-gray-800 mb-2">
-                          {review.name}
-                        </p>
-                        {review.source && (
-                          <p className="text-sm text-gray-600">
-                            via {review.source}
+                          <p className="text-lg italic mb-4">"{review.review}"</p>
+                          <p className="font-semibold text-gray-800 mb-2">
+                            {review.name}
                           </p>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
+                          {review.source && (
+                            <p className="text-sm text-gray-600">
+                              via {review.source}
+                            </p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </CarouselItem>
               ))}
-            </div>
-          </div>
-          {reviews.length > 1 && (
-            <div className="flex justify-center mt-8 gap-2">
-              {reviews.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentReview(index)}
-                  className={`w-3 h-3 rounded-full transition-colors ${
-                    index === currentReview ? "bg-hotel-gold" : "bg-gray-300"
-                  }`}
-                  aria-label={`Go to review ${index + 1}`}
-                />
-              ))}
-            </div>
-          )}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
         </div>
       </div>
     </section>
