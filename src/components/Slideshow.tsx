@@ -39,10 +39,10 @@ const slides: SlideProps[] = [
 
 const Slideshow: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
   const touchStartX = useRef<number>(0);
   const touchEndX = useRef<number>(0);
+  const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
 
   // Preload images
   useEffect(() => {
@@ -55,28 +55,45 @@ const Slideshow: React.FC = () => {
     });
   }, []);
 
+  // Auto-play functionality
   useEffect(() => {
-    const timer = setInterval(() => {
-      nextSlide();
-    }, 5000);
+    const startAutoPlay = () => {
+      if (autoPlayRef.current) {
+        clearInterval(autoPlayRef.current);
+      }
+      autoPlayRef.current = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % slides.length);
+      }, 5000);
+    };
 
-    return () => clearInterval(timer);
-  }, [currentSlide]);
+    startAutoPlay();
+
+    return () => {
+      if (autoPlayRef.current) {
+        clearInterval(autoPlayRef.current);
+      }
+    };
+  }, []);
+
+  const goToSlide = (index: number) => {
+    if (index !== currentSlide) {
+      setCurrentSlide(index);
+      // Restart auto-play timer
+      if (autoPlayRef.current) {
+        clearInterval(autoPlayRef.current);
+      }
+      autoPlayRef.current = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % slides.length);
+      }, 5000);
+    }
+  };
 
   const nextSlide = () => {
-    if (isTransitioning) return;
-    
-    setIsTransitioning(true);
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-    setTimeout(() => setIsTransitioning(false), 500);
+    goToSlide((currentSlide + 1) % slides.length);
   };
 
   const prevSlide = () => {
-    if (isTransitioning) return;
-    
-    setIsTransitioning(true);
-    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
-    setTimeout(() => setIsTransitioning(false), 500);
+    goToSlide(currentSlide === 0 ? slides.length - 1 : currentSlide - 1);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -149,13 +166,7 @@ const Slideshow: React.FC = () => {
         {slides.map((_, index) => (
           <button
             key={index}
-            onClick={() => {
-              if (!isTransitioning && index !== currentSlide) {
-                setIsTransitioning(true);
-                setCurrentSlide(index);
-                setTimeout(() => setIsTransitioning(false), 500);
-              }
-            }}
+            onClick={() => goToSlide(index)}
             className={cn(
               "h-2 rounded-full transition-all duration-300 touch-manipulation",
               index === currentSlide ? "w-6 md:w-8 bg-hotel-gold" : "w-2 bg-white/50"
