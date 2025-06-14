@@ -28,8 +28,8 @@ const Index = () => {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
               <Link
-                to={"/Rooms"}
-                className="p-6 border border-gray-200 rounded-lg bg-hotel-gold"
+                to="/rooms"
+                className="p-6 border border-gray-200 rounded-lg bg-hotel-gold hover:bg-opacity-90 transition-all"
               >
                 <h3 className="font-semibold text-xl mb-3">
                   Luxury Accommodations
@@ -40,8 +40,8 @@ const Index = () => {
                 </p>
               </Link>
               <Link
-                to={"/Dining"}
-                className="p-6 border border-gray-200 rounded-lg bg-hotel-gold"
+                to="/dining"
+                className="p-6 border border-gray-200 rounded-lg bg-hotel-gold hover:bg-opacity-90 transition-all"
               >
                 <h3 className="font-semibold text-xl mb-3">Fine Dining</h3>
                 <p className="text-white">
@@ -50,8 +50,8 @@ const Index = () => {
                 </p>
               </Link>
               <Link
-                to={"/amenities"}
-                className="p-6 border border-gray-200 rounded-lg bg-hotel-gold"
+                to="/amenities"
+                className="p-6 border border-gray-200 rounded-lg bg-hotel-gold hover:bg-opacity-90 transition-all"
               >
                 <h3 className="font-semibold text-xl mb-3">Premium Amenities</h3>
                 <p className="text-white">

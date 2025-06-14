@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface SlideProps {
   imageUrl: string;
@@ -11,7 +13,6 @@ import hotelImage from "../assets/hotel.webp";
 import diningImage from "../assets/dining.webp";
 import viewImage from "../assets/view.webp";
 import roomImage from "../assets/room.webp";
-import { Link } from "react-router-dom";
 
 const slides: SlideProps[] = [
   {
@@ -22,14 +23,12 @@ const slides: SlideProps[] = [
   {
     imageUrl: hotelImage,
     heading: "Experience Luxury",
-    subheading:
-      "Discover the perfect balance of modern comfort and timeless elegance",
+    subheading: "Discover the perfect balance of modern comfort and timeless elegance",
   },
   {
     imageUrl: diningImage,
     heading: "Exquisite Dining",
-    subheading:
-      "Savor culinary masterpieces in our hygenic and inviting restaurants",
+    subheading: "Savor culinary masterpieces in our hygenic and inviting restaurants",
   },
   {
     imageUrl: roomImage,
@@ -42,8 +41,7 @@ const Slideshow: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
-  const touchStartX = useRef<number | null>(null);
-  const touchEndX = useRef<number | null>(null);
+  const touchStartX = useRef<number>(0);
 
   // Preload images
   useEffect(() => {
@@ -65,86 +63,57 @@ const Slideshow: React.FC = () => {
   }, [currentSlide]);
 
   const nextSlide = () => {
-    if (!isTransitioning) {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentSlide((prev) => (prev + 1) % slides.length);
-        setIsTransitioning(false);
-      }, 500);
-    }
+    if (isTransitioning) return;
+    
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      setIsTransitioning(false);
+    }, 300);
   };
 
   const prevSlide = () => {
-    if (!isTransitioning) {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
-        setIsTransitioning(false);
-      }, 500);
-    }
+    if (isTransitioning) return;
+    
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+      setIsTransitioning(false);
+    }, 300);
   };
 
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+  const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
 
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    touchEndX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    if (touchStartX.current !== null && touchEndX.current !== null) {
-      const diff = touchStartX.current - touchEndX.current;
-      if (Math.abs(diff) > 50) {
-        if (diff > 0) {
-          nextSlide();
-        } else {
-          prevSlide();
-        }
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - touchEndX;
+    
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        nextSlide();
+      } else {
+        prevSlide();
       }
     }
-    touchStartX.current = null;
-    touchEndX.current = null;
   };
-
-  // Calculate visible slides (current, prev, next)
-  const visibleSlideIndices = [
-    (currentSlide - 1 + slides.length) % slides.length,
-    currentSlide,
-    (currentSlide + 1) % slides.length,
-  ];
 
   return (
     <div
       className="relative w-full h-screen overflow-hidden"
       onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {slides.map((slide, index) => {
-        // Only render visible slides
-        if (!visibleSlideIndices.includes(index)) return null;
-
-        return (
-          <div
-            key={index}
-            className={cn(
-              "absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-500",
-              index === currentSlide
-                ? "translate-x-0"
-                : index === (currentSlide - 1 + slides.length) % slides.length
-                ? "-translate-x-full"
-                : "translate-x-full",
-              isTransitioning ? "transition-transform" : "",
-              !loadedImages.has(index) && "opacity-0"
-            )}
-            style={{
-              willChange: "transform",
-              backgroundImage: `url(${slide.imageUrl})`,
-            }}
-          />
-        );
-      })}
+      {/* Only render current slide */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url(${slides[currentSlide].imageUrl})`,
+          opacity: loadedImages.has(currentSlide) ? 1 : 0,
+          transition: 'opacity 0.3s ease-in-out',
+        }}
+      />
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
 
@@ -152,7 +121,7 @@ const Slideshow: React.FC = () => {
         className={cn(
           "absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4",
           isTransitioning ? "opacity-0" : "opacity-100",
-          "transition-opacity duration-500"
+          "transition-opacity duration-300"
         )}
       >
         <h1 className="text-5xl md:text-7xl font-bold mb-4">

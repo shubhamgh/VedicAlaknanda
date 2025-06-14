@@ -9,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { format } from "date-fns";
 
 interface Booking {
   id: string;
@@ -46,11 +45,11 @@ const TodaysBookings: React.FC<TodaysBookingsProps> = ({
   rooms,
   onEditBooking,
 }) => {
-  const today = format(new Date(), 'yyyy-MM-dd');
+  const today = new Date().toISOString().split('T')[0];
   
   const todaysBookings = bookings.filter(booking => {
-    const checkIn = format(new Date(booking.check_in_date), 'yyyy-MM-dd');
-    const checkOut = format(new Date(booking.check_out_date), 'yyyy-MM-dd');
+    const checkIn = new Date(booking.check_in_date).toISOString().split('T')[0];
+    const checkOut = new Date(booking.check_out_date).toISOString().split('T')[0];
     return checkIn <= today && checkOut > today;
   });
 
@@ -59,6 +58,18 @@ const TodaysBookings: React.FC<TodaysBookingsProps> = ({
     return room
       ? `${room.room_type} - Room ${room.room_number}`
       : "Unknown Room";
+  };
+
+  const getStatusStyle = (status: string) => {
+    const baseClasses = "px-2 py-1 rounded text-xs font-medium";
+    switch (status) {
+      case "confirmed":
+        return `${baseClasses} bg-green-100 text-green-800`;
+      case "cancelled":
+        return `${baseClasses} bg-red-100 text-red-800`;
+      default:
+        return `${baseClasses} bg-blue-100 text-blue-800`;
+    }
   };
 
   return (
@@ -78,41 +89,34 @@ const TodaysBookings: React.FC<TodaysBookingsProps> = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {todaysBookings.map((booking) => (
-              <TableRow key={booking.id}>
-                <TableCell>{booking.guest_name}</TableCell>
-                <TableCell>{getRoomDetails(booking.room_id)}</TableCell>
-                <TableCell>
-                  {new Date(booking.check_in_date).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  {new Date(booking.check_out_date).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  <span
-                    className={`px-2 py-1 rounded text-xs font-medium ${
-                      booking.status === "confirmed"
-                        ? "bg-green-100 text-green-800"
-                        : booking.status === "cancelled"
-                        ? "bg-red-100 text-red-800"
-                        : "bg-blue-100 text-blue-800"
-                    }`}
-                  >
-                    {booking.status}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => onEditBooking(booking)}
-                  >
-                    Edit
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-            {todaysBookings.length === 0 && (
+            {todaysBookings.length > 0 ? (
+              todaysBookings.map((booking) => (
+                <TableRow key={booking.id}>
+                  <TableCell>{booking.guest_name}</TableCell>
+                  <TableCell>{getRoomDetails(booking.room_id)}</TableCell>
+                  <TableCell>
+                    {new Date(booking.check_in_date).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(booking.check_out_date).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <span className={getStatusStyle(booking.status)}>
+                      {booking.status}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => onEditBooking(booking)}
+                    >
+                      Edit
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-4">
                   No bookings for today.

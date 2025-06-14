@@ -25,11 +25,9 @@ const Reviews = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch reviews from database
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        console.log("Fetching reviews from Supabase...");
         const { data, error } = await supabase
           .from("reviews")
           .select("*")
@@ -52,7 +50,7 @@ const Reviews = () => {
   }, []);
 
   const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }).map((_, index) => (
+    return Array.from({ length: 5 }, (_, index) => (
       <Star
         key={index}
         className={`w-5 h-5 ${
@@ -71,12 +69,13 @@ const Reviews = () => {
   };
 
   const getAvatarBackgroundColor = (gender: string | null) => {
-    if (gender === "female") {
-      return "bg-pink-500";
-    } else if (gender === "male") {
-      return "bg-blue-500";
-    } else {
-      return "bg-purple-500";
+    switch (gender) {
+      case "female":
+        return "bg-pink-500";
+      case "male":
+        return "bg-blue-500";
+      default:
+        return "bg-purple-500";
     }
   };
 
@@ -88,14 +87,7 @@ const Reviews = () => {
             What Our Guests Say
           </h2>
           <div className="flex justify-center items-center">
-            <div className="relative w-24 h-24">
-              {/* Loading animation */}
-              <div className="absolute inset-0 border-4 border-hotel-gold rounded-full animate-[spin_2s_linear_infinite]">
-                <div className="absolute top-1/2 left-1/2 w-3 h-3 -translate-x-1/2 -translate-y-1/2 bg-hotel-gold rounded-full"></div>
-              </div>
-              <div className="absolute inset-2 border-4 border-hotel-gold rounded-full animate-[spin_3s_linear_infinite]"></div>
-              <div className="absolute inset-4 border-4 border-hotel-gold rounded-full animate-[spin_4s_linear_infinite]"></div>
-            </div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-hotel-gold"></div>
           </div>
         </div>
       </section>
@@ -134,57 +126,52 @@ const Reviews = () => {
             <CarouselContent>
               {reviews.map((review) => (
                 <CarouselItem key={review.id}>
-                  <div className="p-1">
-                    <Card className="border-none shadow-lg">
-                      <CardContent className="p-8">
-                        <div className="flex flex-col items-center text-center">
-                          {review.image ? (
-                            <img
-                              src={review.image}
-                              alt={review.name}
-                              className="w-20 h-20 rounded-full mb-4 object-cover"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = "none";
-                                const parent = target.parentElement;
-                                if (parent) {
-                                  const initialsDiv =
-                                    document.createElement("div");
-                                  initialsDiv.className = `w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(
-                                    review.gender
-                                  )}`;
-                                  initialsDiv.textContent = getInitials(
-                                    review.name
-                                  );
-                                  parent.insertBefore(initialsDiv, target);
-                                }
-                              }}
-                            />
-                          ) : (
-                            <div
-                              className={`w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(
-                                review.gender
-                              )}`}
-                            >
-                              {getInitials(review.name)}
-                            </div>
-                          )}
-                          <div className="flex mb-4">
-                            {renderStars(review.rating)}
+                  <Card className="border-none shadow-lg">
+                    <CardContent className="p-8">
+                      <div className="flex flex-col items-center text-center">
+                        {review.image ? (
+                          <img
+                            src={review.image}
+                            alt={review.name}
+                            className="w-20 h-20 rounded-full mb-4 object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = "none";
+                              const parent = target.parentElement;
+                              if (parent) {
+                                const initialsDiv = document.createElement("div");
+                                initialsDiv.className = `w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(
+                                  review.gender
+                                )}`;
+                                initialsDiv.textContent = getInitials(review.name);
+                                parent.insertBefore(initialsDiv, target);
+                              }
+                            }}
+                          />
+                        ) : (
+                          <div
+                            className={`w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(
+                              review.gender
+                            )}`}
+                          >
+                            {getInitials(review.name)}
                           </div>
-                          <p className="text-lg italic mb-4">"{review.review}"</p>
-                          <p className="font-semibold text-gray-800 mb-2">
-                            {review.name}
-                          </p>
-                          {review.source && (
-                            <p className="text-sm text-gray-600">
-                              via {review.source}
-                            </p>
-                          )}
+                        )}
+                        <div className="flex mb-4">
+                          {renderStars(review.rating)}
                         </div>
-                      </CardContent>
-                    </Card>
-                  </div>
+                        <p className="text-lg italic mb-4">"{review.review}"</p>
+                        <p className="font-semibold text-gray-800 mb-2">
+                          {review.name}
+                        </p>
+                        {review.source && (
+                          <p className="text-sm text-gray-600">
+                            via {review.source}
+                          </p>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
                 </CarouselItem>
               ))}
             </CarouselContent>
