@@ -124,42 +124,35 @@ const Slideshow: React.FC = () => {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Sliding container */}
-      <div 
-        className="flex transition-transform duration-500 ease-in-out h-full"
-        style={{
-          transform: `translateX(-${currentSlide * 100}%)`,
-          width: `${slides.length * 100}%`
-        }}
-      >
-        {slides.map((slide, index) => (
-          <div
-            key={index}
-            className="relative w-full h-full flex-shrink-0 bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url(${slide.imageUrl})`,
-              width: `${100 / slides.length}%`
-            }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-            
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-3 md:mb-4 leading-tight">
-                {slide.heading}
-              </h1>
-              <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-6 md:mb-8 leading-relaxed">
-                {slide.subheading}
-              </p>
-              <Link
-                to="/book-now"
-                className="bg-hotel-gold hover:bg-opacity-90 text-white py-3 px-6 md:py-3 md:px-8 text-sm md:text-base uppercase tracking-wider font-medium transition-all touch-manipulation"
-              >
-                Book Your Stay
-              </Link>
-            </div>
+      {slides.map((slide, index) => (
+        <div
+          key={index}
+          className={cn(
+            "absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat transition-opacity duration-500",
+            index === currentSlide ? "opacity-100" : "opacity-0"
+          )}
+          style={{
+            backgroundImage: `url(${slide.imageUrl})`
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+          
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-3 md:mb-4 leading-tight">
+              {slide.heading}
+            </h1>
+            <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-6 md:mb-8 leading-relaxed">
+              {slide.subheading}
+            </p>
+            <Link
+              to="/book-now"
+              className="bg-hotel-gold hover:bg-opacity-90 text-white py-3 px-6 md:py-3 md:px-8 text-sm md:text-base uppercase tracking-wider font-medium transition-all touch-manipulation"
+            >
+              Book Your Stay
+            </Link>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
 
       {/* Navigation dots */}
       <div className="absolute bottom-6 md:bottom-10 left-0 right-0 flex justify-center space-x-2">
