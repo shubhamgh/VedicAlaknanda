@@ -151,7 +151,7 @@ const LogsTab = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-xs sm:text-sm">Date</TableHead>
+              <TableHead className="text-xs sm:text-sm">Date & Time</TableHead>
               <TableHead className="text-xs sm:text-sm hidden sm:table-cell">IP</TableHead>
               <TableHead className="text-xs sm:text-sm">Device</TableHead>
               <TableHead className="text-xs sm:text-sm hidden md:table-cell">Browser</TableHead>
@@ -164,7 +164,10 @@ const LogsTab = () => {
             {logs.map((log) => (
               <TableRow key={log.id}>
                 <TableCell className="text-xs sm:text-sm">
-                  {format(new Date(log.created_at), "MM/dd")}
+                  <div className="flex flex-col">
+                    <span>{format(new Date(log.created_at), "MM/dd/yyyy")}</span>
+                    <span className="text-gray-500 text-xs">{format(new Date(log.created_at), "HH:mm:ss")}</span>
+                  </div>
                 </TableCell>
                 <TableCell className="text-xs sm:text-sm hidden sm:table-cell">{log.ip_address}</TableCell>
                 <TableCell className="text-xs sm:text-sm">{log.device_type}</TableCell>
