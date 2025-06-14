@@ -1,6 +1,7 @@
 import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import HeroSection from "@/components/HeroSection";
 import Badrinath from "../assets/badrinath-temple-bnr-removebg-preview.png";
 
 const localAttractions = [
@@ -255,17 +256,11 @@ const Explore = () => {
     <div className="min-h-screen bg-white">
       <Header />
 
-      <section className="relative h-64 bg-gradient-to-r from-hotel-dark to-hotel-gold flex items-center justify-center">
-        <div className="text-center text-white">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            Local Attractions
-          </h1>
-          <p className="text-lg md:text-xl">
-            Explore the vibrant local culture, historic sites and temples, and
-            natural wonders surrounding our hotel.
-          </p>
-        </div>
-      </section>
+      <HeroSection
+        title="Local Attractions"
+        description="Explore the vibrant local culture, historic sites and temples, and natural wonders surrounding our hotel."
+      />
+
       <div className="container mx-auto px-4 ">
         <section className="mt-10">
           <div className="flex flex-col gap-6">
