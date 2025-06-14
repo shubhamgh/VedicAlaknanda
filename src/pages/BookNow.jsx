@@ -1,3 +1,4 @@
+
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { Mail, MapPin, Phone, Instagram } from "lucide-react";
@@ -8,71 +9,74 @@ const BookNow = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative h-64 bg-gradient-to-r from-hotel-dark to-hotel-gold flex items-center justify-center">
-        <div className="text-center text-white">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+      <section className="relative h-48 md:h-64 bg-gradient-to-r from-hotel-dark to-hotel-gold flex items-center justify-center">
+        <div className="text-center text-white px-4">
+          <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold mb-2 md:mb-4">
             Book Your Stay
           </h1>
-          <p className="text-lg md:text-xl">
+          <p className="text-base md:text-lg lg:text-xl">
             Reserve your perfect mountain getaway
           </p>
         </div>
       </section>
 
-      <main className="container mx-auto px-4 py-20 flex-1">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-8">
-          <h2>
-            For all your booking needs you can contact us on the following
-            places:
-          </h2>
+      <main className="container mx-auto px-4 py-8 md:py-20 flex-1">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 py-4 md:py-8">
+          <div className="space-y-4">
+            <h2 className="text-xl md:text-2xl font-semibold">
+              For all your booking needs you can contact us on the following
+              places:
+            </h2>
+          </div>
           <div>
-            <ul className="space-y-4">
+            <ul className="space-y-4 md:space-y-6">
               <li className="flex items-start">
                 <a
                   href="https://maps.app.goo.gl/45dNGCTWWUx1uzxx8"
                   target="_blank"
-                  className="flex items-start"
+                  className="flex items-start touch-manipulation"
                 >
-                  <MapPin className="mr-3 h-5 w-5 text-hotel-gold" />
-                  <span className="hover:text-hotel-gold transition-colors">
+                  <MapPin className="mr-3 h-5 w-5 text-hotel-gold flex-shrink-0 mt-1" />
+                  <span className="hover:text-hotel-gold transition-colors text-sm md:text-base">
                     Hotel Vedic Alaknanda, Narkota
                     <br />
                     Rudraprayag, Uttarakhand 246171
                   </span>
                 </a>
               </li>
-              <li className="flex items-center">
-                <Phone className="mr-3 h-5 w-5 text-hotel-gold" />
-                <a
-                  href="tel:+918267020926"
-                  className="hover:text-hotel-gold transition-colors"
-                >
-                  +91 8267 020 926
-                </a>
-                ,&nbsp;
-                <a
-                  href="tel:+919815812309"
-                  className="hover:text-hotel-gold transition-colors"
-                >
-                  +91 98158 123 09
-                </a>
+              <li className="flex items-start">
+                <Phone className="mr-3 h-5 w-5 text-hotel-gold flex-shrink-0 mt-1" />
+                <div className="flex flex-col space-y-1">
+                  <a
+                    href="tel:+918267020926"
+                    className="hover:text-hotel-gold transition-colors text-sm md:text-base touch-manipulation"
+                  >
+                    +91 8267 020 926
+                  </a>
+                  <a
+                    href="tel:+919815812309"
+                    className="hover:text-hotel-gold transition-colors text-sm md:text-base touch-manipulation"
+                  >
+                    +91 98158 123 09
+                  </a>
+                </div>
               </li>
               <li className="flex items-center">
-                <Instagram className="mr-3 h-5 w-5 text-hotel-gold" />
+                <Instagram className="mr-3 h-5 w-5 text-hotel-gold flex-shrink-0" />
                 <a
                   href="https://www.instagram.com/vedic.alaknanda"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-hotel-gold transition-colors"
+                  className="hover:text-hotel-gold transition-colors text-sm md:text-base touch-manipulation"
                 >
                   @vedic.alaknanda
                 </a>
               </li>
               <li className="flex items-center">
-                <Mail className="mr-3 h-5 w-5 text-hotel-gold" />
+                <Mail className="mr-3 h-5 w-5 text-hotel-gold flex-shrink-0" />
                 <a
                   href="mailto:booking@vedicalaknanda.com"
-                  className="hover:text-hotel-gold transition-colors"
+                  className="hover:text-hotel-gold transition-colors text-sm md:text-base touch-manipulation break-all"
                 >
                   booking@VedicAlaknanda.com
                 </a>
@@ -82,12 +86,12 @@ const BookNow = () => {
                   href="https://www.booking.com/hotel/in/vedic-alaknanda-seva-sadan.en-gb.html"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="h-5 w-5 flex"
+                  className="h-5 w-5 flex touch-manipulation"
                 >
-                  <p className="text-hotel-gold font-bold mr-3 px-1 h-5 w-5 text-xl flex items-center">
+                  <p className="text-hotel-gold font-bold mr-3 px-1 h-5 w-5 text-lg md:text-xl flex items-center">
                     B.
                   </p>
-                  <span className="hover:text-hotel-gold transition-colors">
+                  <span className="hover:text-hotel-gold transition-colors text-sm md:text-base">
                     Booking.com
                   </span>
                 </a>

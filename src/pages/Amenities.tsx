@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -17,40 +18,40 @@ const Amenities = () => {
     {
       title: "High speed Wi-Fi",
       description: "Stay connected to the internet with high-speed Wi-Fi.",
-      icon: <Wifi className="h-8 w-8 text-hotel-gold mb-4" />,
+      icon: <Wifi className="h-6 w-6 md:h-8 md:w-8 text-hotel-gold mb-3 md:mb-4" />,
     },
     {
       title: "Lift",
       description: "Access to the lift for easy navigation for all age groups.",
-      icon: <ArrowUpDown className="h-8 w-8 text-hotel-gold mb-4" />,
+      icon: <ArrowUpDown className="h-6 w-6 md:h-8 md:w-8 text-hotel-gold mb-3 md:mb-4" />,
     },
     {
       title: "Room services",
       description: "Enjoy the convenience of room services.",
-      icon: <Bell className="h-8 w-8 text-hotel-gold mb-4" />,
+      icon: <Bell className="h-6 w-6 md:h-8 md:w-8 text-hotel-gold mb-3 md:mb-4" />,
     },
     {
       title: "Parking",
       description: "Secure parking for your convenience.",
-      icon: <Car className="h-8 w-8 text-hotel-gold mb-4" />,
+      icon: <Car className="h-6 w-6 md:h-8 md:w-8 text-hotel-gold mb-3 md:mb-4" />,
     },
     {
       title: "Security cameras",
       description:
         "Stay safe with our advanced security cameras throughout the public areas of hotel.",
-      icon: <Camera className="h-8 w-8 text-hotel-gold mb-4" />,
+      icon: <Camera className="h-6 w-6 md:h-8 md:w-8 text-hotel-gold mb-3 md:mb-4" />,
     },
     {
       title: "On demand cab service",
       description:
         "Get a cab service on demand to all nearby attractions including Shri Badrinath, Kedarnath and Airport.",
-      icon: <CarTaxiFront className="h-8 w-8 text-hotel-gold mb-4" />,
+      icon: <CarTaxiFront className="h-6 w-6 md:h-8 md:w-8 text-hotel-gold mb-3 md:mb-4" />,
     },
     {
       title: "Doctor on Call",
       description:
         "For your peace of mind, we offer prompt access to medical assistance with a doctor available on call.",
-      icon: <Stethoscope className="h-8 w-8 text-hotel-gold mb-4" />,
+      icon: <Stethoscope className="h-6 w-6 md:h-8 md:w-8 text-hotel-gold mb-3 md:mb-4" />,
     },
   ];
 
@@ -59,29 +60,29 @@ const Amenities = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative h-64 bg-gradient-to-r from-hotel-dark to-hotel-gold flex items-center justify-center">
-        <div className="text-center text-white">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+      <section className="relative h-48 md:h-64 bg-gradient-to-r from-hotel-dark to-hotel-gold flex items-center justify-center">
+        <div className="text-center text-white px-4">
+          <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold mb-2 md:mb-4">
             Premium Facilities
           </h1>
-          <p className="text-lg md:text-xl">
+          <p className="text-base md:text-lg lg:text-xl max-w-3xl mx-auto">
             Enjoy our comprehensive range of amenities designed for your comfort
             and convenience
           </p>
         </div>
       </section>
 
-      <div className="flex-1 bg-gray-50 py-16 md:py-20 ">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="flex-1 bg-gray-50 py-8 md:py-16 lg:py-20">
+        <div className="container mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {amenities.map((amenity, index) => (
-            <Card key={index}>
-              <CardContent className="p-6">
-                <div className="flex flex-col items-center text-center">
+            <Card key={index} className="h-full">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex flex-col items-center text-center h-full">
                   {amenity.icon}
-                  <h2 className="text-xl font-semibold mb-2">
+                  <h2 className="text-lg md:text-xl font-semibold mb-2">
                     {amenity.title}
                   </h2>
-                  <p className="text-gray-600">{amenity.description}</p>
+                  <p className="text-gray-600 text-sm md:text-base flex-1">{amenity.description}</p>
                 </div>
               </CardContent>
             </Card>

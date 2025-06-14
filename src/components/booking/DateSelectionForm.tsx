@@ -1,8 +1,6 @@
 
 import React from "react";
 import { useFormContext } from "react-hook-form";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -17,36 +15,41 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { CalendarIcon, Loader2 } from "lucide-react";
+import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 interface DateSelectionFormProps {
-  checkInDate?: Date | null;
-  checkOutDate?: Date | null;
-  onCheckInChange: (date: Date | null) => void;
-  onCheckOutChange: (date: Date | null) => void;
+  checkInDate?: Date;
+  checkOutDate?: Date;
+  onCheckInChange: (date: Date | undefined) => void;
+  onCheckOutChange: (date: Date | undefined) => void;
+  onConfirmDates: () => void;
+  datesConfirmed: boolean;
+  loading: boolean;
+  disabled?: boolean;
 }
 
-export interface DateFormValues {
-  check_in_date: Date;
-  check_out_date: Date;
-}
-
-const DateSelectionForm: React.FC<DateSelectionFormProps> = ({
+const DateSelectionForm = ({
   checkInDate,
   checkOutDate,
   onCheckInChange,
   onCheckOutChange,
-}) => {
-  const form = useFormContext<DateFormValues>();
+  onConfirmDates,
+  datesConfirmed,
+  loading,
+  disabled = false,
+}: DateSelectionFormProps) => {
+  const form = useFormContext();
 
   return (
-    <>
+    <div className="space-y-4">
       <FormField
         control={form.control}
         name="check_in_date"
         rules={{ required: "Check-in date is required" }}
         render={({ field }) => (
-          <FormItem className="flex flex-col">
+          <FormItem>
             <FormLabel>Check-in Date</FormLabel>
             <Popover>
               <PopoverTrigger asChild>
@@ -54,32 +57,32 @@ const DateSelectionForm: React.FC<DateSelectionFormProps> = ({
                   <Button
                     variant="outline"
                     className={cn(
-                      "pl-3 text-left font-normal",
-                      !field.value && "text-muted-foreground"
+                      "w-full justify-start text-left font-normal",
+                      !checkInDate && "text-muted-foreground"
                     )}
+                    disabled={disabled}
                   >
-                    {field.value ? (
-                      format(field.value, "PPP")
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {checkInDate ? (
+                      format(checkInDate, "PPP")
                     ) : (
                       <span>Pick a date</span>
                     )}
-                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                   </Button>
                 </FormControl>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
-                  selected={field.value}
+                  selected={checkInDate}
                   onSelect={(date) => {
-                    field.onChange(date);
                     onCheckInChange(date);
+                    field.onChange(date);
                   }}
                   disabled={(date) =>
-                    date < new Date(new Date().setHours(0, 0, 0, 0))
+                    date < new Date() || date < new Date("1900-01-01")
                   }
                   initialFocus
-                  className={cn("p-3 pointer-events-auto")}
                 />
               </PopoverContent>
             </Popover>
@@ -93,7 +96,7 @@ const DateSelectionForm: React.FC<DateSelectionFormProps> = ({
         name="check_out_date"
         rules={{ required: "Check-out date is required" }}
         render={({ field }) => (
-          <FormItem className="flex flex-col">
+          <FormItem>
             <FormLabel>Check-out Date</FormLabel>
             <Popover>
               <PopoverTrigger asChild>
@@ -101,33 +104,33 @@ const DateSelectionForm: React.FC<DateSelectionFormProps> = ({
                   <Button
                     variant="outline"
                     className={cn(
-                      "pl-3 text-left font-normal",
-                      !field.value && "text-muted-foreground"
+                      "w-full justify-start text-left font-normal",
+                      !checkOutDate && "text-muted-foreground"
                     )}
+                    disabled={disabled}
                   >
-                    {field.value ? (
-                      format(field.value, "PPP")
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {checkOutDate ? (
+                      format(checkOutDate, "PPP")
                     ) : (
                       <span>Pick a date</span>
                     )}
-                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                   </Button>
                 </FormControl>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
-                  selected={field.value}
+                  selected={checkOutDate}
                   onSelect={(date) => {
-                    field.onChange(date);
                     onCheckOutChange(date);
+                    field.onChange(date);
                   }}
                   disabled={(date) =>
                     date <= (checkInDate || new Date()) ||
-                    date < new Date(new Date().setHours(0, 0, 0, 0))
+                    date < new Date("1900-01-01")
                   }
                   initialFocus
-                  className={cn("p-3 pointer-events-auto")}
                 />
               </PopoverContent>
             </Popover>
@@ -135,7 +138,31 @@ const DateSelectionForm: React.FC<DateSelectionFormProps> = ({
           </FormItem>
         )}
       />
-    </>
+
+      {!datesConfirmed && !disabled && checkInDate && checkOutDate && (
+        <Button
+          type="button"
+          onClick={onConfirmDates}
+          className="w-full"
+          disabled={loading}
+        >
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Checking Availability...
+            </>
+          ) : (
+            "Check Availability"
+          )}
+        </Button>
+      )}
+
+      {datesConfirmed && (
+        <div className="text-sm text-green-600 font-medium text-center">
+          ✓ Dates confirmed - Room availability loaded
+        </div>
+      )}
+    </div>
   );
 };
 
