@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import HeroSection from "@/components/HeroSection";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
@@ -129,17 +130,10 @@ const Gallery = () => {
     <main className="min-h-screen flex flex-col">
       <Header />
 
-      {/* Hero Section */}
-      <section className="relative h-64 bg-gradient-to-r from-hotel-dark to-hotel-gold flex items-center justify-center">
-        <div className="text-center text-white px-4">
-          <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold mb-4">
-            Our Photo Gallery
-          </h1>
-          <p className="text-base md:text-lg lg:text-xl">
-            Discover the elegance and tranquility that awaits you
-          </p>
-        </div>
-      </section>
+      <HeroSection
+        title="Our Photo Gallery"
+        description="Discover the elegance and tranquility that awaits you"
+      />
 
       {/* Video Section */}
       <section className="py-12">

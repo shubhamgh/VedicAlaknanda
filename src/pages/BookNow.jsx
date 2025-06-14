@@ -1,6 +1,6 @@
-
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import HeroSection from "@/components/HeroSection";
 import { Mail, MapPin, Phone, Instagram } from "lucide-react";
 
 const BookNow = () => {
@@ -9,16 +9,11 @@ const BookNow = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative h-48 md:h-64 bg-gradient-to-r from-hotel-dark to-hotel-gold flex items-center justify-center">
-        <div className="text-center text-white px-4">
-          <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold mb-2 md:mb-4">
-            Book Your Stay
-          </h1>
-          <p className="text-base md:text-lg lg:text-xl">
-            Reserve your perfect mountain getaway
-          </p>
-        </div>
-      </section>
+
+      <HeroSection
+        title="Book Your Stay"
+        description="Reserve your perfect mountain getaway"
+      />
 
       <main className="container mx-auto px-4 py-8 md:py-20 flex-1">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 py-4 md:py-8">

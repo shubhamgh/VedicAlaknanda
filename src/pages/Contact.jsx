@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import HeroSection from "@/components/HeroSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -44,14 +45,11 @@ const Contact = () => {
   return (
     <main className="min-h-screen">
       <Header />
-      <section className="relative h-64 bg-gradient-to-r from-hotel-dark to-hotel-gold flex items-center justify-center">
-        <div className="text-center text-white">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">Contact Us</h1>
-          <p className="text-lg md:text-xl">
-            Reach out to us for any inquiries or assistance
-          </p>
-        </div>
-      </section>
+
+      <HeroSection
+        title="Contact Us"
+        description="Reach out to us for any inquiries or assistance"
+      />
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-2 gap-8">
