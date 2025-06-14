@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useMemo } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { format } from "date-fns";
@@ -9,6 +10,7 @@ import DateSelectionForm from "./booking/DateSelectionForm";
 import SpecialRequestsForm from "./booking/SpecialRequestsForm";
 import BookingSummary from "./booking/BookingSummary";
 import BookingSourceForm from "./booking/BookingSourceForm";
+import PricePerNightForm from "./booking/PricePerNightForm";
 import { calculateNights } from "@/lib/utils";
 
 interface FormValues {
@@ -26,6 +28,7 @@ interface FormValues {
   status: string;
   booking_source?: string;
   custom_booking_source?: string;
+  price_per_night: number;
 }
 
 interface RoomInventory {
@@ -84,6 +87,12 @@ const BookingForm = ({
   const [datesConfirmed, setDatesConfirmed] = useState<boolean>(false);
   const [availabilityLoading, setAvailabilityLoading] = useState<boolean>(false);
 
+  // Default price based on room type, but allow user to override
+  const getDefaultPrice = (roomType?: string) => {
+    if (roomType === "Family Room with Terrace") return 6000;
+    return 5000;
+  };
+
   const methods = useForm<FormValues>({
     defaultValues: {
       guest_name: booking?.guest_name || "",
@@ -100,18 +109,24 @@ const BookingForm = ({
       status: booking?.status || "confirmed",
       booking_source: booking?.booking_source || undefined,
       custom_booking_source: booking?.custom_booking_source || "",
+      price_per_night: booking?.total_price && checkInDate && checkOutDate 
+        ? Math.round(booking.total_price / calculateNights(checkInDate, checkOutDate))
+        : getDefaultPrice(selectedRoom?.type),
     },
   });
 
   // Transform rooms to match the expected format for BookingSummary
   const transformedRooms = useMemo(() => {
-    return rooms.map((room) => ({
-      id: room.id,
-      room_number: room.number,
-      room_type: room.type,
-      price_per_night: room.type === "Family Room with Terrace" ? 6000 : 5000,
-    }));
-  }, [rooms]);
+    return rooms.map((room) => {
+      const pricePerNight = methods.watch("price_per_night") || getDefaultPrice(room.type);
+      return {
+        id: room.id,
+        room_number: room.number,
+        room_type: room.type,
+        price_per_night: pricePerNight,
+      };
+    });
+  }, [rooms, methods.watch("price_per_night")]);
 
   // Auto-confirm dates if they come from calendar selection or editing existing booking
   useEffect(() => {
@@ -152,6 +167,11 @@ const BookingForm = ({
         booking.custom_booking_source || ""
       );
 
+      // Calculate price per night from total price and nights
+      const nights = calculateNights(checkIn, checkOut);
+      const pricePerNight = nights > 0 ? Math.round(booking.total_price / nights) : getDefaultPrice();
+      methods.setValue("price_per_night", pricePerNight);
+
       // Set room type based on the room_id
       const bookingRoom = rooms.find((room) => room.id === booking.room_id);
       if (bookingRoom) {
@@ -166,6 +186,7 @@ const BookingForm = ({
     if (selectedRoom) {
       methods.setValue("room_type", selectedRoom.type);
       methods.setValue("room_id", selectedRoom.id);
+      methods.setValue("price_per_night", getDefaultPrice(selectedRoom.type));
       setSelectedRoomId(selectedRoom.id);
     }
   }, [booking, selectedDates, selectedRoom, methods, rooms]);
@@ -187,13 +208,9 @@ const BookingForm = ({
   };
 
   const handleSubmit = (values: FormValues) => {
-    // Calculate total price based on room rate and nights
-    const selectedRoomData = transformedRooms.find(
-      (room) => room.id === values.room_id
-    );
+    // Calculate total price based on entered price per night and nights
     const nights = calculateNights(values.check_in_date, values.check_out_date);
-    const total_price =
-      selectedRoomData && nights > 0 ? selectedRoomData.price_per_night * nights : 0;
+    const total_price = nights > 0 ? values.price_per_night * nights : 0;
 
     onSubmit({
       ...values,
@@ -240,6 +257,8 @@ const BookingForm = ({
                 datesConfirmed={datesConfirmed}
               />
             )}
+
+            <PricePerNightForm />
 
             <BookingSourceForm onBookingSourceChange={setBookingSource} />
           </div>
