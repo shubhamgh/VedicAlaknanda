@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { useBookings } from "@/hooks/useBookings";
 import { useRooms } from "@/hooks/useRooms";
@@ -154,6 +153,7 @@ const BookingsTab = () => {
         roomTypeAvailability={roomTypeAvailability}
         onSubmit={handleSubmit}
         onFetchAvailability={fetchRoomAvailabilityForDates}
+        lockDates={false}
       />
     </div>
   );

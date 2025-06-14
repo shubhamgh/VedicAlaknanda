@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { useRooms } from "@/hooks/useRooms";
 import { format, addDays } from "date-fns";
@@ -149,6 +148,7 @@ const InventoryTab = () => {
         roomTypeAvailability={roomTypeAvailability}
         onSubmit={handleBookingSubmit}
         onFetchAvailability={fetchRoomAvailabilityForDates}
+        lockDates={true}
       />
     </div>
   );

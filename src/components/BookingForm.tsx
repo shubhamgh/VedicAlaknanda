@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useMemo } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { format } from "date-fns";
@@ -52,6 +51,7 @@ interface BookingFormProps {
   onSubmit: (data: any) => void;
   onCancel: () => void;
   onFetchAvailability?: (checkIn: string, checkOut: string) => Promise<RoomTypeAvailability[]>;
+  lockDates?: boolean;
 }
 
 const BookingForm = ({
@@ -63,6 +63,7 @@ const BookingForm = ({
   onSubmit,
   onCancel,
   onFetchAvailability,
+  lockDates = false,
 }: BookingFormProps) => {
   const [checkInDate, setCheckInDate] = useState<Date | undefined>(
     booking?.check_in_date
@@ -226,7 +227,7 @@ const BookingForm = ({
               onConfirmDates={handleConfirmDates}
               datesConfirmed={datesConfirmed}
               loading={availabilityLoading}
-              disabled={!!selectedDates}
+              disabled={lockDates}
             />
 
             {datesConfirmed && (
