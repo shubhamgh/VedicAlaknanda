@@ -16,6 +16,20 @@ interface RoomTypeAvailability {
   availableRooms: RoomInventory[];
 }
 
+interface BookingDetails {
+  id: string;
+  guest_name: string;
+  guest_email: string;
+  guest_phone: string;
+  check_in: string;
+  check_out: string;
+  adults: number;
+  children: number;
+  total_price: number;
+  status: string;
+  special_requests?: string;
+}
+
 export const useRooms = () => {
   const [roomInventory, setRoomInventory] = useState<RoomInventory[]>([]);
   const [roomTypeAvailability, setRoomTypeAvailability] = useState<
@@ -184,6 +198,37 @@ export const useRooms = () => {
     }
   }, []);
 
+  const fetchBookingForRoomAndDate = useCallback(async (roomId: string, selectedDate: string): Promise<BookingDetails | null> => {
+    try {
+      const { data: booking, error } = await supabase
+        .from("bookings")
+        .select("*")
+        .eq("room_id", roomId)
+        .lte("check_in", selectedDate)
+        .gt("check_out", selectedDate)
+        .neq("status", "cancelled")
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          // No booking found
+          return null;
+        }
+        throw error;
+      }
+
+      return booking;
+    } catch (error: any) {
+      console.error("Error fetching booking details:", error);
+      toast({
+        title: "Error fetching booking details",
+        description: error.message,
+        variant: "destructive",
+      });
+      return null;
+    }
+  }, []);
+
   useEffect(() => {
     fetchRooms();
   }, []);
@@ -193,6 +238,7 @@ export const useRooms = () => {
     roomTypeAvailability, 
     refetchRooms: fetchRooms, 
     fetchRoomAvailabilityForDates,
-    fetchRoomInventoryForDate
+    fetchRoomInventoryForDate,
+    fetchBookingForRoomAndDate
   };
 };

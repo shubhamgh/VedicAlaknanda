@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useRooms } from "@/hooks/useRooms";
-import { format } from "date-fns";
+import { format, addDays } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -18,6 +18,8 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import BookingDetailsModal from "./BookingDetailsModal";
+import AdminBookingModal from "./AdminBookingModal";
 
 interface RoomInventory {
   id: string;
@@ -26,9 +28,28 @@ interface RoomInventory {
   status: string;
 }
 
+interface BookingDetails {
+  id: string;
+  guest_name: string;
+  guest_email: string;
+  guest_phone: string;
+  check_in: string;
+  check_out: string;
+  adults: number;
+  children: number;
+  total_price: number;
+  status: string;
+  special_requests?: string;
+}
+
 const InventoryTab = () => {
-  const { roomInventory, fetchRoomInventoryForDate } = useRooms();
+  const { roomInventory, fetchRoomInventoryForDate, fetchBookingForRoomAndDate, roomTypeAvailability, fetchRoomAvailabilityForDates } = useRooms();
   const [inventoryDate, setInventoryDate] = useState<Date>(new Date());
+  const [selectedBooking, setSelectedBooking] = useState<BookingDetails | null>(null);
+  const [selectedRoom, setSelectedRoom] = useState<RoomInventory | null>(null);
+  const [showBookingDetails, setShowBookingDetails] = useState(false);
+  const [showNewBookingModal, setShowNewBookingModal] = useState(false);
+  const [newBookingDates, setNewBookingDates] = useState<{ start: Date; end: Date } | null>(null);
 
   // Add useEffect for inventory date changes
   useEffect(() => {
@@ -49,13 +70,55 @@ const InventoryTab = () => {
     }, {} as Record<string, RoomInventory[]>);
   }, [roomInventory]);
 
+  const handleRoomClick = async (room: RoomInventory) => {
+    if (room.status === "booked") {
+      const dateStr = format(inventoryDate, "yyyy-MM-dd");
+      const booking = await fetchBookingForRoomAndDate(room.id, dateStr);
+      if (booking) {
+        setSelectedBooking(booking);
+        setSelectedRoom(room);
+        setShowBookingDetails(true);
+      }
+    }
+  };
+
+  const handleNewBooking = async () => {
+    if (!selectedRoom) return;
+    
+    setShowBookingDetails(false);
+    
+    // Set dates for the next night after the current booking
+    const nextDay = addDays(inventoryDate, 1);
+    const dayAfter = addDays(nextDay, 1);
+    
+    setNewBookingDates({ start: nextDay, end: dayAfter });
+    
+    // Fetch availability for the next night
+    const nextDayStr = format(nextDay, "yyyy-MM-dd");
+    const dayAfterStr = format(dayAfter, "yyyy-MM-dd");
+    await fetchRoomAvailabilityForDates(nextDayStr, dayAfterStr);
+    
+    setShowNewBookingModal(true);
+  };
+
+  const handleBookingSubmit = async (data: any) => {
+    // Handle booking submission logic here
+    console.log("New booking data:", data);
+    setShowNewBookingModal(false);
+    setNewBookingDates(null);
+    setSelectedRoom(null);
+    // Refresh inventory after booking
+    const dateStr = format(inventoryDate, "yyyy-MM-dd");
+    fetchRoomInventoryForDate(dateStr);
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="text-lg sm:text-xl">Select Date for Inventory</CardTitle>
           <CardDescription>
-            Choose a date to view room availability and booking status
+            Choose a date to view room availability and booking status. Click on booked rooms to view details.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -98,11 +161,12 @@ const InventoryTab = () => {
               {roomList.map((room) => (
                 <div
                   key={room.id}
-                  className={`p-2 sm:p-3 rounded border text-center text-sm ${
+                  className={`p-2 sm:p-3 rounded border text-center text-sm cursor-pointer transition-colors ${
                     room.status === "available"
-                      ? "bg-green-100 border-green-300"
-                      : "bg-red-100 border-red-300"
+                      ? "bg-green-100 border-green-300 hover:bg-green-200"
+                      : "bg-red-100 border-red-300 hover:bg-red-200"
                   }`}
+                  onClick={() => handleRoomClick(room)}
                 >
                   <div className="font-semibold text-xs sm:text-sm">
                     Room {room.number}
@@ -116,6 +180,29 @@ const InventoryTab = () => {
           </CardContent>
         </Card>
       ))}
+
+      <BookingDetailsModal
+        isOpen={showBookingDetails}
+        onClose={() => setShowBookingDetails(false)}
+        booking={selectedBooking}
+        roomNumber={selectedRoom?.number || ""}
+        onNewBooking={handleNewBooking}
+      />
+
+      <AdminBookingModal
+        isOpen={showNewBookingModal}
+        onClose={() => {
+          setShowNewBookingModal(false);
+          setNewBookingDates(null);
+          setSelectedRoom(null);
+        }}
+        selectedBooking={null}
+        selectedDates={newBookingDates}
+        rooms={roomInventory}
+        roomTypeAvailability={roomTypeAvailability}
+        onSubmit={handleBookingSubmit}
+        onFetchAvailability={fetchRoomAvailabilityForDates}
+      />
     </div>
   );
 };
