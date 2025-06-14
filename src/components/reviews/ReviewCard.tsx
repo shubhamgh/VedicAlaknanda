@@ -20,20 +20,22 @@ interface ReviewCardProps {
 
 const ReviewCard = ({ review }: ReviewCardProps) => {
   return (
-    <Card className="border-none shadow-lg">
-      <CardContent className="p-8">
-        <div className="flex flex-col items-center text-center">
+    <Card className="border-none shadow-lg h-auto">
+      <CardContent className="p-6 md:p-8">
+        <div className="flex flex-col items-center text-center space-y-4">
           <ReviewAvatar
             name={review.name}
             image={review.image}
             gender={review.gender}
           />
           <StarRating rating={review.rating} />
-          <p className="text-lg italic mb-4">"{review.review}"</p>
-          <p className="font-semibold text-gray-800 mb-2">{review.name}</p>
-          {review.source && (
-            <p className="text-sm text-gray-600">via {review.source}</p>
-          )}
+          <p className="text-base md:text-lg italic leading-relaxed">"{review.review}"</p>
+          <div className="pt-2">
+            <p className="font-semibold text-gray-800 text-sm md:text-base">{review.name}</p>
+            {review.source && (
+              <p className="text-xs md:text-sm text-gray-600 mt-1">via {review.source}</p>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

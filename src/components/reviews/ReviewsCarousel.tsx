@@ -35,8 +35,10 @@ const ReviewsCarousel = ({ reviews }: ReviewsCarouselProps) => {
       >
         <CarouselContent className="-ml-2 md:-ml-4">
           {reviews.map((review) => (
-            <CarouselItem key={review.id} className="pl-2 md:pl-4">
-              <ReviewCard review={review} />
+            <CarouselItem key={review.id} className="pl-2 md:pl-4 basis-full">
+              <div className="h-auto">
+                <ReviewCard review={review} />
+              </div>
             </CarouselItem>
           ))}
         </CarouselContent>
