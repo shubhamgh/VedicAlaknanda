@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { useBookings } from "@/hooks/useBookings";
 import { useRooms } from "@/hooks/useRooms";
 import BookingCalendar from "@/components/admin/BookingCalendar";
-import BookingsList from "@/components/admin/BookingsList";
+import TodaysBookings from "@/components/admin/TodaysBookings";
 import AdminBookingModal from "@/components/admin/AdminBookingModal";
 
 interface CalendarEvent {
@@ -72,7 +73,7 @@ const BookingsTab = () => {
     }
   }, [selectedRoomType, bookings, roomInventory]);
 
-  // Transform roomInventory to Room type for BookingsList
+  // Transform roomInventory to Room type for TodaysBookings
   const transformedRooms = useMemo(() => {
     return roomInventory.map((room): Room => ({
       id: room.id,
@@ -134,14 +135,13 @@ const BookingsTab = () => {
         </div>
       )}
 
-      <BookingsList
+      <TodaysBookings
         bookings={filteredBookings}
         rooms={transformedRooms}
         onEditBooking={(booking) => {
           setSelectedBooking(booking);
           setIsModalOpen(true);
         }}
-        onDeleteBooking={handleDeleteBooking}
       />
 
       <AdminBookingModal
