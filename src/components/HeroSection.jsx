@@ -3,7 +3,12 @@ import React from "react";
 
 function HeroSection({ title, description }) {
   return (
-    <section className="relative h-64 md:h-64 bg-gradient-to-r from-gray-800 to-yellow-600 flex items-center justify-center">
+    <section 
+      className="relative h-64 md:h-64 flex items-center justify-center"
+      style={{
+        background: 'linear-gradient(to right, #1f2937, #eab308)'
+      }}
+    >
       <div className="text-center text-white px-4">
         <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold mb-2 md:mb-4">
           {title}
