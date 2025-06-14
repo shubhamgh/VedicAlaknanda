@@ -210,7 +210,7 @@ const Admin = () => {
   }, [roomInventory]);
 
   // Add inventory date state
-  const [inventoryDate, setInventoryDate] = useState<Date>(new Date());
+  
 
   // Add useEffect for inventory date changes
   useEffect(() => {
