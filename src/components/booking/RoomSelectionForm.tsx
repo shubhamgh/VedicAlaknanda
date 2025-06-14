@@ -36,6 +36,7 @@ interface RoomSelectionFormProps {
   roomTypeAvailability: RoomTypeAvailability[];
   onRoomChange: (roomId: string) => void;
   booking?: any;
+  selectedRoom?: RoomInventory | null;
   datesConfirmed?: boolean;
 }
 
@@ -51,6 +52,7 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
   roomTypeAvailability,
   onRoomChange,
   booking,
+  selectedRoom,
   datesConfirmed = false,
 }) => {
   const form = useFormContext<RoomFormValues>();
@@ -89,9 +91,23 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
     }
   }, [watchedRoomType, roomTypeAvailability, datesConfirmed]);
 
-  // Set initial values for editing
+  // Set initial values for editing or selectedRoom
   useEffect(() => {
-    if (booking && rooms.length > 0) {
+    if (selectedRoom) {
+      // Pre-select the specific room when clicked from inventory
+      form.setValue("room_type", selectedRoom.type);
+      form.setValue("room_id", selectedRoom.id);
+      setSelectedRoomType(selectedRoom.type);
+      
+      // Find the room type data and set available rooms
+      const typeData = roomTypeAvailability.find(
+        (rt) => rt.type === selectedRoom.type
+      );
+      const sortedRooms = typeData?.availableRooms.sort((a, b) => 
+        parseInt(a.number) - parseInt(b.number)
+      ) || [];
+      setAvailableRoomsForType(sortedRooms);
+    } else if (booking && rooms.length > 0) {
       const bookingRoom = rooms.find((room) => room.id === booking.room_id);
       if (bookingRoom) {
         form.reset({
@@ -103,7 +119,7 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
         setSelectedRoomType(bookingRoom.type);
       }
     }
-  }, [booking, rooms]);
+  }, [selectedRoom, booking, rooms, roomTypeAvailability, form]);
 
   if (!datesConfirmed) {
     return (
@@ -128,6 +144,7 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
                 field.onChange(value);
                 setSelectedRoomType(value);
               }}
+              disabled={!!selectedRoom}
             >
               <FormControl>
                 <SelectTrigger>
@@ -161,6 +178,7 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
                   field.onChange(value);
                   onRoomChange(value);
                 }}
+                disabled={!!selectedRoom}
               >
                 <FormControl>
                   <SelectTrigger>

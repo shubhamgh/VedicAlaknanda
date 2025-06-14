@@ -46,6 +46,7 @@ interface RoomTypeAvailability {
 interface BookingFormProps {
   booking: any | null;
   selectedDates: { start: Date; end: Date } | null;
+  selectedRoom?: RoomInventory | null;
   rooms: RoomInventory[];
   roomTypeAvailability: RoomTypeAvailability[];
   onSubmit: (data: any) => void;
@@ -56,6 +57,7 @@ interface BookingFormProps {
 const BookingForm = ({
   booking,
   selectedDates,
+  selectedRoom,
   rooms,
   roomTypeAvailability,
   onSubmit,
@@ -73,7 +75,7 @@ const BookingForm = ({
       : selectedDates?.end
   );
   const [selectedRoomId, setSelectedRoomId] = useState<string>(
-    booking?.room_id || ""
+    booking?.room_id || selectedRoom?.id || ""
   );
   const [bookingSource, setBookingSource] = useState<string | undefined>(
     booking?.booking_source || undefined
@@ -88,8 +90,8 @@ const BookingForm = ({
       guest_phone: booking?.guest_phone || "",
       address: booking?.address || "",
       gov_id_number: booking?.gov_id_number || "",
-      room_type: "",
-      room_id: booking?.room_id || "",
+      room_type: selectedRoom?.type || "",
+      room_id: booking?.room_id || selectedRoom?.id || "",
       check_in_date: checkInDate,
       check_out_date: checkOutDate,
       num_guests: booking?.num_guests || 1,
@@ -118,7 +120,7 @@ const BookingForm = ({
     }
   }, [selectedDates, booking, checkInDate, checkOutDate]);
 
-  // Update form when dates or booking changes
+  // Update form when dates, booking, or selectedRoom changes
   useEffect(() => {
     if (selectedDates) {
       methods.setValue("check_in_date", selectedDates.start);
@@ -158,7 +160,14 @@ const BookingForm = ({
       setSelectedRoomId(booking.room_id);
       setBookingSource(booking.booking_source);
     }
-  }, [booking, selectedDates, methods, rooms]);
+
+    // If we have a selectedRoom, pre-fill the room type and room ID
+    if (selectedRoom) {
+      methods.setValue("room_type", selectedRoom.type);
+      methods.setValue("room_id", selectedRoom.id);
+      setSelectedRoomId(selectedRoom.id);
+    }
+  }, [booking, selectedDates, selectedRoom, methods, rooms]);
 
   const handleConfirmDates = async () => {
     if (!checkInDate || !checkOutDate || !onFetchAvailability) return;
@@ -178,12 +187,12 @@ const BookingForm = ({
 
   const handleSubmit = (values: FormValues) => {
     // Calculate total price based on room rate and nights
-    const selectedRoom = transformedRooms.find(
+    const selectedRoomData = transformedRooms.find(
       (room) => room.id === values.room_id
     );
     const nights = calculateNights(values.check_in_date, values.check_out_date);
     const total_price =
-      selectedRoom && nights > 0 ? selectedRoom.price_per_night * nights : 0;
+      selectedRoomData && nights > 0 ? selectedRoomData.price_per_night * nights : 0;
 
     onSubmit({
       ...values,
@@ -217,6 +226,7 @@ const BookingForm = ({
               onConfirmDates={handleConfirmDates}
               datesConfirmed={datesConfirmed}
               loading={availabilityLoading}
+              disabled={!!selectedDates}
             />
 
             {datesConfirmed && (
@@ -225,6 +235,7 @@ const BookingForm = ({
                 roomTypeAvailability={roomTypeAvailability}
                 onRoomChange={setSelectedRoomId}
                 booking={booking}
+                selectedRoom={selectedRoom}
                 datesConfirmed={datesConfirmed}
               />
             )}

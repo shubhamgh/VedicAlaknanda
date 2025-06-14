@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { useRooms } from "@/hooks/useRooms";
 import { format, addDays } from "date-fns";
@@ -58,7 +59,7 @@ const InventoryTab = () => {
     }
   }, [inventoryDate, fetchRoomInventoryForDate]);
 
-  // Group rooms by type for inventory display
+  // Group rooms by type for inventory display and sort by room number
   const roomsByType = useMemo(() => {
     return roomInventory.reduce((acc, room) => {
       if (!acc[room.type]) {
@@ -68,6 +69,15 @@ const InventoryTab = () => {
       return acc;
     }, {} as Record<string, RoomInventory[]>);
   }, [roomInventory]);
+
+  // Sort rooms within each type by room number
+  const sortedRoomsByType = useMemo(() => {
+    const sorted = {} as Record<string, RoomInventory[]>;
+    Object.entries(roomsByType).forEach(([type, rooms]) => {
+      sorted[type] = rooms.sort((a, b) => parseInt(a.number) - parseInt(b.number));
+    });
+    return sorted;
+  }, [roomsByType]);
 
   const handleRoomClick = async (room: RoomInventory) => {
     if (room.status === "booked") {
@@ -163,7 +173,7 @@ const InventoryTab = () => {
         </CardContent>
       </Card>
 
-      {Object.entries(roomsByType).map(([roomType, roomList]) => (
+      {Object.entries(sortedRoomsByType).map(([roomType, roomList]) => (
         <Card key={roomType}>
           <CardHeader>
             <CardTitle className="text-lg sm:text-xl">{roomType}</CardTitle>
@@ -213,6 +223,7 @@ const InventoryTab = () => {
         }}
         selectedBooking={null}
         selectedDates={newBookingDates}
+        selectedRoom={selectedRoom}
         rooms={roomInventory}
         roomTypeAvailability={roomTypeAvailability}
         onSubmit={handleBookingSubmit}

@@ -52,6 +52,7 @@ interface AdminBookingModalProps {
   onClose: () => void;
   selectedBooking: Booking | null;
   selectedDates: { start: Date; end: Date } | null;
+  selectedRoom?: RoomInventory | null;
   rooms: RoomInventory[];
   roomTypeAvailability: RoomTypeAvailability[];
   onSubmit: (data: any) => void;
@@ -63,6 +64,7 @@ const AdminBookingModal = ({
   onClose,
   selectedBooking,
   selectedDates,
+  selectedRoom,
   rooms,
   roomTypeAvailability,
   onSubmit,
@@ -74,6 +76,7 @@ const AdminBookingModal = ({
     <BookingForm
       booking={selectedBooking}
       selectedDates={selectedDates}
+      selectedRoom={selectedRoom}
       rooms={rooms}
       roomTypeAvailability={roomTypeAvailability}
       onSubmit={onSubmit}
