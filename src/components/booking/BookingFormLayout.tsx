@@ -86,12 +86,14 @@ const BookingFormLayout = ({
       <SpecialRequestsForm />
 
       {selectedRoomId && checkInDate && checkOutDate && (
-        <BookingSummary
-          selectedRoomId={selectedRoomId}
-          checkInDate={checkInDate}
-          checkOutDate={checkOutDate}
-          rooms={transformedRooms}
-        />
+        <div className="mt-6">
+          <BookingSummary
+            selectedRoomId={selectedRoomId}
+            checkInDate={checkInDate}
+            checkOutDate={checkOutDate}
+            rooms={transformedRooms}
+          />
+        </div>
       )}
     </div>
   );

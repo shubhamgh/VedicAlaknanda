@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { useRooms } from "@/hooks/useRooms";
 import { format, addDays } from "date-fns";
@@ -110,21 +111,23 @@ const InventoryTab = () => {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-4 sm:space-y-6 p-2 sm:p-4">
       <DateSelector 
         inventoryDate={inventoryDate}
         onDateChange={setInventoryDate}
       />
 
-      {Object.entries(sortedRoomsByType).map(([roomType, roomList]) => (
-        <RoomTypeSection
-          key={roomType}
-          roomType={roomType}
-          rooms={roomList}
-          inventoryDate={inventoryDate}
-          onRoomClick={handleRoomClick}
-        />
-      ))}
+      <div className="space-y-4">
+        {Object.entries(sortedRoomsByType).map(([roomType, roomList]) => (
+          <RoomTypeSection
+            key={roomType}
+            roomType={roomType}
+            rooms={roomList}
+            inventoryDate={inventoryDate}
+            onRoomClick={handleRoomClick}
+          />
+        ))}
+      </div>
 
       <BookingDetailsModal
         isOpen={showBookingDetails}

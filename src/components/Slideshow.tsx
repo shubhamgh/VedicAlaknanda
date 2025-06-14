@@ -124,21 +124,21 @@ const Slideshow: React.FC = () => {
           "transition-opacity duration-300"
         )}
       >
-        <h1 className="text-5xl md:text-7xl font-bold mb-4">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-3 md:mb-4 leading-tight">
           {slides[currentSlide].heading}
         </h1>
-        <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8">
+        <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-6 md:mb-8 leading-relaxed">
           {slides[currentSlide].subheading}
         </p>
         <Link
           to="/book-now"
-          className="bg-hotel-gold hover:bg-opacity-90 text-white py-3 px-8 text-base uppercase tracking-wider font-medium transition-all"
+          className="bg-hotel-gold hover:bg-opacity-90 text-white py-3 px-6 md:py-3 md:px-8 text-sm md:text-base uppercase tracking-wider font-medium transition-all touch-manipulation"
         >
           Book Your Stay
         </Link>
       </div>
 
-      <div className="absolute bottom-10 left-0 right-0 flex justify-center space-x-2">
+      <div className="absolute bottom-6 md:bottom-10 left-0 right-0 flex justify-center space-x-2">
         {slides.map((_, index) => (
           <button
             key={index}
@@ -148,8 +148,8 @@ const Slideshow: React.FC = () => {
               }
             }}
             className={cn(
-              "h-2 rounded-full transition-all duration-300",
-              index === currentSlide ? "w-8 bg-hotel-gold" : "w-2 bg-white/50"
+              "h-2 rounded-full transition-all duration-300 touch-manipulation",
+              index === currentSlide ? "w-6 md:w-8 bg-hotel-gold" : "w-2 bg-white/50"
             )}
             aria-label={`Go to slide ${index + 1}`}
           />

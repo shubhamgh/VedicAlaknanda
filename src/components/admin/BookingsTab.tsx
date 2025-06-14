@@ -110,14 +110,16 @@ const BookingsTab = () => {
   };
 
   return (
-    <div className="space-y-4">
-      <BookingCalendar
-        events={events}
-        rooms={roomInventory}
-        onSelectSlot={handleSelect}
-        onSelectEvent={handleEventSelect}
-        onSelectRoomType={handleRoomTypeSelect}
-      />
+    <div className="space-y-4 p-2 sm:p-4">
+      <div className="overflow-x-auto">
+        <BookingCalendar
+          events={events}
+          rooms={roomInventory}
+          onSelectSlot={handleSelect}
+          onSelectEvent={handleEventSelect}
+          onSelectRoomType={handleRoomTypeSelect}
+        />
+      </div>
 
       {selectedRoomType && (
         <div className="bg-blue-100 p-3 rounded-md">
@@ -126,7 +128,7 @@ const BookingsTab = () => {
               Filtering by: <strong>{selectedRoomType}</strong>
             </span>
             <button
-              className="text-blue-500 hover:text-blue-700 text-sm underline"
+              className="text-blue-500 hover:text-blue-700 text-sm underline touch-manipulation"
               onClick={() => setSelectedRoomType(null)}
             >
               Clear filter
