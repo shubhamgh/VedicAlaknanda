@@ -72,11 +72,13 @@ export const useRooms = () => {
 
       if (roomsError) throw roomsError;
 
-      // Get bookings that overlap with the selected date range
+      // Get bookings that actually overlap with the selected date range
+      // A booking overlaps if: booking.check_in < selected.check_out AND booking.check_out > selected.check_in
       const { data: overlappingBookings, error: bookingsError } = await supabase
         .from("bookings")
         .select("room_id")
-        .or(`and(check_in.lte.${checkOut},check_out.gte.${checkIn})`)
+        .lt("check_in", checkOut)
+        .gt("check_out", checkIn)
         .neq("status", "cancelled");
 
       if (bookingsError) throw bookingsError;
@@ -135,6 +137,54 @@ export const useRooms = () => {
     }
   };
 
+  const fetchRoomInventoryForDate = async (selectedDate: string) => {
+    try {
+      console.log("Fetching room inventory for date:", selectedDate);
+      
+      // Get all rooms
+      const { data: rooms, error: roomsError } = await supabase
+        .from("rooms")
+        .select("id, number, type, status");
+
+      if (roomsError) throw roomsError;
+
+      // Get bookings that overlap with the selected date
+      // A room is booked on a specific date if: booking.check_in <= date < booking.check_out
+      const { data: overlappingBookings, error: bookingsError } = await supabase
+        .from("bookings")
+        .select("room_id")
+        .lte("check_in", selectedDate)
+        .gt("check_out", selectedDate)
+        .neq("status", "cancelled");
+
+      if (bookingsError) throw bookingsError;
+
+      console.log("Bookings for date:", overlappingBookings);
+
+      // Get room IDs that are booked on the selected date
+      const bookedRoomIds = new Set(overlappingBookings?.map(booking => booking.room_id) || []);
+      
+      // Update room inventory with booking status for the specific date
+      const inventoryWithBookingStatus = (rooms || []).map(room => ({
+        ...room,
+        status: bookedRoomIds.has(room.id) ? "booked" : "available"
+      }));
+      
+      console.log("Room inventory for date:", inventoryWithBookingStatus);
+      
+      setRoomInventory(inventoryWithBookingStatus);
+      return inventoryWithBookingStatus;
+    } catch (error: any) {
+      console.error("Error fetching room inventory for date:", error);
+      toast({
+        title: "Error fetching room inventory",
+        description: error.message,
+        variant: "destructive",
+      });
+      return [];
+    }
+  };
+
   useEffect(() => {
     fetchRooms();
   }, []);
@@ -143,6 +193,7 @@ export const useRooms = () => {
     roomInventory, 
     roomTypeAvailability, 
     refetchRooms: fetchRooms, 
-    fetchRoomAvailabilityForDates 
+    fetchRoomAvailabilityForDates,
+    fetchRoomInventoryForDate
   };
 };

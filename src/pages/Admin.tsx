@@ -67,7 +67,7 @@ const Admin = () => {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, handleLogout } = useAdminAuth();
   const { bookings, handleDeleteBooking, handleBookingSubmit } = useBookings();
-  const { roomInventory, roomTypeAvailability, refetchRooms, fetchRoomAvailabilityForDates } = useRooms();
+  const { roomInventory, roomTypeAvailability, refetchRooms, fetchRoomAvailabilityForDates, fetchRoomInventoryForDate } = useRooms();
 
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
@@ -78,6 +78,7 @@ const Admin = () => {
   } | null>(null);
   const [selectedRoomType, setSelectedRoomType] = useState<string | null>(null);
   const [filteredBookings, setFilteredBookings] = useState<any[]>([]);
+  const [inventoryDate, setInventoryDate] = useState<Date>(new Date());
 
   // Messages state
   const [messages, setMessages] = useState([]);
@@ -207,6 +208,17 @@ const Admin = () => {
       price_per_night: room.type === "Family Room with Terrace" ? 6000 : 5000,
     }));
   }, [roomInventory]);
+
+  // Add inventory date state
+  const [inventoryDate, setInventoryDate] = useState<Date>(new Date());
+
+  // Add useEffect for inventory date changes
+  useEffect(() => {
+    if (isAuthenticated && inventoryDate) {
+      const dateStr = format(inventoryDate, "yyyy-MM-dd");
+      fetchRoomInventoryForDate(dateStr);
+    }
+  }, [inventoryDate, isAuthenticated, fetchRoomInventoryForDate]);
 
   const handleSelect = ({ start, end }: { start: Date; end: Date }) => {
     setSelectedDates({ start, end });
@@ -381,12 +393,46 @@ const Admin = () => {
 
           <TabsContent value="inventory">
             <div className="space-y-4 sm:space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg sm:text-xl">Select Date for Inventory</CardTitle>
+                  <CardDescription>
+                    Choose a date to view room availability and booking status
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full md:w-auto justify-start text-left font-normal",
+                          !inventoryDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {inventoryDate ? format(inventoryDate, "PPP") : <span>Pick a date</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={inventoryDate}
+                        onSelect={(date) => date && setInventoryDate(date)}
+                        initialFocus
+                        className="pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </CardContent>
+              </Card>
+
               {Object.entries(roomsByType).map(([roomType, roomList]) => (
                 <Card key={roomType}>
                   <CardHeader>
                     <CardTitle className="text-lg sm:text-xl">{roomType}</CardTitle>
                     <CardDescription>
-                      {roomList.length} rooms total
+                      {roomList.length} rooms total - Status for {format(inventoryDate, "PPP")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
