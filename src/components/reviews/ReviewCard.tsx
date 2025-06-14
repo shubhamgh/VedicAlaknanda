@@ -20,7 +20,7 @@ interface ReviewCardProps {
 
 const ReviewCard = ({ review }: ReviewCardProps) => {
   return (
-    <Card className="border-none shadow-lg h-auto">
+    <Card className="border-none shadow-lg">
       <CardContent className="p-6 md:p-8">
         <div className="flex flex-col items-center text-center space-y-4">
           <ReviewAvatar

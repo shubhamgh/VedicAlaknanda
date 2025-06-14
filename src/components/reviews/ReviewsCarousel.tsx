@@ -25,7 +25,7 @@ interface ReviewsCarouselProps {
 
 const ReviewsCarousel = ({ reviews }: ReviewsCarouselProps) => {
   return (
-    <div className="max-w-4xl mx-auto px-4">
+    <div className="max-w-4xl mx-auto px-4 relative">
       <Carousel
         opts={{
           align: "start",
@@ -36,15 +36,13 @@ const ReviewsCarousel = ({ reviews }: ReviewsCarouselProps) => {
         <CarouselContent className="-ml-2 md:-ml-4">
           {reviews.map((review) => (
             <CarouselItem key={review.id} className="pl-2 md:pl-4 basis-full">
-              <div className="h-auto">
-                <ReviewCard review={review} />
-              </div>
+              <ReviewCard review={review} />
             </CarouselItem>
           ))}
         </CarouselContent>
         <div className="hidden sm:block">
-          <CarouselPrevious className="left-2" />
-          <CarouselNext className="right-2" />
+          <CarouselPrevious className="-left-16 top-1/2 -translate-y-1/2" />
+          <CarouselNext className="-right-16 top-1/2 -translate-y-1/2" />
         </div>
       </Carousel>
     </div>
