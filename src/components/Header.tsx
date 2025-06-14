@@ -13,11 +13,14 @@ import {
   Calendar,
   Camera,
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { useDarkMode } from "@/hooks/useDarkMode";
 import Logo from "../assets/Logo.webp";
 
 const Header: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   const handleMenuClick = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -86,6 +89,16 @@ const Header: React.FC = () => {
                 </Link>
               </li>
             ))}
+            <li className="flex items-center gap-2">
+              <Switch
+                checked={isDarkMode}
+                onCheckedChange={toggleDarkMode}
+                className="data-[state=checked]:bg-hotel-gold"
+              />
+              <span className={`text-xs ${scrolled ? "text-hotel-dark" : "text-white"}`}>
+                {isDarkMode ? "Dark" : "Light"}
+              </span>
+            </li>
             <li>
               <Link
                 to="/book-now"
@@ -108,7 +121,7 @@ const Header: React.FC = () => {
           
           {/* Mobile sidebar with better touch targets */}
           <div
-            className={`fixed top-0 right-0 h-screen w-4/5 max-w-sm bg-white p-4 transform ${
+            className={`fixed top-0 right-0 h-screen w-4/5 max-w-sm bg-white dark:bg-gray-900 p-4 transform ${
               isSidebarOpen ? "translate-x-0" : "translate-x-full"
             } transition-transform duration-300 ease-in-out md:hidden shadow-xl z-50`}
           >
@@ -117,10 +130,20 @@ const Header: React.FC = () => {
               onClick={handleCloseSidebar}
               aria-label="Close menu"
             >
-              <X className="h-6 w-6 text-gray-500" />
+              <X className="h-6 w-6 text-gray-500 dark:text-gray-400" />
             </button>
             
             <ul className="flex flex-col gap-2 justify-center mt-16">
+              <li className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700">
+                <span className="text-lg font-bold text-gray-600 dark:text-gray-300">
+                  Dark Mode
+                </span>
+                <Switch
+                  checked={isDarkMode}
+                  onCheckedChange={toggleDarkMode}
+                  className="data-[state=checked]:bg-hotel-gold"
+                />
+              </li>
               <li>
                 <Link
                   to="/book-now"
@@ -135,7 +158,7 @@ const Header: React.FC = () => {
                 <li key={item.link} className="flex items-center">
                   <Link
                     to={`/${item.link.toLowerCase()}`}
-                    className="text-lg font-bold text-gray-600 flex gap-3 items-center border-b border-gray-200 py-3 w-full touch-manipulation"
+                    className="text-lg font-bold text-gray-600 dark:text-gray-300 flex gap-3 items-center border-b border-gray-200 dark:border-gray-700 py-3 w-full touch-manipulation"
                     onClick={handleCloseSidebar}
                   >
                     <span className="h-5 w-5">{item.icon}</span>
