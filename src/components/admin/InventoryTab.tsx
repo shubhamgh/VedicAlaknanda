@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { useRooms } from "@/hooks/useRooms";
 import { format, addDays } from "date-fns";
@@ -72,6 +71,7 @@ const InventoryTab = () => {
 
   const handleRoomClick = async (room: RoomInventory) => {
     if (room.status === "booked") {
+      // Show booking details for booked rooms
       const dateStr = format(inventoryDate, "yyyy-MM-dd");
       const booking = await fetchBookingForRoomAndDate(room.id, dateStr);
       if (booking) {
@@ -79,6 +79,21 @@ const InventoryTab = () => {
         setSelectedRoom(room);
         setShowBookingDetails(true);
       }
+    } else if (room.status === "available") {
+      // Show new booking modal for available rooms
+      setSelectedRoom(room);
+      
+      // Set dates for the selected date as a single night booking
+      const nextDay = addDays(inventoryDate, 1);
+      
+      setNewBookingDates({ start: inventoryDate, end: nextDay });
+      
+      // Fetch availability for the selected date
+      const checkInStr = format(inventoryDate, "yyyy-MM-dd");
+      const checkOutStr = format(nextDay, "yyyy-MM-dd");
+      await fetchRoomAvailabilityForDates(checkInStr, checkOutStr);
+      
+      setShowNewBookingModal(true);
     }
   };
 
@@ -118,7 +133,7 @@ const InventoryTab = () => {
         <CardHeader>
           <CardTitle className="text-lg sm:text-xl">Select Date for Inventory</CardTitle>
           <CardDescription>
-            Choose a date to view room availability and booking status. Click on booked rooms to view details.
+            Choose a date to view room availability and booking status. Click on booked rooms to view details or available rooms to create a new booking.
           </CardDescription>
         </CardHeader>
         <CardContent>
