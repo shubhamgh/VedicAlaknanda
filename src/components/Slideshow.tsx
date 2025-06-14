@@ -132,22 +132,15 @@ const Slideshow: React.FC = () => {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Sliding container */}
-      <div 
-        className="flex transition-transform duration-500 ease-in-out h-full"
-        style={{
-          transform: `translateX(-${currentSlide * 100}%)`,
-          width: `${slides.length * 100}vw`
-        }}
-      >
+      {/* Sliding container - each slide is absolutely positioned */}
+      <div className="relative w-full h-full">
         {slides.map((slide, index) => (
           <div
             key={index}
-            className="relative flex-shrink-0 bg-cover bg-center bg-no-repeat"
+            className="absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat transition-transform duration-500 ease-in-out"
             style={{
               backgroundImage: `url(${slide.imageUrl})`,
-              width: '100vw',
-              height: '100vh'
+              transform: `translateX(${(index - currentSlide) * 100}%)`,
             }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
