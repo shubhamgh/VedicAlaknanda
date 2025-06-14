@@ -68,12 +68,16 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
       const typeData = roomTypeAvailability.find(
         (rt) => rt.type === watchedRoomType
       );
-      setAvailableRoomsForType(typeData?.availableRooms || []);
+      // Sort rooms by room number
+      const sortedRooms = typeData?.availableRooms.sort((a, b) => 
+        parseInt(a.number) - parseInt(b.number)
+      ) || [];
+      setAvailableRoomsForType(sortedRooms);
 
       // Only reset room_id if it's not already set (avoids resetting during edit)
       const currentRoomId = form.getValues("room_id");
       if (currentRoomId) {
-        const roomStillAvailable = typeData?.availableRooms.some(
+        const roomStillAvailable = sortedRooms.some(
           (room) => room.id === currentRoomId
         );
         if (!roomStillAvailable) {

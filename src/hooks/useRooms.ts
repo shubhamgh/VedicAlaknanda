@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -137,7 +136,7 @@ export const useRooms = () => {
     }
   };
 
-  const fetchRoomInventoryForDate = async (selectedDate: string) => {
+  const fetchRoomInventoryForDate = useCallback(async (selectedDate: string) => {
     try {
       console.log("Fetching room inventory for date:", selectedDate);
       
@@ -183,7 +182,7 @@ export const useRooms = () => {
       });
       return [];
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchRooms();
