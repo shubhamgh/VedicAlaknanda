@@ -67,7 +67,7 @@ const Admin = () => {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, handleLogout } = useAdminAuth();
   const { bookings, handleDeleteBooking, handleBookingSubmit } = useBookings();
-  const { roomInventory, roomTypeAvailability, refetchRooms } = useRooms();
+  const { roomInventory, roomTypeAvailability, refetchRooms, fetchRoomAvailabilityForDates } = useRooms();
 
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
@@ -646,6 +646,7 @@ const Admin = () => {
         rooms={roomInventory}
         roomTypeAvailability={roomTypeAvailability}
         onSubmit={handleSubmit}
+        onFetchAvailability={fetchRoomAvailabilityForDates}
       />
     </div>
   );

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import {
@@ -35,6 +36,7 @@ interface RoomSelectionFormProps {
   roomTypeAvailability: RoomTypeAvailability[];
   onRoomChange: (roomId: string) => void;
   booking?: any;
+  datesConfirmed?: boolean;
 }
 
 export interface RoomFormValues {
@@ -49,6 +51,7 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
   roomTypeAvailability,
   onRoomChange,
   booking,
+  datesConfirmed = false,
 }) => {
   const form = useFormContext<RoomFormValues>();
   const [selectedRoomType, setSelectedRoomType] = useState<string>("");
@@ -60,7 +63,7 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
   const watchedRoomType = form.watch("room_type");
 
   useEffect(() => {
-    if (watchedRoomType) {
+    if (watchedRoomType && datesConfirmed) {
       setSelectedRoomType(watchedRoomType);
       const typeData = roomTypeAvailability.find(
         (rt) => rt.type === watchedRoomType
@@ -80,7 +83,7 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
         form.setValue("room_id", "");
       }
     }
-  }, [watchedRoomType, roomTypeAvailability]);
+  }, [watchedRoomType, roomTypeAvailability, datesConfirmed]);
 
   // Set initial values for editing
   useEffect(() => {
@@ -97,6 +100,14 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
       }
     }
   }, [booking, rooms]);
+
+  if (!datesConfirmed) {
+    return (
+      <div className="text-center text-muted-foreground p-4 border rounded-lg">
+        Please confirm your dates first to check room availability
+      </div>
+    );
+  }
 
   return (
     <>
@@ -132,7 +143,7 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
         )}
       />
 
-      {selectedRoomType && availableRoomsForType.length > 0 && (
+      {selectedRoomType && (
         <FormField
           control={form.control}
           name="room_id"
@@ -149,7 +160,11 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a room number" />
+                    <SelectValue placeholder={
+                      availableRoomsForType.length > 0 
+                        ? "Select a room number" 
+                        : "No rooms available for selected dates"
+                    } />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>

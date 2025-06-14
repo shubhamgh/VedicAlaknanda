@@ -50,6 +50,7 @@ interface BookingFormProps {
   roomTypeAvailability: RoomTypeAvailability[];
   onSubmit: (data: any) => void;
   onCancel: () => void;
+  onFetchAvailability?: (checkIn: string, checkOut: string) => Promise<RoomTypeAvailability[]>;
 }
 
 const BookingForm = ({
@@ -59,6 +60,7 @@ const BookingForm = ({
   roomTypeAvailability,
   onSubmit,
   onCancel,
+  onFetchAvailability,
 }: BookingFormProps) => {
   const [checkInDate, setCheckInDate] = useState<Date | undefined>(
     booking?.check_in_date
@@ -76,6 +78,8 @@ const BookingForm = ({
   const [bookingSource, setBookingSource] = useState<string | undefined>(
     booking?.booking_source || undefined
   );
+  const [datesConfirmed, setDatesConfirmed] = useState<boolean>(false);
+  const [availabilityLoading, setAvailabilityLoading] = useState<boolean>(false);
 
   const methods = useForm<FormValues>({
     defaultValues: {
@@ -105,6 +109,14 @@ const BookingForm = ({
       price_per_night: room.type === "Family Room with Terrace" ? 6000 : 5000,
     }));
   }, [rooms]);
+
+  // Auto-confirm dates if they come from calendar selection or editing existing booking
+  useEffect(() => {
+    if ((selectedDates || booking) && checkInDate && checkOutDate) {
+      setDatesConfirmed(true);
+      handleConfirmDates();
+    }
+  }, [selectedDates, booking, checkInDate, checkOutDate]);
 
   // Update form when dates or booking changes
   useEffect(() => {
@@ -148,6 +160,22 @@ const BookingForm = ({
     }
   }, [booking, selectedDates, methods, rooms]);
 
+  const handleConfirmDates = async () => {
+    if (!checkInDate || !checkOutDate || !onFetchAvailability) return;
+    
+    setAvailabilityLoading(true);
+    try {
+      const checkInStr = format(checkInDate, "yyyy-MM-dd");
+      const checkOutStr = format(checkOutDate, "yyyy-MM-dd");
+      await onFetchAvailability(checkInStr, checkOutStr);
+      setDatesConfirmed(true);
+    } catch (error) {
+      console.error("Error fetching availability:", error);
+    } finally {
+      setAvailabilityLoading(false);
+    }
+  };
+
   const handleSubmit = (values: FormValues) => {
     // Calculate total price based on room rate and nights
     const selectedRoom = transformedRooms.find(
@@ -175,19 +203,31 @@ const BookingForm = ({
           </div>
 
           <div className="space-y-4">
-            <RoomSelectionForm
-              rooms={rooms}
-              roomTypeAvailability={roomTypeAvailability}
-              onRoomChange={setSelectedRoomId}
-              booking={booking}
-            />
-
             <DateSelectionForm
               checkInDate={checkInDate}
               checkOutDate={checkOutDate}
-              onCheckInChange={(date) => setCheckInDate(date || undefined)}
-              onCheckOutChange={(date) => setCheckOutDate(date || undefined)}
+              onCheckInChange={(date) => {
+                setCheckInDate(date || undefined);
+                setDatesConfirmed(false);
+              }}
+              onCheckOutChange={(date) => {
+                setCheckOutDate(date || undefined);
+                setDatesConfirmed(false);
+              }}
+              onConfirmDates={handleConfirmDates}
+              datesConfirmed={datesConfirmed}
+              loading={availabilityLoading}
             />
+
+            {datesConfirmed && (
+              <RoomSelectionForm
+                rooms={rooms}
+                roomTypeAvailability={roomTypeAvailability}
+                onRoomChange={setSelectedRoomId}
+                booking={booking}
+                datesConfirmed={datesConfirmed}
+              />
+            )}
 
             <BookingSourceForm onBookingSourceChange={setBookingSource} />
           </div>
@@ -208,7 +248,7 @@ const BookingForm = ({
           <Button type="button" variant="outline" onClick={onCancel} className="w-full sm:w-auto">
             Cancel
           </Button>
-          <Button type="submit" className="w-full sm:w-auto">
+          <Button type="submit" className="w-full sm:w-auto" disabled={!datesConfirmed}>
             {booking ? "Update Booking" : "Create Booking"}
           </Button>
         </div>

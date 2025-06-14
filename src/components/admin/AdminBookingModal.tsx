@@ -55,6 +55,7 @@ interface AdminBookingModalProps {
   rooms: RoomInventory[];
   roomTypeAvailability: RoomTypeAvailability[];
   onSubmit: (data: any) => void;
+  onFetchAvailability?: (checkIn: string, checkOut: string) => Promise<RoomTypeAvailability[]>;
 }
 
 const AdminBookingModal = ({
@@ -65,6 +66,7 @@ const AdminBookingModal = ({
   rooms,
   roomTypeAvailability,
   onSubmit,
+  onFetchAvailability,
 }: AdminBookingModalProps) => {
   const isMobile = useIsMobile();
 
@@ -76,6 +78,7 @@ const AdminBookingModal = ({
       roomTypeAvailability={roomTypeAvailability}
       onSubmit={onSubmit}
       onCancel={onClose}
+      onFetchAvailability={onFetchAvailability}
     />
   );
 
