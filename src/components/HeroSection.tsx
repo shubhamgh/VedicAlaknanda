@@ -1,7 +1,12 @@
 
 import React from "react";
 
-function HeroSection({ title, description }) {
+interface HeroSectionProps {
+  title: string;
+  description: string;
+}
+
+function HeroSection({ title, description }: HeroSectionProps) {
   return (
     <section 
       className="relative h-64 md:h-64 flex items-center justify-center"
