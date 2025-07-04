@@ -18,12 +18,13 @@ const Dining = () => {
           <Card className="h-full">
             <CardContent className="p-4 md:p-6">
               <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">
-                Restaurant
+                Pure Vegetarian Restaurant
               </h2>
               <p className="text-gray-600 text-sm md:text-base">
-                Experience fine dining at its best with our world-class
-                restaurant offering a diverse menu of international and local
-                cuisine prepared with fresh, locally sourced ingredients.
+                Enjoy a soulful dining experience at our pure vegetarian
+                restaurant, serving a curated menu of Indian and international
+                cuisine. All dishes are prepared using fresh, locally sourced
+                ingredients in a serene, family-friendly setting.
               </p>
             </CardContent>
           </Card>
@@ -33,9 +34,10 @@ const Dining = () => {
                 Local Specialties
               </h2>
               <p className="text-gray-600 text-sm md:text-base">
-                Discover the authentic flavors of Uttarakhand with our selection
-                of traditional dishes prepared by expert local chefs using
-                time-honored recipes and fresh mountain ingredients.
+                Savor the true taste of Uttarakhand with traditional Kumaoni &
+                Garhwali dishes, crafted by local chefs using age-old recipes
+                and fresh mountain produce. A must-try for those seeking
+                authentic vegetarian flavors of the region.
               </p>
             </CardContent>
           </Card>

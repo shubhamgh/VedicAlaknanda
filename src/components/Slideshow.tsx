@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -9,31 +8,40 @@ interface SlideProps {
   subheading: string;
 }
 
-import hotelImage from "../assets/hotel.webp";
-import diningImage from "../assets/dining.webp";
-import viewImage from "../assets/view.webp";
+import dining2 from "../assets/dining2.webp";
+import viewImage from "../assets/View3.webp";
+import viewImage2 from "../assets/view2.webp";
 import roomImage from "../assets/room.webp";
 
 const slides: SlideProps[] = [
   {
-    imageUrl: viewImage,
+    imageUrl: viewImage2,
     heading: "Breathtaking Views",
     subheading: "Wake up to stunning panoramic scenery that inspires your day",
   },
-  {
-    imageUrl: hotelImage,
-    heading: "Experience Luxury",
-    subheading: "Discover the perfect balance of modern comfort and timeless elegance",
-  },
-  {
-    imageUrl: diningImage,
-    heading: "Exquisite Dining",
-    subheading: "Savor culinary masterpieces in our hygenic and inviting restaurants",
-  },
+
   {
     imageUrl: roomImage,
     heading: "Comfortable Rooms",
     subheading: "Have a night of relaxation in our luxurious rooms",
+  },
+  // {
+  //   imageUrl: viewImage2,
+  //   heading: "Experience Luxury",
+  //   subheading:
+  //     "Discover the perfect balance of modern comfort and timeless elegance",
+  // },
+  {
+    imageUrl: dining2,
+    heading: "Exquisite Dining",
+    subheading:
+      "Savor culinary masterpieces in our hygenic and inviting restaurants",
+  },
+  {
+    imageUrl: viewImage,
+    heading: "Vibrant Valley View",
+    subheading:
+      "Experience the beauty of the valley from the comfort of your room",
   },
 ];
 
@@ -80,12 +88,12 @@ const Slideshow: React.FC = () => {
     if (index !== currentSlide && !isTransitioning) {
       setIsTransitioning(true);
       setCurrentSlide(index);
-      
+
       // Reset transition state after animation completes
       setTimeout(() => {
         setIsTransitioning(false);
       }, 500);
-      
+
       // Restart auto-play timer
       if (autoPlayRef.current) {
         clearInterval(autoPlayRef.current);
@@ -115,7 +123,7 @@ const Slideshow: React.FC = () => {
   const handleTouchEnd = () => {
     const diff = touchStartX.current - touchEndX.current;
     const minSwipeDistance = 50;
-    
+
     if (Math.abs(diff) > minSwipeDistance) {
       if (diff > 0) {
         nextSlide();
@@ -144,7 +152,7 @@ const Slideshow: React.FC = () => {
             }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-            
+
             <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-3 md:mb-4 leading-tight">
                 {slide.heading}
@@ -171,7 +179,9 @@ const Slideshow: React.FC = () => {
             onClick={() => goToSlide(index)}
             className={cn(
               "h-2 rounded-full transition-all duration-300 touch-manipulation",
-              index === currentSlide ? "w-6 md:w-8 bg-hotel-gold" : "w-2 bg-white/50"
+              index === currentSlide
+                ? "w-6 md:w-8 bg-hotel-gold"
+                : "w-2 bg-white/50"
             )}
             aria-label={`Go to slide ${index + 1}`}
           />
