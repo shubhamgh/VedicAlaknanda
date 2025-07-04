@@ -10,6 +10,9 @@ import {
   Youtube,
 } from "lucide-react";
 import BookingIcon from "../assets/bookingcom.svg";
+import Ibibo from "../assets/go.svg";
+import MMT from "../assets/mmt.svg";
+
 import { useNewsletter } from "@/hooks/useNewsletter";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -36,7 +39,35 @@ const Footer: React.FC = () => {
               Experience comfort and tranquility on the sacred route to
               Kedarnath & Badrinath.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 items-center">
+              <a
+                href="https://www.goibibo.com/hotels/Hotel-Vedic-Alaknanda-hotel-in-Rudraprayag-1548966445629868873/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-5 w-5 text-hotel-gold"
+                aria-label="Ibibo"
+              >
+                <img src={Ibibo} alt="Goibibo Link" />
+              </a>
+              <a
+                href="https://www.makemytrip.com/hotels/hotel-details/?checkin=date_7&checkout=date_8&city=abc&country=in&roomStayQualifier=2e0e&hotelId=202505111753566893&locusId=abc&locusType=city&currency=INR&source=INGO"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-5 w-5 text-hotel-gold"
+                aria-label="MMT"
+              >
+                <img src={MMT} alt="MMT Link" />
+              </a>
+              <a
+                href="https://www.booking.com/hotel/in/vedic-alaknanda-seva-sadan.en-gb.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-5 w-5 text-hotel-gold"
+                aria-label="Booking.com"
+              >
+                <img src={BookingIcon} alt="Booking.com Link" />
+              </a>
+
               <a
                 href="https://www.instagram.com/vedic.alaknanda"
                 target="_blank"
@@ -70,15 +101,6 @@ const Footer: React.FC = () => {
                 aria-label="YouTube"
               >
                 <Youtube className="w-6 h-6" />
-              </a>
-              <a
-                href="https://www.booking.com/hotel/in/vedic-alaknanda-seva-sadan.en-gb.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="h-5 w-5 text-hotel-gold"
-                aria-label="Booking.com"
-              >
-                <img src={BookingIcon} alt="" />
               </a>
             </div>
           </div>

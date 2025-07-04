@@ -2,6 +2,8 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import HeroSection from "../components/HeroSection";
 import { Mail, MapPin, Phone, Instagram } from "lucide-react";
+import Ibibo from "../assets/go.svg";
+import MMT from "../assets/mmt.svg";
 
 const BookNow = () => {
   return (
@@ -88,6 +90,40 @@ const BookNow = () => {
                   </p>
                   <span className="hover:text-hotel-gold transition-colors text-sm md:text-base">
                     Booking.com
+                  </span>
+                </a>
+              </li>
+              <li className="flex items-center">
+                <a
+                  href="https://www.goibibo.com/hotels/Hotel-Vedic-Alaknanda-hotel-in-Rudraprayag-1548966445629868873/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-5 w-5 flex touch-manipulation"
+                >
+                  <img
+                    src={Ibibo}
+                    alt="Goibibo Link"
+                    className="h-5 w-5  mr-3 px-1"
+                  />
+                  <span className="hover:text-hotel-gold transition-colors text-sm md:text-base">
+                    Goibibo
+                  </span>
+                </a>
+              </li>
+              <li className="flex items-center">
+                <a
+                  href="https://www.makemytrip.com/hotels/hotel-details/?checkin=date_7&checkout=date_8&city=abc&country=in&roomStayQualifier=2e0e&hotelId=202505111753566893&locusId=abc&locusType=city&currency=INR&source=INGO"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-5 w-5 flex touch-manipulation"
+                >
+                  <img
+                    src={MMT}
+                    alt="MMT Link"
+                    className="h-5 w-5  mr-3 px-1"
+                  />
+                  <span className="hover:text-hotel-gold transition-colors text-sm md:text-base">
+                    MakeMyTrip
                   </span>
                 </a>
               </li>
