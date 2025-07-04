@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import HeroSection from "@/components/HeroSection";
+import HeroSection from "../components/HeroSection";
 import Badrinath from "../assets/badrinath-temple-bnr-removebg-preview.png";
 
 const localAttractions = [
