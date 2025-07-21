@@ -51,7 +51,7 @@ const Amenities = () => {
       ),
     },
     {
-      title: "On demand cab service",
+      title: "On demand cab services",
       description:
         "Get a cab service on demand to all nearby attractions including Shri Badrinath, Kedarnath and Airport.",
       icon: (
