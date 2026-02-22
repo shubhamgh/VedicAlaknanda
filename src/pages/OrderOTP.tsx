@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export default function OrderOTP() {
   const [searchParams] = useSearchParams();
@@ -36,19 +36,19 @@ export default function OrderOTP() {
         return;
       }
       setSessionId(session.id);
-      const label =
-        session.room_number
-          ? `Room ${session.room_number}`
-          : session.table_number
-            ? `Table ${session.table_number}`
-            : null;
+      const label = session.room_number
+        ? `Room ${session.room_number}`
+        : session.table_number
+          ? `Table ${session.table_number}`
+          : null;
       setRoomOrTable(label);
       toast({ title: "Session started", description: `Ordering for ${label}` });
       navigate("/order/menu");
     } catch (err: unknown) {
       toast({
         title: "Error",
-        description: err instanceof Error ? err.message : "Failed to start session",
+        description:
+          err instanceof Error ? err.message : "Failed to start session",
         variant: "destructive",
       });
     } finally {
@@ -74,7 +74,9 @@ export default function OrderOTP() {
               <Input
                 placeholder="000000"
                 value={otp}
-                onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                onChange={(e) =>
+                  setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                }
                 maxLength={6}
                 className="text-center text-2xl tracking-[0.5em]"
                 autoComplete="one-time-code"

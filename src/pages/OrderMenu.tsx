@@ -10,8 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { toast } from "@/hooks/use-toast";
 import type { MenuItem } from "@/hooks/useMenu";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
@@ -38,7 +38,7 @@ export default function OrderMenu() {
       const found = prev.find((c) => c.item.id === item.id);
       if (found) {
         return prev.map((c) =>
-          c.item.id === item.id ? { ...c, quantity: c.quantity + 1 } : c
+          c.item.id === item.id ? { ...c, quantity: c.quantity + 1 } : c,
         );
       }
       return [...prev, { item, quantity: 1 }];
@@ -53,15 +53,12 @@ export default function OrderMenu() {
         return prev.filter((c) => c.item.id !== itemId);
       }
       return prev.map((c) =>
-        c.item.id === itemId ? { ...c, quantity: c.quantity - 1 } : c
+        c.item.id === itemId ? { ...c, quantity: c.quantity - 1 } : c,
       );
     });
   };
 
-  const cartTotal = cart.reduce(
-    (sum, c) => sum + c.item.price * c.quantity,
-    0
-  );
+  const cartTotal = cart.reduce((sum, c) => sum + c.item.price * c.quantity, 0);
   const cartCount = cart.reduce((sum, c) => sum + c.quantity, 0);
 
   const handlePlaceOrder = async () => {
