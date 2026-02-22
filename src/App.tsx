@@ -55,11 +55,11 @@ function AuthListener() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
-        navigate("/set-password");
-      }
-    });
+    const hash = window.location.hash;
+
+    if (hash.includes("type=invite") || hash.includes("type=recovery")) {
+      navigate("/set-password");
+    }
   }, [navigate]);
 
   return null;
@@ -80,10 +80,10 @@ function ScrollToTop() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthListener />
       <TooltipProvider>
         <OrderSessionProvider>
           <BrowserRouter>
+            <AuthListener />
             <ScrollToTop />
             <Suspense fallback={<PageLoader />}>
               <Routes>
