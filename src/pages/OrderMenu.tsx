@@ -63,7 +63,10 @@ export default function OrderMenu() {
       is_veg: true,
       created_at: new Date().toISOString(),
     };
-    setCart((prev) => [...prev, { item: customItem, quantity: 1, notes: null }]);
+    setCart((prev) => [
+      ...prev,
+      { item: customItem, quantity: 1, notes: null },
+    ]);
     setCustomName("");
     setCustomPrice("");
   };
@@ -298,7 +301,8 @@ export default function OrderMenu() {
                                   placeholder="Notes (less spicy, no onion...)"
                                   className="w-full px-2 py-1 border rounded-md text-sm"
                                   value={
-                                    cart.find((c) => c.item.id === item.id)?.notes ?? ""
+                                    cart.find((c) => c.item.id === item.id)
+                                      ?.notes ?? ""
                                   }
                                   onChange={(e) =>
                                     setCart((prev) =>
@@ -315,38 +319,50 @@ export default function OrderMenu() {
                           </li>
                         ))}
                       </ul>
-                        <div className="border-t pt-4">
-                          <RoleGuard roles={["super_admin", "manager", "staff", "kitchen"]}>
-                            <div className="mb-4">
-                              <h4 className="font-semibold mb-2">Add custom item (staff only)</h4>
-                              <div className="flex gap-2">
-                                <input
-                                  placeholder="Item name"
-                                  className="flex-1 px-2 py-1 border rounded-md"
-                                  value={customName}
-                                  onChange={(e) => setCustomName(e.target.value)}
-                                />
-                                <input
-                                  placeholder="Price"
-                                  className="w-28 px-2 py-1 border rounded-md"
-                                  value={String(customPrice)}
-                                  onChange={(e) => setCustomPrice(e.target.value)}
-                                />
-                                <Button
-                                  onClick={() => {
-                                    const p = Number(customPrice);
-                                    if (!customName.trim() || Number.isNaN(p) || p <= 0) {
-                                      toast({ title: "Invalid", description: "Enter valid name and price", variant: "destructive" });
-                                      return;
-                                    }
-                                    addCustomToCart(customName.trim(), p);
-                                  }}
-                                >
-                                  Add
-                                </Button>
-                              </div>
+                      <div className="border-t pt-4">
+                        <RoleGuard
+                          roles={["super_admin", "manager", "staff", "kitchen"]}
+                        >
+                          <div className="mb-4">
+                            <h4 className="font-semibold mb-2">
+                              Add custom item (staff only)
+                            </h4>
+                            <div className="flex gap-2">
+                              <input
+                                placeholder="Item name"
+                                className="flex-1 px-2 py-1 border rounded-md"
+                                value={customName}
+                                onChange={(e) => setCustomName(e.target.value)}
+                              />
+                              <input
+                                placeholder="Price"
+                                className="w-28 px-2 py-1 border rounded-md"
+                                value={String(customPrice)}
+                                onChange={(e) => setCustomPrice(e.target.value)}
+                              />
+                              <Button
+                                onClick={() => {
+                                  const p = Number(customPrice);
+                                  if (
+                                    !customName.trim() ||
+                                    Number.isNaN(p) ||
+                                    p <= 0
+                                  ) {
+                                    toast({
+                                      title: "Invalid",
+                                      description: "Enter valid name and price",
+                                      variant: "destructive",
+                                    });
+                                    return;
+                                  }
+                                  addCustomToCart(customName.trim(), p);
+                                }}
+                              >
+                                Add
+                              </Button>
                             </div>
-                          </RoleGuard>
+                          </div>
+                        </RoleGuard>
                         <div className="flex justify-between font-semibold mb-4">
                           <span>Subtotal</span>
                           <span>₹{cartTotal.toFixed(2)}</span>

@@ -60,7 +60,8 @@ export default function RestaurantOrderSessionsTab() {
     } catch (err: unknown) {
       toast({
         title: "Error",
-        description: err instanceof Error ? err.message : "Failed to create session",
+        description:
+          err instanceof Error ? err.message : "Failed to create session",
         variant: "destructive",
       });
     } finally {
@@ -80,7 +81,8 @@ export default function RestaurantOrderSessionsTab() {
         <CardHeader>
           <CardTitle>Create Order Session</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Generate an OTP for room or table. Guest enters OTP at /order to start ordering.
+            Generate an OTP for room or table. Guest enters OTP at /order to
+            start ordering.
           </p>
         </CardHeader>
         <CardContent>
@@ -134,39 +136,62 @@ export default function RestaurantOrderSessionsTab() {
             <p className="text-muted-foreground">No active sessions</p>
           ) : (
             <div className="space-y-2">
-              {sessions?.map((s: { id: string; otp: string; room_number: string | null; table_number: string | null; expires_at: string }) => (
-                <div
-                  key={s.id}
-                  className="flex items-center justify-between p-3 border rounded-lg"
-                >
-                  <div>
-                    <span className="font-mono font-bold">{s.otp}</span>
-                    <span className="ml-2 text-muted-foreground">
-                      {s.room_number ? `Room ${s.room_number}` : `Table ${s.table_number}`}
-                    </span>
-                    <span className="ml-2 text-xs text-muted-foreground">
-                      Expires: {new Date(s.expires_at).toLocaleString()}
-                    </span>
+              {sessions?.map(
+                (s: {
+                  id: string;
+                  otp: string;
+                  room_number: string | null;
+                  table_number: string | null;
+                  expires_at: string;
+                }) => (
+                  <div
+                    key={s.id}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
+                    <div>
+                      <span className="font-mono font-bold">{s.otp}</span>
+                      <span className="ml-2 text-muted-foreground">
+                        {s.room_number
+                          ? `Room ${s.room_number}`
+                          : `Table ${s.table_number}`}
+                      </span>
+                      <span className="ml-2 text-xs text-muted-foreground">
+                        Expires: {new Date(s.expires_at).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          window.open(
+                            `${window.location.origin}/order?otp=${s.otp}`,
+                            "_blank",
+                          )
+                        }
+                      >
+                        Open
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          navigate(`/admin?sessionId=${s.id}`);
+                        }}
+                      >
+                        View Orders
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => copyOTP(s.otp)}
+                      >
+                        <Copy className="h-4 w-4 mr-1" /> Copy
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button size="sm" variant="outline" onClick={() => window.open(`${window.location.origin}/order?otp=${s.otp}`, "_blank") }>
-                      Open
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => {
-                      navigate(`/admin?sessionId=${s.id}`);
-                    }}>
-                      View Orders
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => copyOTP(s.otp)}
-                    >
-                      <Copy className="h-4 w-4 mr-1" /> Copy
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                ),
+              )}
             </div>
           )}
         </CardContent>

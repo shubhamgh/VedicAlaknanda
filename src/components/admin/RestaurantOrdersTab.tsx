@@ -49,21 +49,29 @@ export default function RestaurantOrdersTab() {
         <p className="text-muted-foreground">Loading...</p>
       ) : (
         <div className="space-y-4">
-          {(orders ? (sessionFilter ? orders.filter(o => o.session_id === sessionFilter) : orders) : []).map((order) => {
-            const roomOrTable =
-              order.order_sessions?.room_number
-                ? `Room ${order.order_sessions.room_number}`
-                : order.order_sessions?.table_number
-                  ? `Table ${order.order_sessions.table_number}`
-                  : "—";
+          {(orders
+            ? sessionFilter
+              ? orders.filter((o) => o.session_id === sessionFilter)
+              : orders
+            : []
+          ).map((order) => {
+            const roomOrTable = order.order_sessions?.room_number
+              ? `Room ${order.order_sessions.room_number}`
+              : order.order_sessions?.table_number
+                ? `Table ${order.order_sessions.table_number}`
+                : "—";
 
             return (
               <Card key={order.id}>
                 <CardContent className="p-4">
                   <div className="flex flex-wrap justify-between gap-4">
                     <div>
-                      <span className="font-mono text-sm">#{order.id.slice(0, 8)}</span>
-                      <span className="ml-2 text-muted-foreground">{roomOrTable}</span>
+                      <span className="font-mono text-sm">
+                        #{order.id.slice(0, 8)}
+                      </span>
+                      <span className="ml-2 text-muted-foreground">
+                        {roomOrTable}
+                      </span>
                       <span className="ml-2 text-sm text-muted-foreground">
                         {new Date(order.created_at).toLocaleString()}
                       </span>
@@ -106,11 +114,15 @@ export default function RestaurantOrdersTab() {
                     {order.order_items.map((oi) => (
                       <li key={oi.id}>
                         {oi.item_name ?? "Item"} × {oi.quantity} — ₹
-                        {(Number(oi.custom_price ?? oi.price_at_time) * oi.quantity).toFixed(
-                          2
-                        )}
+                        {(
+                          Number(oi.custom_price ?? oi.price_at_time) *
+                          oi.quantity
+                        ).toFixed(2)}
                         {oi.notes && (
-                          <span className="text-muted-foreground"> ({oi.notes})</span>
+                          <span className="text-muted-foreground">
+                            {" "}
+                            ({oi.notes})
+                          </span>
                         )}
                       </li>
                     ))}

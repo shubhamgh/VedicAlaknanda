@@ -18,7 +18,9 @@ interface OrderSessionContextValue {
   clearSession: () => void;
 }
 
-const OrderSessionContext = createContext<OrderSessionContextValue | null>(null);
+const OrderSessionContext = createContext<OrderSessionContextValue | null>(
+  null,
+);
 
 export function OrderSessionProvider({ children }: { children: ReactNode }) {
   const [sessionId, setSessionIdState] = useState<string | null>(() => {
@@ -116,6 +118,9 @@ export function OrderSessionProvider({ children }: { children: ReactNode }) {
 
 export function useOrderSessionContext() {
   const ctx = useContext(OrderSessionContext);
-  if (!ctx) throw new Error("useOrderSessionContext must be used within OrderSessionProvider");
+  if (!ctx)
+    throw new Error(
+      "useOrderSessionContext must be used within OrderSessionProvider",
+    );
   return ctx;
 }

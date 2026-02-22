@@ -118,7 +118,11 @@ export async function addOrderItem(params: {
 
 export async function updateOrderItem(
   itemId: string,
-  updates: { quantity?: number; custom_price?: number | null; notes?: string | null }
+  updates: {
+    quantity?: number;
+    custom_price?: number | null;
+    notes?: string | null;
+  },
 ) {
   const { data, error } = await supabase
     .from("order_items")
@@ -132,7 +136,10 @@ export async function updateOrderItem(
 }
 
 export async function removeOrderItem(itemId: string) {
-  const { error } = await supabase.from("order_items").delete().eq("id", itemId);
+  const { error } = await supabase
+    .from("order_items")
+    .delete()
+    .eq("id", itemId);
   if (error) throw error;
 }
 

@@ -17,7 +17,8 @@ export default function OrderOTP() {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setSessionId, setRoomOrTable, setGuestName, setGuestPhone } = useOrderSessionContext();
+  const { setSessionId, setRoomOrTable, setGuestName, setGuestPhone } =
+    useOrderSessionContext();
 
   useEffect(() => {
     if (otpParam) setOtp(otpParam.slice(0, 6));
@@ -29,7 +30,8 @@ export default function OrderOTP() {
     if (!phone.trim() || !name.trim()) {
       toast({
         title: "Please provide your name and phone number",
-        description: "We'll use this number to contact you when your order is ready.",
+        description:
+          "We'll use this number to contact you when your order is ready.",
         variant: "destructive",
       });
       return;
@@ -78,30 +80,30 @@ export default function OrderOTP() {
               Enter Order Code
             </CardTitle>
             <p className="text-center text-muted-foreground text-sm">
-                Enter the 6-digit code provided by staff to start ordering.
+              Enter the 6-digit code provided by staff to start ordering.
             </p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-1">
-                  <label className="text-sm">Name</label>
-                  <Input
-                    placeholder="Your name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-sm">Phone number</label>
-                  <Input
-                    placeholder="e.g. +919876543210"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    We'll use this number to contact you when your order is ready.
-                  </p>
-                </div>
+              <div className="space-y-1">
+                <label className="text-sm">Name</label>
+                <Input
+                  placeholder="Your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm">Phone number</label>
+                <Input
+                  placeholder="e.g. +919876543210"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  We'll use this number to contact you when your order is ready.
+                </p>
+              </div>
               <Input
                 placeholder="000000"
                 value={otp}
