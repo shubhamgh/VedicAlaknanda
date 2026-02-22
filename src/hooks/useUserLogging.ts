@@ -17,6 +17,14 @@ interface UserLogData {
 export const useUserLogging = () => {
   const location = useLocation();
   const loggedRef = useRef(false);
+  const GEO_CACHE_KEY = "va_user_geo";
+
+  const isProduction = import.meta.env.MODE === "production";
+  const enabledFlag = import.meta.env.VITE_ENABLE_USER_LOGGING as
+    | string
+    | undefined;
+  const isLoggingEnabled =
+    enabledFlag === "true" || (isProduction && enabledFlag !== "false");
 
   const getDeviceInfo = () => {
     const userAgent = navigator.userAgent;
@@ -67,23 +75,27 @@ export const useUserLogging = () => {
         path: location.pathname,
         referrer: document.referrer || null,
       };
-      if (
-        window.location.href.includes("vedicalaknanda.com") ||
-        window.location.href.includes("vedicalaknanda.netlify.app")
-      ) {
-        try {
+      if (!isLoggingEnabled) return;
+
+      try {
+        const cached = sessionStorage.getItem(GEO_CACHE_KEY);
+        if (cached) {
+          const cachedData = JSON.parse(cached);
+          logData.ip_address = cachedData.ip;
+          logData.country = cachedData.country_name || cachedData.country;
+          logData.city = cachedData.city;
+        } else {
           const response = await fetch("https://ipapi.co/json/");
           if (response.ok) {
             const locationData = await response.json();
             logData.ip_address = locationData.ip;
             logData.country = locationData.country_name;
             logData.city = locationData.city;
+            sessionStorage.setItem(GEO_CACHE_KEY, JSON.stringify(locationData));
           }
-        } catch (error) {
-          console.log("Could not fetch location data:", error);
         }
-      } else {
-        return;
+      } catch (error) {
+        console.log("Could not fetch or cache location data:", error);
       }
 
       const { error } = await supabase.from("user_logs").insert([logData]);
