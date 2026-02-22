@@ -52,9 +52,12 @@ interface AdminBookingModalProps {
   onClose: () => void;
   selectedBooking: Booking | null;
   selectedDates: { start: Date; end: Date } | null;
+  selectedRoom?: RoomInventory | null;
   rooms: RoomInventory[];
   roomTypeAvailability: RoomTypeAvailability[];
   onSubmit: (data: any) => void;
+  onFetchAvailability?: (checkIn: string, checkOut: string) => Promise<RoomTypeAvailability[]>;
+  lockDates?: boolean;
 }
 
 const AdminBookingModal = ({
@@ -62,9 +65,12 @@ const AdminBookingModal = ({
   onClose,
   selectedBooking,
   selectedDates,
+  selectedRoom,
   rooms,
   roomTypeAvailability,
   onSubmit,
+  onFetchAvailability,
+  lockDates = false,
 }: AdminBookingModalProps) => {
   const isMobile = useIsMobile();
 
@@ -72,10 +78,13 @@ const AdminBookingModal = ({
     <BookingForm
       booking={selectedBooking}
       selectedDates={selectedDates}
+      selectedRoom={selectedRoom}
       rooms={rooms}
       roomTypeAvailability={roomTypeAvailability}
       onSubmit={onSubmit}
       onCancel={onClose}
+      onFetchAvailability={onFetchAvailability}
+      lockDates={lockDates}
     />
   );
 
