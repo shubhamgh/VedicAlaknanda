@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, lazy, Suspense } from "react";
 import { useUserLogging } from "@/hooks/useUserLogging";
 import { OrderSessionProvider } from "@/contexts/OrderSessionContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 // Lazy load components
 const Index = lazy(() => import("./pages/Index"));
@@ -18,6 +20,7 @@ const Contact = lazy(() => import("./pages/Contact"));
 const BookNow = lazy(() => import("./pages/BookNow"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const SetPassword = lazy(() => import("./pages/SetPassword"));
 const Gallery = lazy(() => import("./pages/Gallery"));
 const OrderOTP = lazy(() => import("./pages/OrderOTP"));
 const OrderMenu = lazy(() => import("./pages/OrderMenu"));
@@ -48,6 +51,20 @@ const PageLoader = () => (
   </div>
 );
 
+function AuthListener() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
+        navigate("/set-password");
+      }
+    });
+  }, [navigate]);
+
+  return null;
+}
+
 // ScrollToTop component
 function ScrollToTop() {
   const location = useLocation();
@@ -63,6 +80,7 @@ function ScrollToTop() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthListener />
       <TooltipProvider>
         <OrderSessionProvider>
           <BrowserRouter>
@@ -83,6 +101,7 @@ function App() {
                 <Route path="/kitchen" element={<Kitchen />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin-login" element={<AdminLogin />} />
+                <Route path="/set-password" element={<SetPassword />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
