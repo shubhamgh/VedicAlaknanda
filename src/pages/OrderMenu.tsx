@@ -14,7 +14,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { toast } from "@/hooks/use-toast";
 import type { MenuItem } from "@/hooks/useMenu";
-import { Minus, Plus, ShoppingCart } from "lucide-react";
+import { Minus, Plus, ShoppingCart, ChevronDown } from "lucide-react";
 
 interface CartItem {
   item: MenuItem;
@@ -27,6 +27,8 @@ export default function OrderMenu() {
   const { data, isLoading } = useMenu();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [placing, setPlacing] = useState(false);
+  const [query, setQuery] = useState("");
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   if (!sessionId) {
     navigate("/order");
@@ -116,6 +118,15 @@ export default function OrderMenu() {
   const categories = data?.categories ?? [];
   const items = data?.items ?? [];
 
+  const normalizedQuery = query.trim().toLowerCase();
+  const filteredItems = normalizedQuery
+    ? items.filter(
+        (i) =>
+          i.name.toLowerCase().includes(normalizedQuery) ||
+          (i.description || "").toLowerCase().includes(normalizedQuery),
+      )
+    : items;
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -140,68 +151,97 @@ export default function OrderMenu() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
+              <div className="mb-4">
+                <input
+                  aria-label="Search menu"
+                  className="w-full px-3 py-2 border rounded-md"
+                  placeholder="Search menu items..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+              </div>
+
               {categories.map((cat) => {
-                const catItems = items.filter((i) => i.category_id === cat.id);
+                const catItems = filteredItems.filter(
+                  (i) => i.category_id === cat.id,
+                );
                 if (catItems.length === 0) return null;
+                const isExpanded = !!expanded[cat.id];
                 return (
                   <section key={cat.id}>
-                    <h2 className="text-xl font-semibold mb-4 text-hotel-dark">
-                      {cat.name}
-                    </h2>
-                    <div className="grid gap-3">
-                      {catItems.map((item) => (
-                        <Card
-                          key={item.id}
-                          className="flex flex-row items-center justify-between p-4"
-                        >
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">{item.name}</span>
-                              {item.is_veg && (
-                                <Badge
-                                  variant="outline"
-                                  className="text-green-600 border-green-600"
-                                >
-                                  Veg
-                                </Badge>
-                              )}
-                            </div>
-                            {item.description && (
-                              <p className="text-sm text-muted-foreground mt-1">
-                                {item.description}
-                              </p>
-                            )}
-                            <p className="text-hotel-gold font-semibold mt-1">
-                              ₹{item.price}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              size="icon"
-                              variant="outline"
-                              onClick={() => removeFromCart(item.id)}
-                              disabled={
-                                !cart.find((c) => c.item.id === item.id)
-                                  ?.quantity
-                              }
-                            >
-                              <Minus className="h-4 w-4" />
-                            </Button>
-                            <span className="w-6 text-center">
-                              {cart.find((c) => c.item.id === item.id)
-                                ?.quantity ?? 0}
-                            </span>
-                            <Button
-                              size="icon"
-                              variant="outline"
-                              onClick={() => addToCart(item)}
-                            >
-                              <Plus className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </Card>
-                      ))}
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-xl font-semibold text-hotel-dark">
+                        {cat.name}
+                      </h2>
+                      <button
+                        aria-expanded={isExpanded}
+                        onClick={() =>
+                          setExpanded((prev) => ({
+                            ...prev,
+                            [cat.id]: !prev[cat.id],
+                          }))
+                        }
+                        className="flex items-center gap-2 text-sm text-muted-foreground"
+                      >
+                        <span className="text-xs text-muted-foreground">
+                          {catItems.length} items
+                        </span>
+                        <ChevronDown
+                          className={`h-4 w-4 transition-transform duration-150 ${
+                            isExpanded ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
                     </div>
+
+                    {isExpanded && (
+                      <div className="grid gap-3">
+                        {catItems.map((item) => (
+                          <Card
+                            key={item.id}
+                            className="flex flex-row items-center justify-between p-4"
+                          >
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">{item.name}</span>
+                              </div>
+                              {item.description && (
+                                <p className="text-sm text-muted-foreground mt-1">
+                                  {item.description}
+                                </p>
+                              )}
+                              <p className="text-hotel-gold font-semibold mt-1">
+                                ₹{item.price}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                onClick={() => removeFromCart(item.id)}
+                                disabled={
+                                  !cart.find((c) => c.item.id === item.id)
+                                    ?.quantity
+                                }
+                              >
+                                <Minus className="h-4 w-4" />
+                              </Button>
+                              <span className="w-6 text-center">
+                                {cart.find((c) => c.item.id === item.id)
+                                  ?.quantity ?? 0}
+                              </span>
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                onClick={() => addToCart(item)}
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </Card>
+                        ))}
+                      </div>
+                    )}
                   </section>
                 );
               })}
