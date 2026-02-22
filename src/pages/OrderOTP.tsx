@@ -20,6 +20,25 @@ export default function OrderOTP() {
   const { setSessionId, setRoomOrTable, setGuestName, setGuestPhone } =
     useOrderSessionContext();
 
+  // helper to persist guest info server-side when available
+  // import lazily to avoid circular deps at top-level
+  const persistGuestToServer = async (
+    sessionId: string,
+    name: string,
+    phone: string,
+  ) => {
+    try {
+      const { updateOrderSession } = await import("@/lib/restaurant-api");
+      await updateOrderSession(sessionId, {
+        guest_name: name,
+        guest_phone: phone,
+      });
+    } catch (err) {
+      // ignore - DB may not have columns; logging could be added
+      // console.error("Failed to persist guest info", err);
+    }
+  };
+
   useEffect(() => {
     if (otpParam) setOtp(otpParam.slice(0, 6));
   }, [otpParam]);
@@ -50,6 +69,8 @@ export default function OrderOTP() {
       setSessionId(session.id);
       setGuestName(name.trim());
       setGuestPhone(phone.trim());
+      // persist to server so staff/admin can see contact
+      void persistGuestToServer(session.id, name.trim(), phone.trim());
       const label = session.room_number
         ? `Room ${session.room_number}`
         : session.table_number

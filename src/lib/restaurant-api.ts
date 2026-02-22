@@ -64,6 +64,35 @@ export async function getOrderSessionByOTP(otp: string) {
   return data;
 }
 
+export async function updateOrderSession(
+  sessionId: string,
+  updates: { guest_name?: string | null; guest_phone?: string | null },
+) {
+  const { data, error } = await supabase
+    .from("order_sessions")
+    .update({
+      guest_name: updates.guest_name ?? null,
+      guest_phone: updates.guest_phone ?? null,
+    })
+    .eq("id", sessionId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function getOrdersForSession(sessionId: string) {
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*, order_items(*)")
+    .eq("session_id", sessionId)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data ?? [];
+}
+
 export async function closeOrderSession(sessionId: string) {
   const { error } = await supabase
     .from("order_sessions")
