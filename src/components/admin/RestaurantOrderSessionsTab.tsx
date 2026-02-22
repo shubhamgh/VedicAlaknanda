@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   createOrderSession,
@@ -46,48 +46,8 @@ export default function RestaurantOrderSessionsTab() {
     },
   });
 
-  const sessionOrdersQuery = useQueryClient();
-
-  const addItemMut = useMutation(
-    (p: Parameters<typeof addOrderItem>[0]) => addOrderItem(p),
-    {
-      onSuccess: async (res, variables) => {
-        await sessionOrdersQuery.invalidateQueries([
-          "session-orders",
-          variables.orderId,
-        ]);
-        await recalculateOrderTotal(variables.orderId);
-      },
-    },
-  );
-
-  const updateItemMut = useMutation(
-    (
-      p: Parameters<typeof updateOrderItem>[0] & {
-        updates: Parameters<typeof updateOrderItem>[1];
-      },
-    ) => updateOrderItem(p[0] as string, p[1] as any),
-    {
-      onSuccess: async (_data, variables) => {
-        const itemId = (variables as any)[0];
-        // find order id is not returned here, so we simply invalidate all session-orders
-        await sessionOrdersQuery.invalidateQueries({
-          queryKey: ["session-orders"],
-        });
-      },
-    },
-  );
-
-  const removeItemMut = useMutation(
-    (itemId: string) => removeOrderItem(itemId),
-    {
-      onSuccess: async () => {
-        await sessionOrdersQuery.invalidateQueries({
-          queryKey: ["session-orders"],
-        });
-      },
-    },
-  );
+  // Note: using direct API calls and invalidating queries manually to avoid
+  // compatibility/runtime issues with `useMutation` across react-query versions.
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
