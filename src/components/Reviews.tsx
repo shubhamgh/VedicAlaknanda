@@ -1,7 +1,7 @@
+
 import React, { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import ReviewsCarousel from "./reviews/ReviewsCarousel";
 
 interface Review {
   id: string;
@@ -15,14 +15,11 @@ interface Review {
 
 const Reviews = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [currentReview, setCurrentReview] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Fetch reviews from database
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        console.log("Fetching reviews from Supabase...");
         const { data, error } = await supabase
           .from("reviews")
           .select("*")
@@ -44,45 +41,6 @@ const Reviews = () => {
     fetchReviews();
   }, []);
 
-  useEffect(() => {
-    if (reviews.length === 0) return;
-
-    const timer = setInterval(() => {
-      setCurrentReview((prev) => (prev + 1) % reviews.length);
-    }, 5000); // Change review every 5 seconds
-
-    return () => clearInterval(timer);
-  }, [reviews.length]);
-
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }).map((_, index) => (
-      <Star
-        key={index}
-        className={`w-5 h-5 ${
-          index < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
-        }`}
-      />
-    ));
-  };
-
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase())
-      .slice(0, 2)
-      .join("");
-  };
-
-  const getAvatarBackgroundColor = (gender: string | null) => {
-    if (gender === "female") {
-      return "bg-pink-500";
-    } else if (gender === "male") {
-      return "bg-blue-500";
-    } else {
-      return "bg-purple-500";
-    }
-  };
-
   if (loading) {
     return (
       <section className="py-16 bg-gray-50">
@@ -91,14 +49,7 @@ const Reviews = () => {
             What Our Guests Say
           </h2>
           <div className="flex justify-center items-center">
-            <div className="relative w-24 h-24">
-              {/* Loading animation */}
-              <div className="absolute inset-0 border-4 border-hotel-gold rounded-full animate-[spin_2s_linear_infinite]">
-                <div className="absolute top-1/2 left-1/2 w-3 h-3 -translate-x-1/2 -translate-y-1/2 bg-hotel-gold rounded-full"></div>
-              </div>
-              <div className="absolute inset-2 border-4 border-hotel-gold rounded-full animate-[spin_3s_linear_infinite]"></div>
-              <div className="absolute inset-4 border-4 border-hotel-gold rounded-full animate-[spin_4s_linear_infinite]"></div>
-            </div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-hotel-gold"></div>
           </div>
         </div>
       </section>
@@ -126,82 +77,7 @@ const Reviews = () => {
         <h2 className="text-3xl font-bold text-center mb-12">
           What Our Guests Say
         </h2>
-        <div className="max-w-4xl mx-auto">
-          <div className="relative overflow-hidden">
-            <div
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${currentReview * 100}%)` }}
-            >
-              {reviews.map((review, index) => (
-                <div key={review.id} className="w-full flex-shrink-0 px-2">
-                  <Card className="border-none shadow-lg">
-                    <CardContent className="p-8">
-                      <div className="flex flex-col items-center text-center">
-                        {review.image ? (
-                          <img
-                            src={review.image}
-                            alt={review.name}
-                            className="w-20 h-20 rounded-full mb-4 object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = "none";
-                              const parent = target.parentElement;
-                              if (parent) {
-                                const initialsDiv =
-                                  document.createElement("div");
-                                initialsDiv.className = `w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(
-                                  review.gender
-                                )}`;
-                                initialsDiv.textContent = getInitials(
-                                  review.name
-                                );
-                                parent.insertBefore(initialsDiv, target);
-                              }
-                            }}
-                          />
-                        ) : (
-                          <div
-                            className={`w-20 h-20 rounded-full mb-4 flex items-center justify-center text-white font-bold text-xl ${getAvatarBackgroundColor(
-                              review.gender
-                            )}`}
-                          >
-                            {getInitials(review.name)}
-                          </div>
-                        )}
-                        <div className="flex mb-4">
-                          {renderStars(review.rating)}
-                        </div>
-                        <p className="text-lg italic mb-4">"{review.review}"</p>
-                        <p className="font-semibold text-gray-800 mb-2">
-                          {review.name}
-                        </p>
-                        {review.source && (
-                          <p className="text-sm text-gray-600">
-                            via {review.source}
-                          </p>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
-            </div>
-          </div>
-          {reviews.length > 1 && (
-            <div className="flex justify-center mt-8 gap-2">
-              {reviews.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentReview(index)}
-                  className={`w-3 h-3 rounded-full transition-colors ${
-                    index === currentReview ? "bg-hotel-gold" : "bg-gray-300"
-                  }`}
-                  aria-label={`Go to review ${index + 1}`}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        <ReviewsCarousel reviews={reviews} />
       </div>
     </section>
   );

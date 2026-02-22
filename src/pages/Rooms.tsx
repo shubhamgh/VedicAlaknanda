@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ContentSection from "@/components/ContentSection";
+import HeroSection from "../components/HeroSection";
 import {
   Card,
   CardContent,
@@ -45,34 +45,35 @@ export default function Rooms() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      {/* Hero Section */}
-      <section className="relative h-64 bg-gradient-to-r from-hotel-dark to-hotel-gold flex items-center justify-center">
-        <div className="text-center text-white">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            Accommodation Options
-          </h1>
-          <p className="text-lg md:text-xl">
-            Choose from our variety of rooms designed for your comfort
-          </p>
-        </div>
-      </section>
+      <HeroSection
+        title="Accommodation Options"
+        description="Choose from our variety of rooms designed for your comfort"
+      />
 
-      <div className="flex-1 bg-gray-50 py-16 md:py-20">
-        <div className="container mx-auto px-4 grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="flex-1 bg-gray-50 py-8 md:py-16 lg:py-20">
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {roomTypes.map((room) => (
-            <Card key={room.id}>
-              <CardHeader>
-                <CardTitle>{room.type}</CardTitle>
-                <CardDescription>{room.count} rooms available</CardDescription>
+            <Card key={room.id} className="h-full">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg md:text-xl">
+                  {room.type}
+                </CardTitle>
+                <CardDescription className="text-sm">
+                  {room.count} rooms available
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <p>{room.description}</p>
-                  <p className="font-semibold">Room size: {room.size}</p>
+              <CardContent className="pt-0">
+                <div className="space-y-3">
+                  <p className="text-sm md:text-base">{room.description}</p>
+                  <p className="font-semibold text-sm md:text-base">
+                    Room size: {room.size}
+                  </p>
                   {room.amenities && room.amenities.length > 0 && (
                     <div>
-                      <p className="font-semibold">Amenities:</p>
-                      <ul className="list-disc list-inside">
+                      <p className="font-semibold text-sm md:text-base">
+                        Amenities:
+                      </p>
+                      <ul className="list-disc list-inside text-sm md:text-base">
                         {room.amenities.map((amenity, index) => (
                           <li key={index}>{amenity}</li>
                         ))}

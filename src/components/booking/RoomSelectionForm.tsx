@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import {
@@ -35,6 +36,8 @@ interface RoomSelectionFormProps {
   roomTypeAvailability: RoomTypeAvailability[];
   onRoomChange: (roomId: string) => void;
   booking?: any;
+  selectedRoom?: RoomInventory | null;
+  datesConfirmed?: boolean;
 }
 
 export interface RoomFormValues {
@@ -49,6 +52,8 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
   roomTypeAvailability,
   onRoomChange,
   booking,
+  selectedRoom,
+  datesConfirmed = false,
 }) => {
   const form = useFormContext<RoomFormValues>();
   const [selectedRoomType, setSelectedRoomType] = useState<string>("");
@@ -60,17 +65,21 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
   const watchedRoomType = form.watch("room_type");
 
   useEffect(() => {
-    if (watchedRoomType) {
+    if (watchedRoomType && datesConfirmed) {
       setSelectedRoomType(watchedRoomType);
       const typeData = roomTypeAvailability.find(
         (rt) => rt.type === watchedRoomType
       );
-      setAvailableRoomsForType(typeData?.availableRooms || []);
+      // Sort rooms by room number
+      const sortedRooms = typeData?.availableRooms.sort((a, b) => 
+        parseInt(a.number) - parseInt(b.number)
+      ) || [];
+      setAvailableRoomsForType(sortedRooms);
 
       // Only reset room_id if it's not already set (avoids resetting during edit)
       const currentRoomId = form.getValues("room_id");
       if (currentRoomId) {
-        const roomStillAvailable = typeData?.availableRooms.some(
+        const roomStillAvailable = sortedRooms.some(
           (room) => room.id === currentRoomId
         );
         if (!roomStillAvailable) {
@@ -80,11 +89,25 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
         form.setValue("room_id", "");
       }
     }
-  }, [watchedRoomType, roomTypeAvailability]);
+  }, [watchedRoomType, roomTypeAvailability, datesConfirmed]);
 
-  // Set initial values for editing
+  // Set initial values for editing or selectedRoom
   useEffect(() => {
-    if (booking && rooms.length > 0) {
+    if (selectedRoom) {
+      // Pre-select the specific room when clicked from inventory
+      form.setValue("room_type", selectedRoom.type);
+      form.setValue("room_id", selectedRoom.id);
+      setSelectedRoomType(selectedRoom.type);
+      
+      // Find the room type data and set available rooms
+      const typeData = roomTypeAvailability.find(
+        (rt) => rt.type === selectedRoom.type
+      );
+      const sortedRooms = typeData?.availableRooms.sort((a, b) => 
+        parseInt(a.number) - parseInt(b.number)
+      ) || [];
+      setAvailableRoomsForType(sortedRooms);
+    } else if (booking && rooms.length > 0) {
       const bookingRoom = rooms.find((room) => room.id === booking.room_id);
       if (bookingRoom) {
         form.reset({
@@ -96,7 +119,15 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
         setSelectedRoomType(bookingRoom.type);
       }
     }
-  }, [booking, rooms]);
+  }, [selectedRoom, booking, rooms, roomTypeAvailability, form]);
+
+  if (!datesConfirmed) {
+    return (
+      <div className="text-center text-muted-foreground p-4 border rounded-lg">
+        Please confirm your dates first to check room availability
+      </div>
+    );
+  }
 
   return (
     <>
@@ -113,6 +144,7 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
                 field.onChange(value);
                 setSelectedRoomType(value);
               }}
+              disabled={!!selectedRoom}
             >
               <FormControl>
                 <SelectTrigger>
@@ -132,7 +164,7 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
         )}
       />
 
-      {selectedRoomType && availableRoomsForType.length > 0 && (
+      {selectedRoomType && (
         <FormField
           control={form.control}
           name="room_id"
@@ -146,10 +178,15 @@ const RoomSelectionForm: React.FC<RoomSelectionFormProps> = ({
                   field.onChange(value);
                   onRoomChange(value);
                 }}
+                disabled={!!selectedRoom}
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a room number" />
+                    <SelectValue placeholder={
+                      availableRoomsForType.length > 0 
+                        ? "Select a room number" 
+                        : "No rooms available for selected dates"
+                    } />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>

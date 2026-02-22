@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import HeroSection from "../components/HeroSection";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +22,9 @@ import dining2 from "../assets/dining2.webp";
 import customerDining from "../assets/CustomerDining.webp";
 import hotel2 from "../assets/hotel2.webp";
 import reception from "../assets/reception.webp";
+import viewImage2 from "../assets/view2.webp";
+import viewImage3 from "../assets/View3.webp";
+import BalconyRoom from "../assets/BalconyRoom.webp";
 
 interface GalleryImage {
   id: number;
@@ -31,6 +35,13 @@ interface GalleryImage {
 }
 
 const galleryImages: GalleryImage[] = [
+  {
+    id: 11,
+    src: BalconyRoom,
+    title: "Balcony Room",
+    description: "Balcony room of Hotel Vedic Alaknanda",
+    category: "rooms",
+  },
   {
     id: 1,
     src: hotelImage,
@@ -54,34 +65,50 @@ const galleryImages: GalleryImage[] = [
   },
   {
     id: 4,
+    src: viewImage2,
+    title: "Vibrant Valley View",
+    description:
+      "Experience the beauty of the valley from the comfort of your room",
+    category: "views",
+  },
+  {
+    id: 5,
+    src: viewImage3,
+    title: "Vibrant Valley View",
+    description:
+      "Experience the beauty of the valley from the comfort of your room",
+    category: "views",
+  },
+  {
+    id: 6,
     src: roomImage,
     title: "Comfortable Rooms",
     description: "Luxurious and comfortable guest accommodations",
     category: "rooms",
   },
   {
-    id: 5,
+    id: 7,
     src: dining2,
     title: "Dining Area",
     description: "Elegant dining space with mountain views",
     category: "dining",
   },
   {
-    id: 6,
+    id: 8,
     src: customerDining,
     title: "Customer Dining",
     description: "Customer dining experience",
     category: "dining",
   },
   {
-    id: 7,
+    id: 9,
     src: hotel2,
     title: "Hotel Exterior",
     description: "Beautiful exterior view of Hotel Vedic Alaknanda",
     category: "hotel",
   },
   {
-    id: 8,
+    id: 10,
     src: reception,
     title: "Reception",
     description: "Reception area of Hotel Vedic Alaknanda",
@@ -129,17 +156,10 @@ const Gallery = () => {
     <main className="min-h-screen flex flex-col">
       <Header />
 
-      {/* Hero Section */}
-      <section className="relative h-64 bg-gradient-to-r from-hotel-dark to-hotel-gold flex items-center justify-center">
-        <div className="text-center text-white px-4">
-          <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold mb-4">
-            Our Photo Gallery
-          </h1>
-          <p className="text-base md:text-lg lg:text-xl">
-            Discover the elegance and tranquility that awaits you
-          </p>
-        </div>
-      </section>
+      <HeroSection
+        title="Our Photo Gallery"
+        description="Discover the elegance and tranquility that awaits you"
+      />
 
       {/* Video Section */}
       <section className="py-12">
