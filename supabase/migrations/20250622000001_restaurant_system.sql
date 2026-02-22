@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS menu_items (
   category_id uuid NOT NULL REFERENCES menu_categories(id) ON DELETE CASCADE,
   name text NOT NULL,
   description text,
-  price decimal NOT NULL,
+  price numeric(10,2) NOT NULL,
   is_available boolean NOT NULL DEFAULT true,
   is_veg boolean NOT NULL DEFAULT true,
   created_at timestamptz DEFAULT now()
@@ -255,11 +255,17 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO public.profiles (user_id, role, name, email)
-  VALUES (NEW.id, 'staff'::user_role, NEW.raw_user_meta_data->>'name', NEW.email)
+  VALUES (
+    NEW.id,
+    'staff'::public.user_role,
+    NEW.raw_user_meta_data->>'name',
+    NEW.email
+  )
   ON CONFLICT (user_id) DO NOTHING;
+
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
