@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { createOrderSession } from "@/lib/restaurant-api";
@@ -12,8 +13,10 @@ import { Copy } from "lucide-react";
 export default function RestaurantOrderSessionsTab() {
   const [roomNumber, setRoomNumber] = useState("");
   const [tableNumber, setTableNumber] = useState("");
+  const [expiresIn, setExpiresIn] = useState<number>(30);
   const [creating, setCreating] = useState(false);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: sessions, isLoading } = useQuery({
     queryKey: ["order-sessions"],
@@ -43,6 +46,7 @@ export default function RestaurantOrderSessionsTab() {
       const session = await createOrderSession({
         roomNumber: roomNumber || undefined,
         tableNumber: tableNumber || undefined,
+        expiresInMinutes: expiresIn,
       });
       const url = `${window.location.origin}/order?otp=${session.otp}`;
       await navigator.clipboard.writeText(`${session.otp}\n${url}`);
@@ -104,6 +108,17 @@ export default function RestaurantOrderSessionsTab() {
                 {creating ? "Creating..." : "Generate OTP"}
               </Button>
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="expiry">Expiry (minutes)</Label>
+              <input
+                id="expiry"
+                type="number"
+                min={1}
+                className="w-24 px-2 py-1 border rounded-md"
+                value={expiresIn}
+                onChange={(e) => setExpiresIn(Number(e.target.value))}
+              />
+            </div>
           </form>
         </CardContent>
       </Card>
@@ -133,13 +148,23 @@ export default function RestaurantOrderSessionsTab() {
                       Expires: {new Date(s.expires_at).toLocaleString()}
                     </span>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => copyOTP(s.otp)}
-                  >
-                    <Copy className="h-4 w-4 mr-1" /> Copy
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" variant="outline" onClick={() => window.open(`${window.location.origin}/order?otp=${s.otp}`, "_blank") }>
+                      Open
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => {
+                      navigate(`/admin?sessionId=${s.id}`);
+                    }}>
+                      View Orders
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => copyOTP(s.otp)}
+                    >
+                      <Copy className="h-4 w-4 mr-1" /> Copy
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>

@@ -11,6 +11,7 @@ function generateOTP(): string {
 export async function createOrderSession(params: {
   roomNumber?: string;
   tableNumber?: string;
+  expiresInMinutes?: number; // optional, allows staff to set expiry
 }) {
   const {
     data: { session },
@@ -23,7 +24,8 @@ export async function createOrderSession(params: {
   }
 
   const expiresAt = new Date();
-  expiresAt.setMinutes(expiresAt.getMinutes() + OTP_EXPIRY_MINUTES);
+  const expiresIn = params.expiresInMinutes ?? OTP_EXPIRY_MINUTES;
+  expiresAt.setMinutes(expiresAt.getMinutes() + expiresIn);
 
   const otp = generateOTP();
 

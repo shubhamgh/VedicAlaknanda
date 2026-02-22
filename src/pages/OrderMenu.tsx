@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { RoleGuard } from "@/components/restaurant/RoleGuard";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { toast } from "@/hooks/use-toast";
@@ -19,6 +20,7 @@ import { Minus, Plus, ShoppingCart, ChevronDown } from "lucide-react";
 interface CartItem {
   item: MenuItem;
   quantity: number;
+  notes?: string | null;
 }
 
 export default function OrderMenu() {
@@ -26,6 +28,8 @@ export default function OrderMenu() {
   const navigate = useNavigate();
   const { data, isLoading } = useMenu();
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [customName, setCustomName] = useState("");
+  const [customPrice, setCustomPrice] = useState<number | string>("");
   const [placing, setPlacing] = useState(false);
   const [query, setQuery] = useState("");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -45,6 +49,23 @@ export default function OrderMenu() {
       }
       return [...prev, { item, quantity: 1 }];
     });
+  };
+
+  const addCustomToCart = (name: string, price: number) => {
+    const id = `custom-${Date.now()}`;
+    const customItem: MenuItem & { isCustom?: boolean } = {
+      id,
+      category_id: "custom",
+      name,
+      description: null,
+      price,
+      is_available: true,
+      is_veg: true,
+      created_at: new Date().toISOString(),
+    };
+    setCart((prev) => [...prev, { item: customItem, quantity: 1, notes: null }]);
+    setCustomName("");
+    setCustomPrice("");
   };
 
   const removeFromCart = (itemId: string) => {
@@ -75,13 +96,15 @@ export default function OrderMenu() {
     setPlacing(true);
     try {
       const order = await createOrder(sessionId);
-      for (const { item, quantity } of cart) {
+      for (const { item, quantity, notes } of cart) {
+        const isCustom = String(item.id).startsWith("custom-");
         await addOrderItem({
           orderId: order.id,
-          itemId: item.id,
+          itemId: isCustom ? undefined : item.id,
           itemName: item.name,
           quantity,
           priceAtTime: item.price,
+          notes: notes ?? null,
         });
       }
       await recalculateOrderTotal(order.id);
@@ -268,11 +291,62 @@ export default function OrderMenu() {
                             <span>
                               {item.name} × {quantity}
                             </span>
-                            <span>₹{item.price * quantity}</span>
+                            <div className="text-right">
+                              <div>₹{item.price * quantity}</div>
+                              <div className="mt-1">
+                                <input
+                                  placeholder="Notes (less spicy, no onion...)"
+                                  className="w-full px-2 py-1 border rounded-md text-sm"
+                                  value={
+                                    cart.find((c) => c.item.id === item.id)?.notes ?? ""
+                                  }
+                                  onChange={(e) =>
+                                    setCart((prev) =>
+                                      prev.map((c) =>
+                                        c.item.id === item.id
+                                          ? { ...c, notes: e.target.value }
+                                          : c,
+                                      ),
+                                    )
+                                  }
+                                />
+                              </div>
+                            </div>
                           </li>
                         ))}
                       </ul>
-                      <div className="border-t pt-4">
+                        <div className="border-t pt-4">
+                          <RoleGuard roles={["super_admin", "manager", "staff", "kitchen"]}>
+                            <div className="mb-4">
+                              <h4 className="font-semibold mb-2">Add custom item (staff only)</h4>
+                              <div className="flex gap-2">
+                                <input
+                                  placeholder="Item name"
+                                  className="flex-1 px-2 py-1 border rounded-md"
+                                  value={customName}
+                                  onChange={(e) => setCustomName(e.target.value)}
+                                />
+                                <input
+                                  placeholder="Price"
+                                  className="w-28 px-2 py-1 border rounded-md"
+                                  value={String(customPrice)}
+                                  onChange={(e) => setCustomPrice(e.target.value)}
+                                />
+                                <Button
+                                  onClick={() => {
+                                    const p = Number(customPrice);
+                                    if (!customName.trim() || Number.isNaN(p) || p <= 0) {
+                                      toast({ title: "Invalid", description: "Enter valid name and price", variant: "destructive" });
+                                      return;
+                                    }
+                                    addCustomToCart(customName.trim(), p);
+                                  }}
+                                >
+                                  Add
+                                </Button>
+                              </div>
+                            </div>
+                          </RoleGuard>
                         <div className="flex justify-between font-semibold mb-4">
                           <span>Subtotal</span>
                           <span>₹{cartTotal.toFixed(2)}</span>

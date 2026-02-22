@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAllOrdersForAdmin } from "@/hooks/useOrders";
 import { updateOrderStatus } from "@/lib/restaurant-api";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,9 @@ const STATUS_LABELS: Record<OrderStatus, string> = {
 export default function RestaurantOrdersTab() {
   const navigate = useNavigate();
   const { data: orders, isLoading } = useAllOrdersForAdmin();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const sessionFilter = params.get("sessionId");
 
   const handleStatusChange = async (orderId: string, status: OrderStatus) => {
     await updateOrderStatus(orderId, status);
@@ -46,7 +49,7 @@ export default function RestaurantOrdersTab() {
         <p className="text-muted-foreground">Loading...</p>
       ) : (
         <div className="space-y-4">
-          {orders?.map((order) => {
+          {(orders ? (sessionFilter ? orders.filter(o => o.session_id === sessionFilter) : orders) : []).map((order) => {
             const roomOrTable =
               order.order_sessions?.room_number
                 ? `Room ${order.order_sessions.room_number}`
