@@ -1,4 +1,6 @@
+import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import HeroSection from "../components/HeroSection";
@@ -14,7 +16,15 @@ const Dining = () => {
       />
 
       <div className="flex-1 bg-gray-50 py-8 md:py-16 lg:py-20">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-end mb-6">
+            <Link to="/order">
+              <Button className="bg-hotel-gold hover:bg-opacity-90 text-white">
+                Order Food / Room Service
+              </Button>
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           <Card className="h-full">
             <CardContent className="p-4 md:p-6">
               <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">
@@ -41,6 +51,7 @@ const Dining = () => {
               </p>
             </CardContent>
           </Card>
+          </div>
         </div>
       </div>
 

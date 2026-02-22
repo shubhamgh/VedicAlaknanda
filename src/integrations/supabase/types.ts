@@ -251,6 +251,195 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          id: string
+          user_id: string
+          role: "super_admin" | "manager" | "staff" | "kitchen" | "guest_session"
+          name: string | null
+          email: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          role?: "super_admin" | "manager" | "staff" | "kitchen" | "guest_session"
+          name?: string | null
+          email?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          role?: "super_admin" | "manager" | "staff" | "kitchen" | "guest_session"
+          name?: string | null
+          email?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      menu_categories: {
+        Row: {
+          id: string
+          name: string
+          sort_order: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          sort_order?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          sort_order?: number
+          created_at?: string
+        }
+        Relationships: []
+      }
+      menu_items: {
+        Row: {
+          id: string
+          category_id: string
+          name: string
+          description: string | null
+          price: number
+          is_available: boolean
+          is_veg: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          category_id: string
+          name: string
+          description?: string | null
+          price: number
+          is_available?: boolean
+          is_veg?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          category_id?: string
+          name?: string
+          description?: string | null
+          price?: number
+          is_available?: boolean
+          is_veg?: boolean
+          created_at?: string
+        }
+        Relationships: [{ foreignKeyName: "menu_items_category_id_fkey"; columns: ["category_id"]; referencedRelation: "menu_categories"; referencedColumns: ["id"] }]
+      }
+      order_sessions: {
+        Row: {
+          id: string
+          otp: string
+          room_number: string | null
+          table_number: string | null
+          created_by: string | null
+          expires_at: string
+          status: "active" | "closed"
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          otp: string
+          room_number?: string | null
+          table_number?: string | null
+          created_by?: string | null
+          expires_at: string
+          status?: "active" | "closed"
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          otp?: string
+          room_number?: string | null
+          table_number?: string | null
+          created_by?: string | null
+          expires_at?: string
+          status?: "active" | "closed"
+          created_at?: string
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          id: string
+          session_id: string
+          room_id: string | null
+          status: "pending" | "confirmed" | "preparing" | "ready" | "delivered" | "completed" | "cancelled"
+          total_amount: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          room_id?: string | null
+          status?: "pending" | "confirmed" | "preparing" | "ready" | "delivered" | "completed" | "cancelled"
+          total_amount?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          room_id?: string | null
+          status?: "pending" | "confirmed" | "preparing" | "ready" | "delivered" | "completed" | "cancelled"
+          total_amount?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: "orders_session_id_fkey"; columns: ["session_id"]; referencedRelation: "order_sessions"; referencedColumns: ["id"] },
+          { foreignKeyName: "orders_room_id_fkey"; columns: ["room_id"]; referencedRelation: "rooms"; referencedColumns: ["id"] }
+        ]
+      }
+      order_items: {
+        Row: {
+          id: string
+          order_id: string
+          item_id: string | null
+          quantity: number
+          price_at_time: number
+          custom_price: number | null
+          notes: string | null
+          item_name: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          order_id: string
+          item_id?: string | null
+          quantity: number
+          price_at_time: number
+          custom_price?: number | null
+          notes?: string | null
+          item_name?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          order_id?: string
+          item_id?: string | null
+          quantity?: number
+          price_at_time?: number
+          custom_price?: number | null
+          notes?: string | null
+          item_name?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: "order_items_order_id_fkey"; columns: ["order_id"]; referencedRelation: "orders"; referencedColumns: ["id"] },
+          { foreignKeyName: "order_items_item_id_fkey"; columns: ["item_id"]; referencedRelation: "menu_items"; referencedColumns: ["id"] }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -259,7 +448,9 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_role: "super_admin" | "manager" | "staff" | "kitchen" | "guest_session"
+      order_session_status: "active" | "closed"
+      order_status: "pending" | "confirmed" | "preparing" | "ready" | "delivered" | "completed" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -374,6 +565,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_role: ["super_admin", "manager", "staff", "kitchen", "guest_session"] as const,
+      order_session_status: ["active", "closed"] as const,
+      order_status: ["pending", "confirmed", "preparing", "ready", "delivered", "completed", "cancelled"] as const,
+    },
   },
 } as const
