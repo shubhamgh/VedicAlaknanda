@@ -8,7 +8,9 @@ import {
 
 interface OrderSessionContextValue {
   sessionId: string | null;
+  sessionOtp: string | null;
   setSessionId: (id: string | null) => void;
+  setSessionOtp: (otp: string | null) => void;
   roomOrTable: string | null;
   setRoomOrTable: (v: string | null) => void;
   guestName: string | null;
@@ -51,6 +53,13 @@ export function OrderSessionProvider({ children }: { children: ReactNode }) {
       return null;
     }
   });
+  const [sessionOtp, setSessionOtpState] = useState<string | null>(() => {
+    try {
+      return sessionStorage.getItem("restaurant_session_otp");
+    } catch {
+      return null;
+    }
+  });
 
   const setSessionId = useCallback((id: string | null) => {
     setSessionIdState(id);
@@ -84,16 +93,26 @@ export function OrderSessionProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, []);
 
+  const setSessionOtp = useCallback((otp: string | null) => {
+    setSessionOtpState(otp);
+    try {
+      if (otp) sessionStorage.setItem("restaurant_session_otp", otp);
+      else sessionStorage.removeItem("restaurant_session_otp");
+    } catch {}
+  }, []);
+
   const clearSession = useCallback(() => {
     setSessionIdState(null);
     setRoomOrTableState(null);
     setGuestNameState(null);
     setGuestPhoneState(null);
+    setSessionOtpState(null);
     try {
       sessionStorage.removeItem("restaurant_session_id");
       sessionStorage.removeItem("restaurant_room_table");
       sessionStorage.removeItem("restaurant_guest_name");
       sessionStorage.removeItem("restaurant_guest_phone");
+      sessionStorage.removeItem("restaurant_session_otp");
     } catch {}
   }, []);
 
@@ -101,7 +120,9 @@ export function OrderSessionProvider({ children }: { children: ReactNode }) {
     <OrderSessionContext.Provider
       value={{
         sessionId,
+        sessionOtp,
         setSessionId,
+        setSessionOtp,
         roomOrTable,
         setRoomOrTable,
         guestName,

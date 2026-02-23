@@ -6,7 +6,17 @@ import {
   createOrder,
   addOrderItem,
   recalculateOrderTotal,
+  getOrdersForSession,
 } from "@/lib/restaurant-api";
+import { useQuery } from "@tanstack/react-query";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,7 +34,8 @@ interface CartItem {
 }
 
 export default function OrderMenu() {
-  const { sessionId, roomOrTable, clearSession } = useOrderSessionContext();
+  const { sessionId, sessionOtp, roomOrTable, clearSession } =
+    useOrderSessionContext();
   const navigate = useNavigate();
   const { data, isLoading } = useMenu();
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -141,6 +152,55 @@ export default function OrderMenu() {
     );
   }
 
+  function GuestOrders({ sessionId }: { sessionId: string | null }) {
+    const { data, isLoading } = useQuery({
+      queryKey: ["guest-session-orders", sessionId],
+      queryFn: async () => {
+        if (!sessionId) return [];
+        return await getOrdersForSession(sessionId);
+      },
+      enabled: !!sessionId,
+    });
+
+    if (!sessionId) return <div>No active session</div>;
+    if (isLoading) return <div>Loading orders...</div>;
+    if (!data || data.length === 0) return <div>No orders yet</div>;
+
+    return (
+      <div className="space-y-4">
+        {data.map((order: any) => (
+          <div key={order.id} className="border rounded p-3">
+            <div className="flex justify-between items-center">
+              <div>
+                <div className="text-sm text-muted-foreground">Order</div>
+                <div className="font-medium">#{order.id.slice(0, 8)}</div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm text-muted-foreground">Total</div>
+                <div className="font-medium">₹{order.total_amount}</div>
+              </div>
+            </div>
+            <ul className="mt-2 space-y-1 text-sm">
+              {order.order_items?.map((it: any) => (
+                <li key={it.id} className="flex justify-between">
+                  <span>
+                    {it.item_name} × {it.quantity}
+                  </span>
+                  <span>
+                    ₹
+                    {(
+                      Number(it.custom_price ?? it.price_at_time) * it.quantity
+                    ).toFixed(2)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   const categories = data?.categories ?? [];
   const items = data?.items ?? [];
 
@@ -167,9 +227,9 @@ export default function OrderMenu() {
                 <p className="text-sm text-muted-foreground">{roomOrTable}</p>
               )}
               {/* Show OTP if available */}
-              {sessionId && (
+              {(sessionOtp || sessionId) && (
                 <p className="text-xs text-hotel-gold mt-1">
-                  OTP: {sessionId.slice(0, 6)}
+                  OTP: {(sessionOtp ?? sessionId)?.slice(0, 6)}
                 </p>
               )}
             </div>
@@ -177,6 +237,24 @@ export default function OrderMenu() {
               <Button variant="outline" onClick={() => clearSession()}>
                 End Session
               </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button size="sm" variant="outline">
+                    View orders
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>
+                      Orders for OTP {sessionOtp ?? sessionId?.slice(0, 6)}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="mt-2">
+                    <GuestOrders sessionId={sessionId} />
+                  </div>
+                  <DialogFooter />
+                </DialogContent>
+              </Dialog>
               <Link to="/order">
                 <Button variant="ghost">Change OTP</Button>
               </Link>

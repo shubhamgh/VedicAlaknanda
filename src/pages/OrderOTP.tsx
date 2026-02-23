@@ -17,8 +17,13 @@ export default function OrderOTP() {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setSessionId, setRoomOrTable, setGuestName, setGuestPhone } =
-    useOrderSessionContext();
+  const {
+    setSessionId,
+    setRoomOrTable,
+    setGuestName,
+    setGuestPhone,
+    setSessionOtp,
+  } = useOrderSessionContext();
 
   // helper to persist guest info server-side when available
   // import lazily to avoid circular deps at top-level
@@ -67,6 +72,7 @@ export default function OrderOTP() {
         return;
       }
       setSessionId(session.id);
+      setSessionOtp(session.otp);
       setGuestName(name.trim());
       setGuestPhone(phone.trim());
       // persist to server so staff/admin can see contact
