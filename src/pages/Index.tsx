@@ -1,4 +1,3 @@
-
 import React from "react";
 import Header from "../components/Header";
 import Slideshow from "../components/Slideshow";
@@ -23,8 +22,8 @@ const Index = () => {
           <div className="max-w-4xl mx-auto text-center px-4">
             <p className="mb-6 md:mb-8 text-gray-600 text-sm md:text-base">
               Unwind at our tranquil hotel in Narkota, Rudraprayag. Wake up to
-              panoramic mountain and river views, right at Kedarnath and Badrinath
-              routes. Perfect for pilgrims and nature lovers alike.
+              panoramic mountain and river views, right at Kedarnath and
+              Badrinath routes. Perfect for pilgrims and nature lovers alike.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mt-8 md:mt-12">
               <Link
@@ -35,15 +34,17 @@ const Index = () => {
                   Luxury Accommodations
                 </h3>
                 <p className="text-white text-sm md:text-base">
-                  Spacious rooms and suites designed for your ultimate comfort and
-                  relaxation.
+                  Spacious rooms and suites designed for your ultimate comfort
+                  and relaxation.
                 </p>
               </Link>
               <Link
                 to="/dining"
                 className="p-4 md:p-6 border border-gray-200 rounded-lg bg-hotel-gold hover:bg-opacity-90 transition-all touch-manipulation"
               >
-                <h3 className="font-semibold text-lg md:text-xl mb-2 md:mb-3">Fine Dining</h3>
+                <h3 className="font-semibold text-lg md:text-xl mb-2 md:mb-3">
+                  Fine Dining
+                </h3>
                 <p className="text-white text-sm md:text-base">
                   Savor culinary masterpieces in our hygenic and inviting
                   restaurants
@@ -53,9 +54,11 @@ const Index = () => {
                 to="/amenities"
                 className="p-4 md:p-6 border border-gray-200 rounded-lg bg-hotel-gold hover:bg-opacity-90 transition-all touch-manipulation"
               >
-                <h3 className="font-semibold text-lg md:text-xl mb-2 md:mb-3">Premium Amenities</h3>
+                <h3 className="font-semibold text-lg md:text-xl mb-2 md:mb-3">
+                  Premium Amenities
+                </h3>
                 <p className="text-white text-sm md:text-base">
-                  24x7 security cameras, room service, high speed Wi-Fi, and more
+                  24x7 security cameras, high speed Wi-Fi, and more
                 </p>
               </Link>
             </div>

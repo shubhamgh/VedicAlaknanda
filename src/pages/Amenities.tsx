@@ -28,13 +28,13 @@ const Amenities = () => {
         <ArrowUpDown className="h-6 w-6 md:h-8 md:w-8 text-hotel-gold mb-3 md:mb-4" />
       ),
     },
-    {
-      title: "Room services",
-      description: "Enjoy the convenience of room services.",
-      icon: (
-        <Bell className="h-6 w-6 md:h-8 md:w-8 text-hotel-gold mb-3 md:mb-4" />
-      ),
-    },
+    // {
+    //   title: "Room services",
+    //   description: "Enjoy the convenience of room services.",
+    //   icon: (
+    //     <Bell className="h-6 w-6 md:h-8 md:w-8 text-hotel-gold mb-3 md:mb-4" />
+    //   ),
+    // },
     {
       title: "Parking",
       description: "Secure parking for your convenience.",

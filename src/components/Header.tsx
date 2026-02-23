@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -54,7 +53,7 @@ const Header: React.FC = () => {
     <header
       className={cn(
         "fixed w-full z-50 transition-all duration-700 ease-in-out",
-        scrolled ? "opaque-header" : "transparent-header"
+        scrolled ? "opaque-header" : "transparent-header",
       )}
     >
       <div className="container mx-auto px-4 py-3 md:py-4 flex justify-between items-center">
@@ -96,8 +95,8 @@ const Header: React.FC = () => {
             </li>
           </ul>
 
-          <button 
-            className="md:hidden flex touch-manipulation p-2" 
+          <button
+            className="md:hidden flex touch-manipulation p-2"
             onClick={handleMenuClick}
             aria-label="Toggle menu"
           >
@@ -105,7 +104,7 @@ const Header: React.FC = () => {
               className={`h-6 w-6 ${scrolled ? "text-hotel-dark" : "text-white"}`}
             />
           </button>
-          
+
           {/* Mobile sidebar with better touch targets */}
           <div
             className={`fixed top-0 right-0 h-screen w-4/5 max-w-sm bg-white p-4 transform ${
@@ -119,7 +118,7 @@ const Header: React.FC = () => {
             >
               <X className="h-6 w-6 text-gray-500" />
             </button>
-            
+
             <ul className="flex flex-col gap-2 justify-center mt-16">
               <li>
                 <Link
@@ -145,7 +144,7 @@ const Header: React.FC = () => {
               ))}
             </ul>
           </div>
-          
+
           {/* Overlay for mobile menu */}
           {isSidebarOpen && (
             <div

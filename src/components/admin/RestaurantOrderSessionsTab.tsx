@@ -30,7 +30,7 @@ export default function RestaurantOrderSessionsTab() {
   const [tableNumber, setTableNumber] = useState("");
   const [guestName, setGuestName] = useState("");
   const [guestPhone, setGuestPhone] = useState("");
-  const [expiresIn, setExpiresIn] = useState<number>(30);
+  const [expiresIn, setExpiresIn] = useState<number>(24); // hours
   const [creating, setCreating] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ export default function RestaurantOrderSessionsTab() {
       const session = await createOrderSession({
         roomNumber: roomNumber || undefined,
         tableNumber: tableNumber || undefined,
-        expiresInMinutes: expiresIn,
+        expiresInMinutes: expiresIn * 60,
       });
       const url = `${window.location.origin}/order?otp=${session.otp}`;
       await navigator.clipboard.writeText(`${session.otp}\n${url}`);
@@ -148,7 +148,7 @@ export default function RestaurantOrderSessionsTab() {
               </Button>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="expiry">Expiry (minutes)</Label>
+              <Label htmlFor="expiry">Expiry (hours)</Label>
               <input
                 id="expiry"
                 type="number"

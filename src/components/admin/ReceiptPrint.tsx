@@ -28,11 +28,12 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
       ? `Table ${order.order_sessions.table_number}`
       : "—";
 
-  // If GST is checked, reduce each item price by 5% before subtotal
+  // GST handling: if includeGST is true, marked price is GST-inclusive.
+  // Back-calc base price: base = marked / (1 + gstRate)
   const gstRate = 0.05;
   const itemsWithGST = order.order_items.map((oi) => {
-    let price = Number(oi.custom_price ?? oi.price_at_time);
-    if (includeGST) price = price * (1 - gstRate);
+    const marked = Number(oi.custom_price ?? oi.price_at_time);
+    const price = includeGST ? marked / (1 + gstRate) : marked;
     return { ...oi, price };
   });
 
@@ -50,9 +51,10 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
   }
   const subtotalAfterDiscount = subtotal - discountAmount;
 
-  // GST calculation: add 5% GST to subtotalAfterDiscount
-  const gstAmount = includeGST ? subtotalAfterDiscount * gstRate : 0;
-  const grandTotal = subtotalAfterDiscount + gstAmount;
+  // GST calculation: compute exact GST on subtotalAfterDiscount and ceil final total
+  const gstAmountExact = includeGST ? subtotalAfterDiscount * gstRate : 0;
+  const grandTotalExact = subtotalAfterDiscount + gstAmountExact;
+  const grandTotal = Math.ceil(grandTotalExact);
 
   const handlePrint = () => {
     const content = printRef.current;
@@ -170,7 +172,12 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
                           {oi.notes ? ` (${oi.notes})` : ""}
                         </td>
                         <td className="right">{oi.quantity}</td>
-                        <td className="right">₹{oi.price.toFixed(2)}</td>
+                        <td className="right">
+                          ₹
+                          {includeGST
+                            ? oi.price.toFixed(4)
+                            : oi.price.toFixed(2)}
+                        </td>
                         <td className="right">₹{amt.toFixed(2)}</td>
                       </tr>
                     );
@@ -191,7 +198,7 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
                 <>
                   <div className="flex justify-between">
                     <span>GST (5%)</span>
-                    <span>₹{gstAmount.toFixed(2)}</span>
+                    <span>₹{gstAmountExact.toFixed(2)}</span>
                   </div>
                 </>
               )}

@@ -156,6 +156,8 @@ export default function OrderMenu() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
+      {/* page-specific spacer so menu content appears below the fixed header */}
+      <div aria-hidden="true" className="h-16 md:h-20" />
       <main className="flex-1 bg-gray-50 py-8">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-between items-center mb-6">
