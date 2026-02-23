@@ -9,6 +9,7 @@ import {
   removeOrderItem,
   addOrderItem,
   recalculateOrderTotal,
+  closeOrderSession,
 } from "@/lib/restaurant-api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -262,6 +263,29 @@ export default function RestaurantOrderSessionsTab() {
                         onClick={() => copyOTP(s.otp)}
                       >
                         <Copy className="h-4 w-4 mr-1" /> Copy
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={async () => {
+                          const ok = window.confirm(
+                            `Close session ${s.otp}? This will prevent guests from using this OTP to place new orders.`,
+                          );
+                          if (!ok) return;
+                          try {
+                            await closeOrderSession(s.id);
+                            queryClient.invalidateQueries({ queryKey: ["order-sessions"] });
+                            toast({ title: "Closed", description: "Session closed" });
+                          } catch (err: unknown) {
+                            toast({
+                              title: "Error",
+                              description: err instanceof Error ? err.message : "Failed to close session",
+                              variant: "destructive",
+                            });
+                          }
+                        }}
+                      >
+                        Close
                       </Button>
                     </div>
                   </div>
