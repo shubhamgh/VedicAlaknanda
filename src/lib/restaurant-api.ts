@@ -2,7 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { OrderStatus } from "@/types/restaurant";
 
 const OTP_LENGTH = 6;
-const OTP_EXPIRY_MINUTES = 30;
+const OTP_EXPIRY_MINUTES = 1440; // 1 day
 
 function generateOTP(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();

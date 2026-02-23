@@ -28,6 +28,8 @@ import {
 export default function RestaurantOrderSessionsTab() {
   const [roomNumber, setRoomNumber] = useState("");
   const [tableNumber, setTableNumber] = useState("");
+  const [guestName, setGuestName] = useState("");
+  const [guestPhone, setGuestPhone] = useState("");
   const [expiresIn, setExpiresIn] = useState<number>(30);
   const [creating, setCreating] = useState(false);
   const queryClient = useQueryClient();
@@ -97,10 +99,9 @@ export default function RestaurantOrderSessionsTab() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Create Order Session</CardTitle>
+          <CardTitle>Create Order Session / Staff Order</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Generate an OTP for room or table. Guest enters OTP at /order to
-            start ordering.
+            Generate an OTP for guest or create a fresh order as staff.
           </p>
         </CardHeader>
         <CardContent>
@@ -123,9 +124,27 @@ export default function RestaurantOrderSessionsTab() {
                 onChange={(e) => setTableNumber(e.target.value)}
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="name">Guest/Staff Name</Label>
+              <Input
+                id="name"
+                placeholder="Name"
+                value={guestName ?? ""}
+                onChange={(e) => setGuestName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone">Contact</Label>
+              <Input
+                id="phone"
+                placeholder="Phone"
+                value={guestPhone ?? ""}
+                onChange={(e) => setGuestPhone(e.target.value)}
+              />
+            </div>
             <div className="flex items-end">
               <Button type="submit" disabled={creating}>
-                {creating ? "Creating..." : "Generate OTP"}
+                {creating ? "Creating..." : "Generate OTP / Order"}
               </Button>
             </div>
             <div className="space-y-2">
@@ -202,7 +221,7 @@ export default function RestaurantOrderSessionsTab() {
                           <DialogHeader>
                             <DialogTitle>Session {s.otp} details</DialogTitle>
                           </DialogHeader>
-                          <div className="mt-2 space-y-4">
+                          <div className="mt-2 space-y-4 flex flex-col">
                             <div>
                               <div className="text-sm text-muted-foreground">
                                 {s.room_number
@@ -228,21 +247,15 @@ export default function RestaurantOrderSessionsTab() {
                               )}
                             </div>
 
-                            <SessionOrders sessionId={s.id} />
+                            <div className="flex-1 min-h-0 overflow-y-auto">
+                              <SessionOrders sessionId={s.id} />
+                            </div>
                           </div>
                           <DialogFooter />
                         </DialogContent>
                       </Dialog>
 
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          navigate(`/admin?sessionId=${s.id}`);
-                        }}
-                      >
-                        View Orders
-                      </Button>
+                      {/* Removed View Orders button as not needed */}
                       <Button
                         size="sm"
                         variant="outline"

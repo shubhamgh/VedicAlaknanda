@@ -158,14 +158,20 @@ export default function OrderMenu() {
       <Header />
       <main className="flex-1 bg-gray-50 py-8">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-wrap justify-between items-center mb-6">
             <div>
               <h1 className="text-2xl font-bold text-hotel-dark">Menu</h1>
               {roomOrTable && (
                 <p className="text-sm text-muted-foreground">{roomOrTable}</p>
               )}
+              {/* Show OTP if available */}
+              {sessionId && (
+                <p className="text-xs text-hotel-gold mt-1">
+                  OTP: {sessionId.slice(0, 6)}
+                </p>
+              )}
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
               <Button variant="outline" onClick={() => clearSession()}>
                 End Session
               </Button>
@@ -177,7 +183,7 @@ export default function OrderMenu() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
-              <div className="mb-4">
+              <div className="mb-4 flex items-center gap-2 relative">
                 <input
                   aria-label="Search menu"
                   className="w-full px-3 py-2 border rounded-md"
@@ -185,7 +191,31 @@ export default function OrderMenu() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
+                {query && (
+                  <button
+                    type="button"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-hotel-gold bg-transparent border-none p-1"
+                    onClick={() => setQuery("")}
+                    aria-label="Clear search"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
               </div>
+              {query && (
+                <div className="mb-2 text-hotel-gold font-semibold text-sm">
+                  Showing results for "{query}"
+                </div>
+              )}
 
               {categories.map((cat) => {
                 const catItems = filteredItems.filter(
@@ -320,49 +350,7 @@ export default function OrderMenu() {
                         ))}
                       </ul>
                       <div className="border-t pt-4">
-                        <RoleGuard
-                          roles={["super_admin", "manager", "staff", "kitchen"]}
-                        >
-                          <div className="mb-4">
-                            <h4 className="font-semibold mb-2">
-                              Add custom item (staff only)
-                            </h4>
-                            <div className="flex gap-2">
-                              <input
-                                placeholder="Item name"
-                                className="flex-1 px-2 py-1 border rounded-md"
-                                value={customName}
-                                onChange={(e) => setCustomName(e.target.value)}
-                              />
-                              <input
-                                placeholder="Price"
-                                className="w-28 px-2 py-1 border rounded-md"
-                                value={String(customPrice)}
-                                onChange={(e) => setCustomPrice(e.target.value)}
-                              />
-                              <Button
-                                onClick={() => {
-                                  const p = Number(customPrice);
-                                  if (
-                                    !customName.trim() ||
-                                    Number.isNaN(p) ||
-                                    p <= 0
-                                  ) {
-                                    toast({
-                                      title: "Invalid",
-                                      description: "Enter valid name and price",
-                                      variant: "destructive",
-                                    });
-                                    return;
-                                  }
-                                  addCustomToCart(customName.trim(), p);
-                                }}
-                              >
-                                Add
-                              </Button>
-                            </div>
-                          </div>
-                        </RoleGuard>
+                        {/* Custom item section removed for guests. Only staff can add custom items from Order Sessions. */}
                         <div className="flex justify-between font-semibold mb-4">
                           <span>Subtotal</span>
                           <span>₹{cartTotal.toFixed(2)}</span>
