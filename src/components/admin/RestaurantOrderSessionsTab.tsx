@@ -274,12 +274,20 @@ export default function RestaurantOrderSessionsTab() {
                           if (!ok) return;
                           try {
                             await closeOrderSession(s.id);
-                            queryClient.invalidateQueries({ queryKey: ["order-sessions"] });
-                            toast({ title: "Closed", description: "Session closed" });
+                            queryClient.invalidateQueries({
+                              queryKey: ["order-sessions"],
+                            });
+                            toast({
+                              title: "Closed",
+                              description: "Session closed",
+                            });
                           } catch (err: unknown) {
                             toast({
                               title: "Error",
-                              description: err instanceof Error ? err.message : "Failed to close session",
+                              description:
+                                err instanceof Error
+                                  ? err.message
+                                  : "Failed to close session",
                               variant: "destructive",
                             });
                           }
@@ -306,6 +314,21 @@ function SessionOrders({ sessionId }: { sessionId: string }) {
       return await getOrdersForSession(sessionId);
     },
   });
+
+  const { data: sessionInfo, isLoading: sessionLoading } = useQuery({
+    queryKey: ["order-session", sessionId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("order_sessions")
+        .select("status")
+        .eq("id", sessionId)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const isActive = sessionInfo?.status === "active";
 
   const queryClient = useQueryClient();
 
@@ -339,11 +362,16 @@ function SessionOrders({ sessionId }: { sessionId: string }) {
     }
   };
 
-  if (isLoading) return <div>Loading orders...</div>;
+  if (isLoading || sessionLoading) return <div>Loading orders...</div>;
   if (!data || data.length === 0) return <div>No orders for this session</div>;
 
   return (
     <div className="space-y-4">
+      {!isActive && (
+        <div className="text-sm text-destructive">
+          This session is closed — editing is disabled.
+        </div>
+      )}
       {data.map((order: any) => (
         <div key={order.id} className="border rounded p-3">
           <div className="flex justify-between items-center">
@@ -368,10 +396,11 @@ function SessionOrders({ sessionId }: { sessionId: string }) {
                     Price: ₹{it.custom_price ?? it.price_at_time}
                   </div>
                   <div className="mt-2 flex gap-2">
-                    <EditOrderItemForm item={it} />
+                    <EditOrderItemForm item={it} disabled={!isActive} />
                     <Button
                       size="sm"
                       variant="destructive"
+                      disabled={!isActive}
                       onClick={async () => {
                         try {
                           await removeOrderItem(it.id);
@@ -407,13 +436,18 @@ function SessionOrders({ sessionId }: { sessionId: string }) {
               placeholder="Custom name"
               value={customName}
               onChange={(e) => setCustomName(e.target.value)}
+              disabled={!isActive}
             />
             <Input
               placeholder="Price"
               value={customPrice}
               onChange={(e) => setCustomPrice(e.target.value)}
+              disabled={!isActive}
             />
-            <Button onClick={() => handleAddCustom(order.id)}>
+            <Button
+              onClick={() => handleAddCustom(order.id)}
+              disabled={!isActive}
+            >
               <Plus className="w-4 h-4 mr-1" /> Add
             </Button>
           </div>
@@ -423,7 +457,13 @@ function SessionOrders({ sessionId }: { sessionId: string }) {
   );
 }
 
-function EditOrderItemForm({ item }: { item: any }) {
+function EditOrderItemForm({
+  item,
+  disabled = false,
+}: {
+  item: any;
+  disabled?: boolean;
+}) {
   const [qty, setQty] = useState(item.quantity);
   const [notes, setNotes] = useState(item.notes ?? "");
   const [price, setPrice] = useState<string>(
@@ -432,6 +472,7 @@ function EditOrderItemForm({ item }: { item: any }) {
   const queryClient = useQueryClient();
 
   const handleSave = async () => {
+    if (disabled) return;
     try {
       await updateOrderItem(item.id, {
         quantity: qty,
@@ -455,18 +496,21 @@ function EditOrderItemForm({ item }: { item: any }) {
         className="w-16"
         value={qty}
         onChange={(e) => setQty(Number(e.target.value))}
+        disabled={disabled}
       />
       <Input
         className="w-24"
         value={price}
         onChange={(e) => setPrice(e.target.value)}
+        disabled={disabled}
       />
       <Input
         className="w-48"
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
+        disabled={disabled}
       />
-      <Button size="sm" onClick={handleSave}>
+      <Button size="sm" onClick={handleSave} disabled={disabled}>
         <Edit2 className="w-4 h-4" />
       </Button>
     </div>
