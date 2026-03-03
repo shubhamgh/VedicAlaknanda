@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { OrderWithDetails } from "@/hooks/useOrders";
+import { createBill } from "@/lib/restaurant-api";
 import { Printer } from "lucide-react";
 
 const HOTEL_NAME = "Hotel Vedic Alaknanda";
@@ -70,13 +71,20 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
           <style>
             body { font-family: monospace; padding: 20px; font-size: 14px; }
             h1 { font-size: 18px; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid #eee; }
+            table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+            th, td { padding: 6px 8px; border-bottom: 1px solid #eee; }
+            th:first-child, td:first-child { width: 55%; }
+            th:nth-child(2), td:nth-child(2) { width: 10%; text-align: right; }
+            th:nth-child(3), td:nth-child(3) { width: 15%; text-align: right; }
+            th:nth-child(4), td:nth-child(4) { width: 20%; text-align: right; }
+            th { text-align: left; }
+            td { word-break: break-word; }
             .right { text-align: right; }
             .total { font-weight: bold; }
             @media print {
               body { padding: 0; }
               .print-controls { display: none !important; }
+              table { width: 100%; }
             }
           </style>
         </head>
@@ -87,7 +95,19 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
     `);
     win.document.close();
     win.focus();
-    setTimeout(() => {
+    setTimeout(async () => {
+      try {
+        await createBill(order, includeGST, {
+          subtotal,
+          discountAmount,
+          gstAmount: gstAmountExact,
+          grandTotal,
+        });
+      } catch (err) {
+        // non-fatal, still attempt to print
+        // eslint-disable-next-line no-console
+        console.error("Failed to save bill:", err);
+      }
       win.print();
       win.close();
     }, 250);

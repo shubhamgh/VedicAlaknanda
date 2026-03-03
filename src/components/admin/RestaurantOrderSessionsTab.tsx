@@ -10,13 +10,15 @@ import {
   addOrderItem,
   recalculateOrderTotal,
   closeOrderSession,
+  createOrder,
 } from "@/lib/restaurant-api";
+import { useMenu } from "@/hooks/useMenu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { Copy, Phone, Edit2, Trash2, Plus } from "lucide-react";
+import { Copy, Phone, Edit2, Trash2, Plus, Minus } from "lucide-react";
 import {
   Dialog,
   DialogTrigger,
@@ -331,6 +333,8 @@ function SessionOrders({ sessionId }: { sessionId: string }) {
   const isActive = sessionInfo?.status === "active";
 
   const queryClient = useQueryClient();
+  const { data: menuData } = useMenu();
+  const [showMenu, setShowMenu] = useState(false);
 
   const [customName, setCustomName] = useState("");
   const [customPrice, setCustomPrice] = useState<string>("");
@@ -363,7 +367,71 @@ function SessionOrders({ sessionId }: { sessionId: string }) {
   };
 
   if (isLoading || sessionLoading) return <div>Loading orders...</div>;
-  if (!data || data.length === 0) return <div>No orders for this session</div>;
+
+  // Always render session orders area; show menu dialog to add items so UI doesn't disappear
+  // when orders are created (keeps hooks stable and behavior consistent)
+  return (
+    <div className="space-y-4">
+      {!data || data.length === 0 ? (
+        <div className="text-muted-foreground">No orders for this session</div>
+      ) : (
+        data.map((order: any) => (
+          <div key={order.id} className="border rounded p-3">
+            <div className="flex justify-between items-center">
+              <div>
+                <div className="text-sm text-muted-foreground">Order</div>
+                <div className="font-medium">{order.id}</div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm text-muted-foreground">Total</div>
+                <div className="font-medium">₹{order.total_amount}</div>
+              </div>
+            </div>
+            <div className="mt-3 space-y-2">
+              {order.order_items?.map((it: any) => (
+                <div key={it.id} className="flex items-start gap-3">
+                  <div className="flex-1">
+                    <div className="font-medium">{it.item_name}</div>
+                    <div className="text-sm text-muted-foreground">
+                      Qty: {it.quantity}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Price: ₹{it.custom_price ?? it.price_at_time}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      )}
+
+      {isActive && (
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button size="sm">Open Menu</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add items to session</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <StaffOrderMenu
+                sessionId={sessionId}
+                existingOrders={data}
+                onPlaced={async () => {
+                  await queryClient.invalidateQueries({
+                    queryKey: ["session-orders", sessionId],
+                  });
+                }}
+              />
+            </div>
+            <DialogFooter />
+          </DialogContent>
+        </Dialog>
+      )}
+    </div>
+  );
 
   return (
     <div className="space-y-4">
@@ -513,6 +581,216 @@ function EditOrderItemForm({
       <Button size="sm" onClick={handleSave} disabled={disabled}>
         <Edit2 className="w-4 h-4" />
       </Button>
+    </div>
+  );
+}
+
+function StaffOrderMenu({
+  sessionId,
+  existingOrders,
+  onPlaced,
+}: {
+  sessionId: string;
+  existingOrders: any[] | undefined;
+  onPlaced?: () => Promise<void>;
+}) {
+  const { data } = useMenu();
+  const items = data?.items ?? [];
+  const [query, setQuery] = useState("");
+  const [cart, setCart] = useState<{ item: any; quantity: number }[]>([]);
+  const [customName, setCustomName] = useState("");
+  const [customPrice, setCustomPrice] = useState<string>("");
+  const [placing, setPlacing] = useState(false);
+  const queryClient = useQueryClient();
+
+  const addToCart = (item: any) => {
+    setCart((prev) => {
+      const found = prev.find((c) => c.item.id === item.id);
+      if (found)
+        return prev.map((c) =>
+          c.item.id === item.id ? { ...c, quantity: c.quantity + 1 } : c,
+        );
+      return [...prev, { item, quantity: 1 }];
+    });
+  };
+
+  const removeFromCart = (itemId: string) => {
+    setCart((prev) => {
+      const found = prev.find((c) => c.item.id === itemId);
+      if (!found) return prev;
+      if (found.quantity === 1) return prev.filter((c) => c.item.id !== itemId);
+      return prev.map((c) =>
+        c.item.id === itemId ? { ...c, quantity: c.quantity - 1 } : c,
+      );
+    });
+  };
+
+  const addCustomToCart = (name: string, price: number) => {
+    const id = `custom-${Date.now()}`;
+    const customItem = { id, name, price };
+    setCart((prev) => [...prev, { item: customItem, quantity: 1 }]);
+    setCustomName("");
+    setCustomPrice("");
+  };
+
+  const cartTotal = cart.reduce(
+    (sum, c) => sum + Number(c.item.price ?? 0) * c.quantity,
+    0,
+  );
+
+  const handlePlace = async () => {
+    if (cart.length === 0) return;
+    setPlacing(true);
+    try {
+      // create order if none exists else add to first existing order
+      let orderId: string;
+      if (!existingOrders || existingOrders.length === 0) {
+        const ord = await createOrder(sessionId);
+        orderId = ord.id;
+      } else {
+        orderId = existingOrders[0].id;
+      }
+      for (const c of cart) {
+        const isCustom = String(c.item.id).startsWith("custom-");
+        await addOrderItem({
+          orderId,
+          itemId: isCustom ? undefined : c.item.id,
+          itemName: c.item.name,
+          quantity: c.quantity,
+          priceAtTime: Number(c.item.price ?? 0),
+          notes: null,
+        });
+      }
+      await recalculateOrderTotal(orderId);
+      setCart([]);
+      if (onPlaced) await onPlaced();
+      toast({ title: "Order updated", description: "Items added to session" });
+    } catch (err: unknown) {
+      toast({
+        title: "Error",
+        description: err instanceof Error ? err.message : "Failed to add items",
+        variant: "destructive",
+      });
+    } finally {
+      setPlacing(false);
+      await queryClient.invalidateQueries({
+        queryKey: ["session-orders", sessionId],
+      });
+    }
+  };
+
+  const normalizedQuery = query.trim().toLowerCase();
+  const filtered = normalizedQuery
+    ? items.filter(
+        (i: any) =>
+          i.name.toLowerCase().includes(normalizedQuery) ||
+          (i.description || "").toLowerCase().includes(normalizedQuery),
+      )
+    : items;
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <input
+          placeholder="Search items"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="w-full px-3 py-2 border rounded"
+        />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-72 overflow-auto">
+        {filtered.map((it: any) => (
+          <div
+            key={it.id}
+            className="p-2 border rounded flex items-center justify-between"
+          >
+            <div>
+              <div className="font-medium">{it.name}</div>
+              <div className="text-sm text-muted-foreground">
+                ₹{Number(it.price).toFixed(2)}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={() => removeFromCart(it.id)}
+                disabled={!cart.find((c) => c.item.id === it.id)?.quantity}
+              >
+                <Minus className="w-4 h-4" />
+              </Button>
+              <span className="w-6 text-center">
+                {cart.find((c) => c.item.id === it.id)?.quantity ?? 0}
+              </span>
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={() => addToCart(it)}
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div>
+          <input
+            placeholder="Custom name"
+            value={customName}
+            onChange={(e) => setCustomName(e.target.value)}
+            className="w-full px-2 py-1 border rounded"
+          />
+        </div>
+        <div className="flex gap-2">
+          <input
+            placeholder="Price"
+            value={customPrice}
+            onChange={(e) => setCustomPrice(e.target.value)}
+            className="px-2 py-1 border rounded w-32"
+          />
+          <Button
+            onClick={() => {
+              if (customName && customPrice)
+                addCustomToCart(customName, Number(customPrice));
+            }}
+          >
+            Add Custom
+          </Button>
+        </div>
+      </div>
+
+      <div className="border rounded p-3">
+        <div className="mb-2 font-semibold">Cart</div>
+        {cart.length === 0 ? (
+          <div className="text-sm text-muted-foreground">No items yet</div>
+        ) : (
+          <ul className="space-y-2">
+            {cart.map((c) => (
+              <li key={c.item.id} className="flex justify-between">
+                <span>
+                  {c.item.name} × {c.quantity}
+                </span>
+                <span>
+                  ₹{(Number(c.item.price ?? 0) * c.quantity).toFixed(2)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="text-right font-bold mt-2">
+          Total: ₹{cartTotal.toFixed(2)}
+        </div>
+        <div className="mt-3 flex justify-end gap-2">
+          <Button variant="outline" onClick={() => setCart([])}>
+            Clear
+          </Button>
+          <Button onClick={handlePlace} disabled={placing || cart.length === 0}>
+            {placing ? "Adding..." : "Add to Order"}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

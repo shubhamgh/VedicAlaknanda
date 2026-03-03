@@ -207,3 +207,47 @@ export async function recalculateOrderTotal(orderId: string) {
 
   return total;
 }
+
+export async function createBill(
+  order: any,
+  gstIncluded: boolean,
+  summary?: any,
+) {
+  const payload = {
+    order_id: order.id,
+    gst_included: gstIncluded,
+    data: {
+      order: order,
+      summary: summary ?? null,
+    },
+  };
+
+  // upsert by order_id to avoid duplicates
+  const { data, error } = await supabase
+    .from("bills")
+    .upsert(payload, { onConflict: "order_id" })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function getBills(filter: {
+  from?: string;
+  to?: string;
+  gstIncluded?: boolean | null;
+}) {
+  let q = supabase
+    .from("bills")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (filter.from) q = q.gte("created_at", filter.from);
+  if (filter.to) q = q.lte("created_at", filter.to);
+  if (typeof filter.gstIncluded === "boolean")
+    q = q.eq("gst_included", filter.gstIncluded);
+
+  const { data, error } = await q;
+  if (error) throw error;
+  return data ?? [];
+}

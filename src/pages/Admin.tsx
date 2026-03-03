@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import AdminHeader from "@/components/admin/AdminHeader";
+import BillsTab from "@/components/admin/BillsTab";
+import ReportsTab from "@/components/admin/ReportsTab";
 import BookingsTab from "@/components/admin/BookingsTab";
 import AllBookingsTab from "@/components/admin/AllBookingsTab";
 import InventoryTab from "@/components/admin/InventoryTab";
@@ -39,7 +41,7 @@ const Admin = () => {
       />
 
       <main className="mx-auto max-w-7xl px-2 sm:px-4 py-4 sm:py-6 lg:px-8">
-        <Tabs defaultValue="manage" className="w-full">
+        <Tabs defaultValue="kitchen" className="w-full">
           <TabsList className="mb-4 w-full flex flex-wrap gap-1 text-xs sm:text-sm">
             <TabsTrigger value="manage" className="px-2 py-1">
               Manage
@@ -73,6 +75,12 @@ const Admin = () => {
                 <TabsTrigger value="logs" className="px-2 py-1">
                   Logs
                 </TabsTrigger>
+                <TabsTrigger value="bills" className="px-2 py-1">
+                  Bills
+                </TabsTrigger>
+                <TabsTrigger value="reports" className="px-2 py-1">
+                  Reports
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="bookings">
                 <BookingsTab />
@@ -96,6 +104,12 @@ const Admin = () => {
               </TabsContent>
               <TabsContent value="logs">
                 <LogsTab />
+              </TabsContent>
+              <TabsContent value="bills">
+                <BillsTab />
+              </TabsContent>
+              <TabsContent value="reports">
+                <ReportsTab />
               </TabsContent>
             </Tabs>
           </TabsContent>
