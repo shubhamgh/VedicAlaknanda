@@ -58,41 +58,83 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
   const grandTotal = Math.ceil(grandTotalExact);
 
   const handlePrint = () => {
-    const content = printRef.current;
-    if (!content) return;
     const win = window.open("", "_blank");
     if (!win) return;
-    win.document.write(`
+
+    const itemsHtml = itemsWithGST
+      .map((oi) => {
+        const amt = oi.price * oi.quantity;
+        return `
+          <tr>
+            <td style="padding:6px 8px">${oi.item_name ?? "Item"}${oi.notes ? ` (${oi.notes})` : ""}</td>
+            <td style="text-align:right;padding:6px 8px">${oi.quantity}</td>
+            <td style="text-align:right;padding:6px 8px">₹${includeGST ? oi.price.toFixed(4) : oi.price.toFixed(2)}</td>
+            <td style="text-align:right;padding:6px 8px">₹${amt.toFixed(2)}</td>
+          </tr>`;
+      })
+      .join("\n");
+
+    const gstLine = includeGST
+      ? `<div style="text-align:center;font-size:12px">GSTIN: ${GSTIN}</div>`
+      : "";
+
+    const discountHtml =
+      discountType !== "none" && discountValue > 0
+        ? `<div style="display:flex;justify-content:space-between;margin-top:6px;"><div>Discount ${discountType === "percent" ? `(${discountValue}%)` : ""}</div><div>-₹${discountAmount.toFixed(2)}</div></div>`
+        : "";
+
+    const html = `
       <!DOCTYPE html>
       <html>
         <head>
           <title>Receipt - ${order.id.slice(0, 8)}</title>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <style>
-            body { font-family: monospace; padding: 20px; font-size: 14px; }
-            h1 { font-size: 18px; }
-            table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-            th, td { padding: 6px 8px; border-bottom: 1px solid #eee; }
-            th:first-child, td:first-child { width: 55%; }
-            th:nth-child(2), td:nth-child(2) { width: 10%; text-align: right; }
-            th:nth-child(3), td:nth-child(3) { width: 15%; text-align: right; }
-            th:nth-child(4), td:nth-child(4) { width: 20%; text-align: right; }
-            th { text-align: left; }
-            td { word-break: break-word; }
-            .right { text-align: right; }
-            .total { font-weight: bold; }
-            @media print {
-              body { padding: 0; }
-              .print-controls { display: none !important; }
-              table { width: 100%; }
-            }
+            body{font-family:monospace;padding:16px;margin:0;color:#000}
+            h1{font-size:18px;margin:0}
+            table{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:8px}
+            th,td{padding:6px 8px;border-bottom:1px solid #eee}
+            th:first-child, td:first-child{width:55%}
+            th:nth-child(2), td:nth-child(2){width:10%;text-align:right}
+            th:nth-child(3), td:nth-child(3){width:15%;text-align:right}
+            th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
+            .total{font-weight:bold;margin-top:8px;display:flex;justify-content:space-between}
+            .bill{page-break-inside:avoid;break-inside:avoid}
+            @media print{ body{padding:0} .print-controls{display:none!important} }
           </style>
         </head>
         <body>
-          ${content.innerHTML}
+          <div class="bill" style="padding:8px">
+            <h1 style="text-align:center">${HOTEL_NAME}</h1>
+            <div style="text-align:center;font-size:12px">${ADDRESS}</div>
+            ${gstLine}
+            <hr />
+            <div style="display:flex;justify-content:space-between;margin-top:8px">
+              <div>Order #: ${order.id.slice(0, 8)}</div>
+              <div>Date: ${new Date(order.created_at).toLocaleString()}</div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th style="text-align:left;padding:6px 8px">Item</th>
+                  <th style="text-align:right;padding:6px 8px">Qty</th>
+                  <th style="text-align:right;padding:6px 8px">Price</th>
+                  <th style="text-align:right;padding:6px 8px">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsHtml}
+              </tbody>
+            </table>
+            ${discountHtml}
+            ${includeGST ? `<div style="display:flex;justify-content:space-between;margin-top:6px"><div>GST (5%)</div><div>₹${gstAmountExact.toFixed(2)}</div></div>` : ""}
+            <div class="total"><span>Grand Total</span><span>₹${grandTotal.toFixed(2)}</span></div>
+          </div>
         </body>
       </html>
-    `);
+    `;
+
+    win.document.write(html);
     win.document.close();
     win.focus();
     setTimeout(async () => {
@@ -108,8 +150,16 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
         // eslint-disable-next-line no-console
         console.error("Failed to save bill:", err);
       }
-      win.print();
-      win.close();
+      try {
+        win.print();
+      } catch (e) {
+        /* ignore */
+      }
+      try {
+        win.close();
+      } catch (e) {
+        /* ignore */
+      }
     }, 250);
   };
 

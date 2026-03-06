@@ -103,7 +103,6 @@ function App() {
                 <Route path="/admin-login" element={<AdminLogin />} />
                 <Route path="/set-password" element={<SetPassword />} />
                 <Route path="*" element={<NotFound />} />
-              
               </Routes>
             </Suspense>
             <Toaster />
