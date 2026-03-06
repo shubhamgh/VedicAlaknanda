@@ -43,18 +43,18 @@ const Admin = () => {
       <main className="mx-auto max-w-7xl px-2 sm:px-4 py-4 sm:py-6 lg:px-8">
         <Tabs defaultValue="kitchen" className="w-full">
           <TabsList className="mb-4 w-full flex flex-wrap gap-1 text-xs sm:text-sm">
-            <TabsTrigger value="manage" className="px-2 py-1">
-              Manage
-            </TabsTrigger>
             <TabsTrigger value="kitchen" className="px-2 py-1">
               Kitchen
+            </TabsTrigger>
+            <TabsTrigger value="manage" className="px-2 py-1">
+              Manage
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="manage">
-            <Tabs defaultValue="bookings" className="w-full">
+            <Tabs defaultValue="bills" className="w-full">
               <TabsList className="mb-4 w-full flex flex-wrap gap-1 text-xs sm:text-sm">
-                <TabsTrigger value="bookings" className="px-2 py-1">
+                {/* <TabsTrigger value="bookings" className="px-2 py-1">
                   Calendar
                 </TabsTrigger>
                 <TabsTrigger value="all-bookings" className="px-2 py-1">
@@ -62,16 +62,16 @@ const Admin = () => {
                 </TabsTrigger>
                 <TabsTrigger value="inventory" className="px-2 py-1">
                   Inventory
-                </TabsTrigger>
+                </TabsTrigger> */}
                 <TabsTrigger value="reviews" className="px-2 py-1">
                   Reviews
                 </TabsTrigger>
                 <TabsTrigger value="messages" className="px-2 py-1">
                   Messages
                 </TabsTrigger>
-                <TabsTrigger value="newsletter" className="px-2 py-1">
+                {/* <TabsTrigger value="newsletter" className="px-2 py-1">
                   Newsletter
-                </TabsTrigger>
+                </TabsTrigger> */}
                 <TabsTrigger value="logs" className="px-2 py-1">
                   Logs
                 </TabsTrigger>
@@ -82,7 +82,7 @@ const Admin = () => {
                   Reports
                 </TabsTrigger>
               </TabsList>
-              <TabsContent value="bookings">
+              {/* <TabsContent value="bookings">
                 <BookingsTab />
               </TabsContent>
               <TabsContent value="all-bookings">
@@ -90,18 +90,18 @@ const Admin = () => {
               </TabsContent>
               <TabsContent value="inventory">
                 <InventoryTab />
-              </TabsContent>
+              </TabsContent> */}
               <TabsContent value="reviews">
                 <ReviewsManagement />
               </TabsContent>
               <TabsContent value="messages">
                 <MessagesTab />
               </TabsContent>
-              <TabsContent value="newsletter">
+              {/* <TabsContent value="newsletter">
                 <div className="space-y-4">
                   <NewsletterSubscribers />
                 </div>
-              </TabsContent>
+              </TabsContent> */}
               <TabsContent value="logs">
                 <LogsTab />
               </TabsContent>
@@ -115,13 +115,13 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="kitchen">
-            <Tabs defaultValue="restaurant-orders" className="w-full">
+            <Tabs defaultValue="restaurant-sessions" className="w-full">
               <TabsList className="mb-4 w-full flex flex-wrap gap-1 text-xs sm:text-sm">
-                <TabsTrigger value="restaurant-orders" className="px-2 py-1">
-                  Restaurant Orders
-                </TabsTrigger>
                 <TabsTrigger value="restaurant-sessions" className="px-2 py-1">
                   Order Sessions
+                </TabsTrigger>
+                <TabsTrigger value="restaurant-orders" className="px-2 py-1">
+                  Restaurant Orders
                 </TabsTrigger>
                 <TabsTrigger value="restaurant-menu" className="px-2 py-1">
                   Menu
