@@ -74,19 +74,19 @@ const Contact = () => {
                     </div>
                   </div>
 
-                  <a href="tel:+918267020926" className="flex items-start">
+                  <a href="tel:+919022277718" className="flex items-start">
                     <Phone className="h-5 w-5 mr-3 text-blue-600 mt-1 flex-shrink-0" />
                     <div>
                       <h3 className="font-medium">Phone</h3>
                       <p className="text-gray-600 mt-1 flex flex-col">
                         <a
-                          href="tel:+918267020926"
+                          href="tel:+919022277718"
                           className="hover:text-blue-600 transition-colors"
                         >
                           +91 82670 20926
                         </a>
                         <a
-                          href="tel:+919815812309"
+                          href="tel:+917456860475"
                           className="hover:text-blue-600 transition-colors"
                         >
                           +91 98158 123 09

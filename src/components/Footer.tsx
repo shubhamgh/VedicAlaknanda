@@ -127,13 +127,13 @@ const Footer: React.FC = () => {
                 <Phone className="mr-3 h-5 w-5 text-hotel-gold" />
                 <span className="flex flex-col">
                   <a
-                    href="tel:+918267020926"
+                    href="tel:+919022277718"
                     className="hover:text-hotel-gold transition-colors"
                   >
                     +91 8267 020 926
                   </a>
                   <a
-                    href="tel:+919815812309"
+                    href="tel:+917456860475"
                     className="hover:text-hotel-gold transition-colors"
                   >
                     +91 98158 123 09
