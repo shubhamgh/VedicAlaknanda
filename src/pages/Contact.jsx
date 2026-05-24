@@ -83,13 +83,13 @@ const Contact = () => {
                           href="tel:+919022277718"
                           className="hover:text-blue-600 transition-colors"
                         >
-                          +91 82670 20926
+                          +91 90222 777 18
                         </a>
                         <a
                           href="tel:+917456860475"
                           className="hover:text-blue-600 transition-colors"
                         >
-                          +91 98158 123 09
+                          +91 7456 860 475
                         </a>
                       </p>
                     </div>
