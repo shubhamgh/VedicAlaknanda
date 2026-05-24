@@ -222,9 +222,7 @@ const Footer: React.FC = () => {
             © {new Date().getFullYear()} Hotel Vedic Alaknanda. All rights
             reserved.
           </p>
-          <p className="mt-2 md:mt-0">
-            <Link to={"/admin"}>|</Link>
-          </p>
+          <p className="mt-2 md:mt-0">{/* <Link to={"/admin"}>|</Link> */}</p>
         </div>
       </div>
     </footer>

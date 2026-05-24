@@ -18,14 +18,14 @@ const Amenities = lazy(() => import("./pages/Amenities"));
 const Explore = lazy(() => import("./pages/Explore"));
 const Contact = lazy(() => import("./pages/Contact"));
 const BookNow = lazy(() => import("./pages/BookNow"));
-const Admin = lazy(() => import("./pages/Admin"));
-const AdminLogin = lazy(() => import("./pages/AdminLogin"));
-const SetPassword = lazy(() => import("./pages/SetPassword"));
 const Gallery = lazy(() => import("./pages/Gallery"));
-const OrderOTP = lazy(() => import("./pages/OrderOTP"));
-const OrderMenu = lazy(() => import("./pages/OrderMenu"));
-const OrderConfirm = lazy(() => import("./pages/OrderConfirm"));
-const Kitchen = lazy(() => import("./pages/Kitchen"));
+// const Admin = lazy(() => import("./pages/Admin"));
+// const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+// const SetPassword = lazy(() => import("./pages/SetPassword"));
+// const OrderOTP = lazy(() => import("./pages/OrderOTP"));
+// const OrderMenu = lazy(() => import("./pages/OrderMenu"));
+// const OrderConfirm = lazy(() => import("./pages/OrderConfirm"));
+// const Kitchen = lazy(() => import("./pages/Kitchen"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -95,13 +95,13 @@ function App() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/book-now" element={<BookNow />} />
                 <Route path="/gallery" element={<Gallery />} />
-                <Route path="/order" element={<OrderOTP />} />
+                {/* <Route path="/order" element={<OrderOTP />} />
                 <Route path="/order/menu" element={<OrderMenu />} />
                 <Route path="/order/confirm" element={<OrderConfirm />} />
                 <Route path="/kitchen" element={<Kitchen />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin-login" element={<AdminLogin />} />
-                <Route path="/set-password" element={<SetPassword />} />
+                <Route path="/set-password" element={<SetPassword />} /> */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

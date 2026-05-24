@@ -18,11 +18,11 @@ const Dining = () => {
       <div className="flex-1 bg-gray-50 py-8 md:py-16 lg:py-20">
         <div className="container mx-auto px-4">
           <div className="flex justify-end mb-6">
-            <Link to="/order">
+            {/* <Link to="/order">
               <Button className="bg-hotel-gold hover:bg-opacity-90 text-white">
                 Order Food
               </Button>
-            </Link>
+            </Link> */}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             <Card className="h-full">
