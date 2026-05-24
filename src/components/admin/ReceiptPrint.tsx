@@ -11,8 +11,8 @@ import { createBill } from "@/lib/restaurant-api";
 import { Printer } from "lucide-react";
 
 const HOTEL_NAME = "Hotel Vedic Alaknanda";
-const ADDRESS = "Kedarnath Road, Rudraprayag, Uttarakhand";
-const GSTIN = "XX XXXXXXXXX XXX X";
+const ADDRESS = "Narkota, Rudraprayag, Uttarakhand";
+const GSTIN = "05CKIPM9560K1ZM";
 
 export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
   const [open, setOpen] = useState(false);
@@ -29,12 +29,21 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
       ? `Table ${order.order_sessions.table_number}`
       : "—";
 
-  // GST handling: if includeGST is true, marked price is GST-inclusive.
-  // Back-calc base price: base = marked / (1 + gstRate)
-  const gstRate = 0.05;
+  const guestName = order.order_sessions?.guest_name ?? "";
+  const guestPhone = order.order_sessions?.guest_phone ?? "";
+  const guestHtml = [
+    guestName ? `<div>Guest: ${guestName}</div>` : "",
+    guestPhone ? `<div>Contact: ${guestPhone}</div>` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  // Tax handling: if includeGST is true, we'll add CGST+SGST (2.5% each) on subtotal
+  const cgstRate = 0.025;
+  const sgstRate = 0.025;
   const itemsWithGST = order.order_items.map((oi) => {
     const marked = Number(oi.custom_price ?? oi.price_at_time);
-    const price = includeGST ? marked / (1 + gstRate) : marked;
+    const price = marked;
     return { ...oi, price };
   });
 
@@ -52,10 +61,20 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
   }
   const subtotalAfterDiscount = subtotal - discountAmount;
 
-  // GST calculation: compute exact GST on subtotalAfterDiscount and ceil final total
-  const gstAmountExact = includeGST ? subtotalAfterDiscount * gstRate : 0;
-  const grandTotalExact = subtotalAfterDiscount + gstAmountExact;
+  // Tax calculation: CGST + SGST applied on subtotalAfterDiscount
+  const cgstAmount = includeGST ? subtotalAfterDiscount * cgstRate : 0;
+  const sgstAmount = includeGST ? subtotalAfterDiscount * sgstRate : 0;
+  const grandTotalExact = subtotalAfterDiscount + cgstAmount + sgstAmount;
   const grandTotal = Math.ceil(grandTotalExact);
+
+  function formatDateOnly(dateStr: string | undefined | null) {
+    if (!dateStr) return "-";
+    const d = new Date(dateStr);
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const yyyy = d.getFullYear();
+    return `${dd}/${mm}/${yyyy}`;
+  }
 
   const handlePrint = () => {
     const win = window.open("", "_blank");
@@ -68,7 +87,7 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
           <tr>
             <td style="padding:6px 8px">${oi.item_name ?? "Item"}${oi.notes ? ` (${oi.notes})` : ""}</td>
             <td style="text-align:right;padding:6px 8px">${oi.quantity}</td>
-            <td style="text-align:right;padding:6px 8px">₹${includeGST ? oi.price.toFixed(4) : oi.price.toFixed(2)}</td>
+            <td style="text-align:right;padding:6px 8px">₹${oi.price.toFixed(2)}</td>
             <td style="text-align:right;padding:6px 8px">₹${amt.toFixed(2)}</td>
           </tr>`;
       })
@@ -77,7 +96,6 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
     const gstLine = includeGST
       ? `<div style="text-align:center;font-size:12px">GSTIN: ${GSTIN}</div>`
       : "";
-
     const discountHtml =
       discountType !== "none" && discountValue > 0
         ? `<div style="display:flex;justify-content:space-between;margin-top:6px;"><div>Discount ${discountType === "percent" ? `(${discountValue}%)` : ""}</div><div>-₹${discountAmount.toFixed(2)}</div></div>`
@@ -87,10 +105,12 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Receipt - ${order.id.slice(0, 8)}</title>
+          <title></title>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <style>
-            body{font-family:monospace;padding:16px;margin:0;color:#000}
+            @page { margin: 0 }
+            html,body{height:100%;}
+            body{font-family:monospace;padding:0;margin:0;color:#000}
             h1{font-size:18px;margin:0}
             table{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:8px}
             th,td{padding:6px 8px;border-bottom:1px solid #eee}
@@ -100,7 +120,7 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
             th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
             .total{font-weight:bold;margin-top:8px;display:flex;justify-content:space-between}
             .bill{page-break-inside:avoid;break-inside:avoid}
-            @media print{ body{padding:0} .print-controls{display:none!important} }
+            @media print{ html,body{margin:0;padding:0} .print-controls{display:none!important} }
           </style>
         </head>
         <body>
@@ -111,8 +131,9 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
             <hr />
             <div style="display:flex;justify-content:space-between;margin-top:8px">
               <div>Order #: ${order.id.slice(0, 8)}</div>
-              <div>Date: ${new Date(order.created_at).toLocaleString()}</div>
+              <div>Date: ${formatDateOnly(order.created_at)}</div>
             </div>
+            ${order.order_sessions?.guest_name ? `<div>Guest: ${order.order_sessions.guest_name}</div>` : ""}
             <table>
               <thead>
                 <tr>
@@ -127,7 +148,15 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
               </tbody>
             </table>
             ${discountHtml}
-            ${includeGST ? `<div style="display:flex;justify-content:space-between;margin-top:6px"><div>GST (5%)</div><div>₹${gstAmountExact.toFixed(2)}</div></div>` : ""}
+            ${
+              includeGST
+                ? `
+              <div style="display:flex;justify-content:space-between;margin-top:6px"><div>CGST (2.5%)</div><div>₹${cgstAmount.toFixed(2)}</div></div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px"><div>SGST (2.5%)</div><div>₹${sgstAmount.toFixed(2)}</div></div>
+              <div style="margin-top:6px;font-size:12px">Calculation: Subtotal (₹${subtotalAfterDiscount.toFixed(2)}) + CGST (2.5%) + SGST (2.5%) = ₹${grandTotal.toFixed(2)}</div>
+            `
+                : ""
+            }
             <div class="total"><span>Grand Total</span><span>₹${grandTotal.toFixed(2)}</span></div>
           </div>
         </body>
@@ -142,7 +171,8 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
         await createBill(order, includeGST, {
           subtotal,
           discountAmount,
-          gstAmount: gstAmountExact,
+          cgstAmount,
+          sgstAmount,
           grandTotal,
         });
       } catch (err) {
@@ -151,6 +181,15 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
         console.error("Failed to save bill:", err);
       }
       try {
+        // clear title & try to hide URL in some browsers (user print settings may still show headers)
+        try {
+          win.document.title = "";
+          if (win.history && win.history.replaceState) {
+            try {
+              win.history.replaceState(null, "", "");
+            } catch (e) {}
+          }
+        } catch (e) {}
         win.print();
       } catch (e) {
         /* ignore */
@@ -221,7 +260,9 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
               <p>
                 Order #: {order.id.slice(0, 8)} | {roomOrTable}
               </p>
-              <p>Date: {new Date(order.created_at).toLocaleString()}</p>
+              <p>Date: {formatDateOnly(order.created_at)}</p>
+              {guestName && <p>Guest: {guestName}</p>}
+              {guestPhone && <p>Contact: {guestPhone}</p>}
               <hr />
               <table>
                 <thead>
@@ -242,12 +283,7 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
                           {oi.notes ? ` (${oi.notes})` : ""}
                         </td>
                         <td className="right">{oi.quantity}</td>
-                        <td className="right">
-                          ₹
-                          {includeGST
-                            ? oi.price.toFixed(4)
-                            : oi.price.toFixed(2)}
-                        </td>
+                        <td className="right">₹{oi.price.toFixed(2)}</td>
                         <td className="right">₹{amt.toFixed(2)}</td>
                       </tr>
                     );
@@ -267,14 +303,23 @@ export default function ReceiptPrint({ order }: { order: OrderWithDetails }) {
               {includeGST && (
                 <>
                   <div className="flex justify-between">
-                    <span>GST (5%)</span>
-                    <span>₹{gstAmountExact.toFixed(2)}</span>
+                    <span>CGST (2.5%)</span>
+                    <span>₹{cgstAmount.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>SGST (2.5%)</span>
+                    <span>₹{sgstAmount.toFixed(2)}</span>
                   </div>
                 </>
               )}
               <div className="flex justify-between total">
                 <span>Grand Total</span>
-                <span>₹{grandTotal.toFixed(2)}</span>
+                <span>
+                  ₹
+                  {Number(grandTotal.toFixed(2)) +
+                    Number(cgstAmount.toFixed(2)) +
+                    Number(sgstAmount.toFixed(2))}
+                </span>
               </div>
             </div>
             <Button className="w-full" onClick={handlePrint}>

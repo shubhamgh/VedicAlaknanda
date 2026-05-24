@@ -12,13 +12,15 @@ export async function createOrderSession(params: {
   roomNumber?: string;
   tableNumber?: string;
   expiresInMinutes?: number; // optional, allows staff to set expiry
+  guestName?: string | null;
+  guestPhone?: string | null;
 }) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
   if (!session?.user) throw new Error("Not authenticated");
 
-  const { roomNumber, tableNumber } = params;
+  const { roomNumber, tableNumber, guestName, guestPhone } = params;
   if (!roomNumber && !tableNumber) {
     throw new Error("Either room number or table number is required");
   }
@@ -35,6 +37,8 @@ export async function createOrderSession(params: {
       otp,
       room_number: roomNumber || null,
       table_number: tableNumber || null,
+      guest_name: guestName || null,
+      guest_phone: guestPhone || null,
       created_by: session.user.id,
       expires_at: expiresAt.toISOString(),
       status: "active",
@@ -212,8 +216,9 @@ export async function createBill(
   order: any,
   gstIncluded: boolean,
   summary?: any,
+  createdAt?: string,
 ) {
-  const payload = {
+  const payload: any = {
     order_id: order.id,
     gst_included: gstIncluded,
     data: {
@@ -221,6 +226,7 @@ export async function createBill(
       summary: summary ?? null,
     },
   };
+  if (createdAt) payload.created_at = createdAt;
 
   // upsert by order_id to avoid duplicates
   const { data, error } = await supabase

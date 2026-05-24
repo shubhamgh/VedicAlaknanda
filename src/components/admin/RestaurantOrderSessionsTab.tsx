@@ -70,6 +70,8 @@ export default function RestaurantOrderSessionsTab() {
         roomNumber: roomNumber || undefined,
         tableNumber: tableNumber || undefined,
         expiresInMinutes: expiresIn * 60,
+        guestName: guestName?.trim() || undefined,
+        guestPhone: guestPhone?.trim() || undefined,
       });
       const url = `${window.location.origin}/order?otp=${session.otp}`;
       await navigator.clipboard.writeText(`${session.otp}\n${url}`);
@@ -79,6 +81,8 @@ export default function RestaurantOrderSessionsTab() {
       });
       setRoomNumber("");
       setTableNumber("");
+      setGuestName("");
+      setGuestPhone("");
       queryClient.invalidateQueries({ queryKey: ["order-sessions"] });
     } catch (err: unknown) {
       toast({
@@ -183,6 +187,8 @@ export default function RestaurantOrderSessionsTab() {
                   room_number: string | null;
                   table_number: string | null;
                   expires_at: string;
+                  guest_name?: string | null;
+                  guest_phone?: string | null;
                 }) => (
                   <div
                     key={s.id}
@@ -338,23 +344,28 @@ function SessionOrders({ sessionId }: { sessionId: string }) {
 
   const [customName, setCustomName] = useState("");
   const [customPrice, setCustomPrice] = useState<string>("");
+  const [customQuantity, setCustomQuantity] = useState<number>(1);
 
   const handleAddCustom = async (orderId: string) => {
-    if (!customName || !customPrice) return;
+    const qty = Number(customQuantity);
+    if (!customName || !customPrice || Number.isNaN(qty) || qty <= 0) return;
     const price = Number(customPrice);
     try {
       await addOrderItem({
         orderId,
         itemId: undefined,
         itemName: customName,
-        quantity: 1,
+        quantity: qty,
         priceAtTime: price,
         customPrice: price,
         notes: null,
       });
       setCustomName("");
       setCustomPrice("");
-      await queryClient.invalidateQueries(["session-orders", sessionId]);
+      setCustomQuantity(1);
+      await queryClient.invalidateQueries({
+        queryKey: ["session-orders", sessionId],
+      });
       await recalculateOrderTotal(orderId);
       toast({ title: "Added", description: "Custom item added" });
     } catch (err: unknown) {
@@ -472,10 +483,9 @@ function SessionOrders({ sessionId }: { sessionId: string }) {
                       onClick={async () => {
                         try {
                           await removeOrderItem(it.id);
-                          await queryClient.invalidateQueries([
-                            "session-orders",
-                            sessionId,
-                          ]);
+                          await queryClient.invalidateQueries({
+                            queryKey: ["session-orders", sessionId],
+                          });
                           await recalculateOrderTotal(order.id);
                           toast({
                             title: "Removed",
@@ -499,7 +509,7 @@ function SessionOrders({ sessionId }: { sessionId: string }) {
             ))}
           </div>
 
-          <div className="mt-3 grid grid-cols-3 gap-2">
+          <div className="mt-3 grid grid-cols-4 gap-2">
             <Input
               placeholder="Custom name"
               value={customName}
@@ -510,6 +520,16 @@ function SessionOrders({ sessionId }: { sessionId: string }) {
               placeholder="Price"
               value={customPrice}
               onChange={(e) => setCustomPrice(e.target.value)}
+              disabled={!isActive}
+            />
+            <Input
+              placeholder="Qty"
+              type="number"
+              min={1}
+              value={customQuantity}
+              onChange={(e) =>
+                setCustomQuantity(Math.max(1, Number(e.target.value)))
+              }
               disabled={!isActive}
             />
             <Button
@@ -600,6 +620,7 @@ function StaffOrderMenu({
   const [cart, setCart] = useState<{ item: any; quantity: number }[]>([]);
   const [customName, setCustomName] = useState("");
   const [customPrice, setCustomPrice] = useState<string>("");
+  const [customQuantity, setCustomQuantity] = useState<number>(1);
   const [placing, setPlacing] = useState(false);
   const queryClient = useQueryClient();
 
@@ -625,12 +646,13 @@ function StaffOrderMenu({
     });
   };
 
-  const addCustomToCart = (name: string, price: number) => {
+  const addCustomToCart = (name: string, price: number, quantity: number) => {
     const id = `custom-${Date.now()}`;
     const customItem = { id, name, price };
-    setCart((prev) => [...prev, { item: customItem, quantity: 1 }]);
+    setCart((prev) => [...prev, { item: customItem, quantity }]);
     setCustomName("");
     setCustomPrice("");
+    setCustomQuantity(1);
   };
 
   const cartTotal = cart.reduce(
@@ -734,7 +756,7 @@ function StaffOrderMenu({
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
         <div>
           <input
             placeholder="Custom name"
@@ -750,10 +772,21 @@ function StaffOrderMenu({
             onChange={(e) => setCustomPrice(e.target.value)}
             className="px-2 py-1 border rounded w-32"
           />
+          <input
+            placeholder="Qty"
+            type="number"
+            min={1}
+            value={customQuantity}
+            onChange={(e) =>
+              setCustomQuantity(Math.max(1, Number(e.target.value)))
+            }
+            className="px-2 py-1 border rounded w-24"
+          />
           <Button
             onClick={() => {
-              if (customName && customPrice)
-                addCustomToCart(customName, Number(customPrice));
+              const qty = Number(customQuantity);
+              if (customName && customPrice && qty > 0)
+                addCustomToCart(customName, Number(customPrice), qty);
             }}
           >
             Add Custom

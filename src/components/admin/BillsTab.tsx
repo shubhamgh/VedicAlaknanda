@@ -6,11 +6,18 @@ import { toast } from "@/hooks/use-toast";
 export default function BillsTab() {
   const { data: orders = [], isLoading } = useAllOrdersForAdmin();
   const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const [selectedDates, setSelectedDates] = useState<Record<string, string>>(
+    {},
+  );
   const [includeGST, setIncludeGST] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const toggle = (id: string) => {
     setSelected((s) => ({ ...s, [id]: !s[id] }));
+  };
+
+  const setDateFor = (id: string, date: string) => {
+    setSelectedDates((s) => ({ ...s, [id]: date }));
   };
 
   const postSelected = async () => {
@@ -25,10 +32,19 @@ export default function BillsTab() {
         if (!order) continue;
         try {
           const grandTotal = Number(order.total_amount ?? 0);
-          await createBill(order, includeGST, {
-            posted_from: "admin-bulk",
-            summary: { grandTotal },
-          });
+          const dateVal = selectedDates[id];
+          const createdAt = dateVal
+            ? new Date(dateVal + "T00:00:00").toISOString()
+            : undefined;
+          await createBill(
+            order,
+            includeGST,
+            {
+              posted_from: "admin-bulk",
+              summary: { grandTotal },
+            },
+            createdAt,
+          );
           success++;
         } catch (err) {
           failed++;
@@ -90,7 +106,17 @@ export default function BillsTab() {
                 </td>
                 <td className="p-2">{o.id.slice(0, 8)}</td>
                 <td className="p-2">
-                  {new Date(o.created_at).toLocaleString()}
+                  <input
+                    type="date"
+                    value={
+                      selectedDates[o.id] ??
+                      (o.created_at
+                        ? new Date(o.created_at).toISOString().slice(0, 10)
+                        : "")
+                    }
+                    onChange={(e) => setDateFor(o.id, e.target.value)}
+                    className="border rounded px-2 py-1"
+                  />
                 </td>
                 <td className="p-2">{o.order_items?.length ?? 0}</td>
                 <td className="p-2">₹{(o.total_amount ?? 0).toFixed(2)}</td>

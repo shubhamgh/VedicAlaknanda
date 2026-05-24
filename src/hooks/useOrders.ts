@@ -32,6 +32,8 @@ export interface OrderWithDetails {
   order_sessions: {
     room_number: string | null;
     table_number: string | null;
+    guest_name?: string | null;
+    guest_phone?: string | null;
   } | null;
 }
 
@@ -45,8 +47,8 @@ export function useOrders(statusFilter?: OrderStatus[]) {
           `
           *,
           order_items (*),
-          order_sessions (room_number, table_number)
-        `
+          order_sessions (room_number, table_number, guest_name, guest_phone)
+        `,
         )
         .neq("status", "cancelled")
         .neq("status", "completed")
@@ -74,8 +76,8 @@ export function useAllOrdersForAdmin() {
           `
           *,
           order_items (*),
-          order_sessions (room_number, table_number)
-        `
+          order_sessions (room_number, table_number, guest_name, guest_phone)
+        `,
         )
         .order("created_at", { ascending: false });
 
